@@ -1,31 +1,33 @@
-import { fetchPagedBoardItems } from "@/app/libs/api";
+import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/api";
 
-const POSTS_PER_PAGE = 5; // 페이지당 게시글 수
+export default async function BoardDataTable({
+    currentPage,
+    postsPerPage,
+}: {
+    currentPage: number;
+    postsPerPage: number;
+}) {
+    // 한번에 두 개의 쿼리를 실행
+    const data = await Promise.all([
+        getAllPostsCount(),
+        fetchPagedBoardItems(currentPage, postsPerPage)
+    ]);
+    console.log("data", data);
+    const totalPostCount = Number(data[0] ?? '0');
+    console.log("totalPostCount", totalPostCount);
+    const totalPages = Math.ceil(totalPostCount / postsPerPage);
+    console.log("totalPages", totalPages);
+    const posts = data[1];
 
-export default async function BoardDataTable({ currentPage }: { currentPage: number }) {
+    // const posts = await fetchPagedBoardItems(currentPage, postsPerPage);
 
-    const posts = await fetchPagedBoardItems(currentPage);
+    const startIndex = (currentPage - 1) * postsPerPage;
+    const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
 
-    // console.log("posts", posts);    
-    const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
-    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-    const currentPosts = posts.slice(startIndex, startIndex + POSTS_PER_PAGE);
-    console.log("currentPosts", currentPosts);    
-
-    // const handlePageClick = (page: number) => {
-    //     setCurrentPage(page);
-    // };
-
-    // const handlePrev = () => {
-    //     if (currentPage > 1) setCurrentPage(currentPage - 1);
-    // };
-
-    // const handleNext = () => {
-    //     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-    // };
 
     return (
-        <div className="min-h-screen max-w-3xl mx-auto font-sans">
+        // <div className="min-h-screen max-w-3xl mx-auto font-sans">
+        <div>
             <div className="text-2xl font-bold p-4 mb-4 text-left">
                 <h1> Q&A </h1>
             </div>
@@ -46,24 +48,22 @@ export default async function BoardDataTable({ currentPage }: { currentPage: num
                             <td className="p-3 text-center">{post.article_id}</td>
                             <td className="p-3 text-center">{post.category_name}</td>
                             <td className="p-3 text-left">
-                                {/* TODO */}
-                                {/* {post.comments > 0 && (
+                                {post.comment_count > 0 && (
                                     <span className="bg-gray-500 text-white pr-2 pl-2 rounded-sm font-light mr-2">
-                                        {post.comments}
+                                        {post.comment_count}
                                     </span>
-                                )} */}
+                                )}
                                 <a href={`/post/${post.article_id}`} className="text-gray-800 hover:underline">
                                     {post.title}
                                 </a>
                             </td>
                             <td className="p-3 text-center">{post.created}</td>
-                            {/* TODO */}
                             <td className="p-3 text-center">{post.views}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div className="text-right  mt-8 mb-8">총 {posts.length}개의 게시글</div>
+            <div className="text-right  mt-8 mb-8">전체 {totalPostCount}개의 게시글 중 {postsPerPage} 개 표시 </div>
         </div>
     );
 }

@@ -1,8 +1,16 @@
-import BoardDataTable from "@/components/boardDataTable/table";
+import BoardDataTable from "@/components/BoardDataTable/component";
+import Pagination from "@/components/Pagination/component";
+import { getAllPostsCount, getTotalPagesCount } from "../libs/api";
 
-export default function Page() {
+const POSTS_PER_PAGE = 9; // 페이지당 게시글 수
 
+export default async function Page() {
+    const totalPagesCnt = await getTotalPagesCount(POSTS_PER_PAGE);
+    console.log("totalPages", totalPagesCnt);  
     return (
-        <BoardDataTable currentPage={1} />
+        <div className="min-h-screen max-w-3xl mx-auto font-sans">
+            <BoardDataTable currentPage={1} postsPerPage={POSTS_PER_PAGE} />
+            <Pagination totalPagesCnt={totalPagesCnt} />
+        </div>
     );
 }

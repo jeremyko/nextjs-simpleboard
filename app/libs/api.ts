@@ -1,15 +1,5 @@
 import postgres from "postgres";
-// import {
-//     CustomerField,
-//     CustomersTableType,
-//     InvoiceForm,
-//     InvoicesTable,
-//     LatestInvoiceRaw,
-//     Revenue,
-// } from './definitions';
-// import { formatCurrency } from './utils';
 
-const ITEMS_PER_PAGE = 5; //TODO
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export type BoardItems = {
@@ -17,21 +7,52 @@ export type BoardItems = {
     title: string;
     created: string;
     category_name: string;
+    comment_count: number;
     views: number;
 };
 
-export async function fetchPagedBoardItems(currentPage: number) {
-    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+export async function getTotalPagesCount(postPerPage: number): Promise<number> {
+    try {
+        const result = await sql<{ count: number }[]>`
+            SELECT COUNT(*) AS count FROM ARTICLES;
+        `;
+        const totalPages = Math.ceil(result[0].count / postPerPage);
+        return totalPages;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch total pages count.");
+    }
+}
+
+export async function getAllPostsCount(): Promise<number> {
+    try {
+        const result = await sql<{ count: number }[]>`
+            SELECT COUNT(*) AS count FROM ARTICLES;
+        `;
+        return result[0].count;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch posts count.");
+    }
+}
+
+export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: number): Promise<BoardItems[]> {
+    const offset = (currentPage - 1) * itemsPerPage;
 
     try {
         const boardItems = await sql<BoardItems[]>`
-        select  A.article_id, A.title, to_char(A.created, 'YYYY-MM-DD') as created, 
-                B.name as category_name, A.views 
-        from articles A ,
-            categories B
-        where B.caterory_id = A.caterory_id 
-        order by A.created desc 
-        LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset} `;
+        SELECT  A.ARTICLE_ID, 
+                A.TITLE, 
+                TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
+                B.NAME AS CATEGORY_NAME, 
+                COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
+                A.VIEWS
+        FROM    ARTICLES A 
+                INNER JOIN CATEGORIES B ON B.CATERORY_ID = A.CATERORY_ID 
+                LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
+        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.NAME, A.VIEWS
+        ORDER BY A.CREATED DESC 
+        LIMIT ${itemsPerPage} OFFSET ${offset} `;
 
         return boardItems;
     } catch (error) {

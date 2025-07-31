@@ -48,6 +48,8 @@ create table public.comments (
   constraint fk_users_to_comments foreign KEY (user_id) references users (user_id)
 ) TABLESPACE pg_default;
 
+create index IF not exists comments_article_id_idx on public.comments using btree (article_id) TABLESPACE pg_default;
+
 -- ///////////////////////////////////////////////////////////////////////////////
 
 select A.*, C.*, B.comment, B.comment_user_id 
