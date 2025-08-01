@@ -1,55 +1,55 @@
 'use client';
 
-import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+// import React, { useState } from "react";
 
 export default function Pagination({ totalPagesCnt = 0 }: { totalPagesCnt?: number }) {
-    const [currentPage, setCurrentPage] = useState(1);
-    const handlePageClick = (page: number) => {
-        setCurrentPage(page);
-    };
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const currentPage = Number(searchParams.get("page")) || 1;
+    // const allPages = generatePagination(currentPage, totalPages);
 
-    const handlePrev = () => {
-        if (currentPage > 1) setCurrentPage(currentPage - 1);
-    };
-
-    const handleNext = () => {
-        if (currentPage < totalPagesCnt) setCurrentPage(currentPage + 1);
+    const createPageURL = (pageNumber: number | string) => {
+        const params = new URLSearchParams(searchParams);
+        params.set("page", pageNumber.toString());
+        console.log(`${pathname}?${params.toString()}`);
+        return `${pathname}?${params.toString()}`;
     };
 
     return (
         <div className="flex justify-center items-center mt-4 space-x-2">
-            {/* 이전 버튼 */}
-            <button
-                onClick={handlePrev}
-                disabled={currentPage === 1}
-                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
-            >
-                이전
-            </button>
-
-            {/* 숫자 페이지 */}
-            {Array.from({ length: totalPagesCnt }, (_, index) => (
+            <Link href={createPageURL(currentPage - 1)}>
                 <button
-                    key={index + 1}
-                    onClick={() => handlePageClick(index + 1)}
-                    className={`px-3 py-1 border rounded ${
-                        currentPage === index + 1
-                            ? "bg-blue-500 text-white border-blue-500"
-                            : "border-gray-300 hover:bg-gray-100"
-                    }`}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
                 >
-                    {index + 1}
+                    이전
                 </button>
+            </Link>
+
+            {Array.from({ length: totalPagesCnt }, (_, index) => (
+                <Link key={index } href={createPageURL(index+1 )}>
+                    <button
+                        className={`px-3 py-1 border rounded ${
+                            currentPage === index + 1
+                                ? "bg-blue-500 text-white border-blue-500"
+                                : "border-gray-300 hover:bg-gray-100"
+                        }`}
+                    >
+                        {index + 1}
+                    </button>
+                </Link>
             ))}
 
-            {/* 다음 버튼 */}
-            <button
-                onClick={handleNext}
-                disabled={currentPage === totalPagesCnt}
-                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
-            >
-                다음
-            </button>
+            <Link href={createPageURL(currentPage + 1)}>
+                <button
+                    disabled={currentPage === totalPagesCnt}
+                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
+                >
+                    다음
+                </button>
+            </Link>
         </div>
     );
 }

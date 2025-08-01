@@ -25,18 +25,17 @@ export default function HeaderNav() {
                     <div>
                         <ul className="flex space-x-4 align-bottom pt-4">
                             <li className="pl-6">
-                                {/* <a href="/dashboard" className="hover:underline ">Q&A</a> */}
-                                <Link href="/dashboard" className="hover:underline ">
+                                <Link href="/qna" className="hover:underline ">
                                     Q&A
                                 </Link>
                             </li>
                             <li className="pl-6">
-                                <Link href="/dashboard" className="hover:underline ">
+                                <Link href="/qna" className="hover:underline ">
                                     Q&A
                                 </Link>
                             </li>
                             <li className="pl-6">
-                                <Link href="/dashboard" className="hover:underline ">
+                                <Link href="/qna" className="hover:underline ">
                                     Q&A
                                 </Link>
                             </li>

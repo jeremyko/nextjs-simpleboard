@@ -1,9 +1,11 @@
 import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/api";
 
 export default async function BoardDataTable({
+    searchQuery,
     currentPage,
     postsPerPage,
 }: {
+    searchQuery?: string;
     currentPage: number;
     postsPerPage: number;
 }) {
@@ -22,7 +24,7 @@ export default async function BoardDataTable({
     // const posts = await fetchPagedBoardItems(currentPage, postsPerPage);
 
     const startIndex = (currentPage - 1) * postsPerPage;
-    const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
+    // const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
 
 
     return (
@@ -43,7 +45,7 @@ export default async function BoardDataTable({
                     </tr>
                 </thead>
                 <tbody>
-                    {currentPosts.map((post) => (
+                    {posts.map((post) => (
                         <tr key={post.article_id} className="border-b border-green-700 ">
                             <td className="p-3 text-center">{post.article_id}</td>
                             <td className="p-3 text-center">{post.category_name}</td>
