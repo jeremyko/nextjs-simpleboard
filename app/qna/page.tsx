@@ -42,8 +42,8 @@ export default async function Page(props: {
         <div className="min-h-screen max-w-3xl mx-auto font-sans">
             <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={POSTS_PER_PAGE} />
             <div className="flex justify-between items-center p-4">
-                <Button label="검색" href="/qna/search" />
-                <Button label="새 글 작성" href="/qna/new" />
+                <Button href="/qna/search" >검색</Button>
+                <Button href="/qna/new" >새 질문</Button>
             </div>
 
             <Pagination totalPagesCnt={totalPagesCnt} />

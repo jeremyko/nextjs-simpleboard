@@ -7,19 +7,19 @@ export default function HeaderNav() {
         <header>
             <nav className=" bg-gray-800  text-zinc-300 p-4 h-[100px]">
                 <div className="max-w-4xl mx-auto text-sm flex justify-end items-end">
-                    <a href="/signin" className="pl-6 hover:underline ">
+                    <Link href="/signin" className="pl-6 hover:underline ">
                         로그인
-                    </a>
-                    <a href="/signup" className="pl-6 hover:underline ml-4 ">
+                    </Link>
+                    <Link href="/signup" className="pl-6 hover:underline ml-4 ">
                         회원가입
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="max-w-4xl mx-auto text-lg flex justify-between items-center">
                     <div className="flex items-center space-x-4">
-                        <a href="/" className="text-xl font-bold hover:underline mr-4">
+                        <Link href="/" className="text-xl font-bold hover:underline mr-4">
                             <FontAwesomeIcon size="xl" icon={faHouse} className="text-zinc-200" />
-                        </a>
+                        </Link>
                     </div>
 
                     <div>

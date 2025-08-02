@@ -89,19 +89,9 @@ export default function Page() {
                         </div>
 
                         {/* --------------------- */}
-                        <div className="mt-6 flex justify-end gap-4">
-                            <Link
-                                href="/qna"
-                                className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-                            >
-                                취소
-                            </Link>
-                            {/* <Link
-                                href="/qna"
-                                className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-                            > */}
-                            <button type="submit"> 저장</button>
-                            {/* </Link> */}
+                        <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">
+                            <Button href="/qna"> 취소</Button>
+                            <Button type="submit"> 저장</Button>
                         </div>
                     </div>
                 </div>

@@ -4,15 +4,17 @@ import { z } from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { use } from "react";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export type State = {
+    //XXX 왜 배열 type 을 지정해야 하는가 ==> zod 에서 그렇게 리턴해준다..
     errors?: {
-        categoryId?: string[];
+        categoryId?: string[]; 
         title?: string[];
         content?: string[];
-        userId?: string[]; 
+        // userId?: string[]; //TODO
     };
     message?: string | null;
 };
@@ -27,29 +29,39 @@ const FormSchema = z.object({
     categoryId: z.string(),
     title: z.string(),
     content: z.string(),
-    userId: z.string(),
+    // userId: z.string(), //TODO
     date: z.string(),
     // views: z.number(),
 });
 
-const CreateQnA = FormSchema.omit({ date: true });
+// const CreateQnA = FormSchema.omit({ date: true });
+const CreateQnA = FormSchema.omit({ date: true, userId: true }); //TODO 
 
 export async function createQuestion(prevState: State, formData: FormData) {
 
-    //XXX 이 로그는 server 기하한 터미널에서만 보임. 왜냐하면 server 액션이기 때문
+    //XXX 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.log("==> createQuestion called with formData:", formData);
 
     const validatedFields = CreateQnA.safeParse({
         categoryId: formData.get("categoryId"),
         title: formData.get("title"),
         content: formData.get("content"),
+        // userId: formData.get("userId"), //TODO 
     });
 
     if (!validatedFields.success) {
         console.error("Validation failed:", validatedFields.error.flatten().fieldErrors);
+        const pretty = z.prettifyError(validatedFields.error);
+        console.error("Validation error details:", pretty);
+
+        const flattened = z.flattenError(validatedFields.error);
+        console.error("Flattened error details:", flattened);
+
         return {
+            // The fieldErrors object provides an array of errors for each field in the schema.
+            // https://zod.dev/error-formatting?id=zflattenerror
             errors: validatedFields.error.flatten().fieldErrors,
-            // message: 'Missing Fields. Failed to Create Invoice.',
+            // errors: z.treeifyError(validatedFields.error).errors,
             message: prevState.message + "==> Missing Fields. Failed to Create QnA.",
         };
     }
