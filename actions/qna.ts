@@ -34,8 +34,8 @@ const FormSchema = z.object({
     // views: z.number(),
 });
 
-// const CreateQnA = FormSchema.omit({ date: true });
-const CreateQnA = FormSchema.omit({ date: true, userId: true }); //TODO 
+const CreateQnA = FormSchema.omit({ date: true });
+// const CreateQnA = FormSchema.omit({ date: true, userId: true }); //TODO 
 
 export async function createQuestion(prevState: State, formData: FormData) {
 

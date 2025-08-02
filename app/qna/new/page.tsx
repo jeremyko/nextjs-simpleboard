@@ -90,8 +90,22 @@ export default function Page() {
 
                         {/* --------------------- */}
                         <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">
-                            <Button href="/qna"> 취소</Button>
+                            <Link href="/qna" >
+                                <Button> 취소</Button>
+                            </Link>
+
+                            {/* 에러 ? */}
+                            {/* <Link href="/qna" >
                             <Button type="submit"> 저장</Button>
+                            </Link> */}
+
+                            <button
+                                type="submit"
+                                className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                {" "}
+                                저장
+                            </button>
                         </div>
                     </div>
                 </div>

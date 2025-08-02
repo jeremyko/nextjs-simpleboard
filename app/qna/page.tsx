@@ -2,8 +2,9 @@ import BoardDataTable from "@/components/BoardDataTable/component";
 import Pagination from "@/components/Pagination/component";
 import { getAllPostsCount, getTotalPagesCount } from "../libs/api";
 import Button from "@/components/Button/component";
+import Link from "next/link";
 
-const POSTS_PER_PAGE = 3; // 페이지당 게시글 수
+const POSTS_PER_PAGE = 10; // 페이지당 게시글 수
 
 export default async function Page(props: {
     // props 인자 :
@@ -42,8 +43,12 @@ export default async function Page(props: {
         <div className="min-h-screen max-w-3xl mx-auto font-sans">
             <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={POSTS_PER_PAGE} />
             <div className="flex justify-between items-center p-4">
-                <Button href="/qna/search" >검색</Button>
-                <Button href="/qna/new" >새 질문</Button>
+                <Link href="/qna/search">
+                    <Button>검색</Button>
+                </Link>
+                <Link href="/qna/new">
+                    <Button>새 질문</Button>
+                </Link>
             </div>
 
             <Pagination totalPagesCnt={totalPagesCnt} />
