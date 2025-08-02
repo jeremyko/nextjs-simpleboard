@@ -22,16 +22,16 @@ export default function Pagination({ totalPagesCnt = 0 }: { totalPagesCnt?: numb
             <Link href={createPageURL(currentPage - 1)}>
                 <button
                     disabled={currentPage === 1}
-                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
+                    className="cursor-pointer px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
                 >
                     이전
                 </button>
             </Link>
 
             {Array.from({ length: totalPagesCnt }, (_, index) => (
-                <Link key={index } href={createPageURL(index+1 )}>
+                <Link key={index} href={createPageURL(index + 1)}>
                     <button
-                        className={`px-3 py-1 border rounded ${
+                        className={`cursor-pointer px-3 py-1 border rounded ${
                             currentPage === index + 1
                                 ? "bg-blue-500 text-white border-blue-500"
                                 : "border-gray-300 hover:bg-gray-100"
@@ -45,7 +45,7 @@ export default function Pagination({ totalPagesCnt = 0 }: { totalPagesCnt?: numb
             <Link href={createPageURL(currentPage + 1)}>
                 <button
                     disabled={currentPage === totalPagesCnt}
-                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
+                    className="cursor-pointer px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
                 >
                     다음
                 </button>

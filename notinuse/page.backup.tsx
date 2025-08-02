@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchPagedBoardItems } from "../libs/api";
+import { fetchPagedBoardItems } from "../app/libs/api";
 import React, { useState } from "react";
 
 // 샘플 데이터 (10개)

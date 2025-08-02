@@ -55,7 +55,7 @@ export default async function BoardDataTable({
                                         {post.comment_count}
                                     </span>
                                 )}
-                                <a href={`/post/${post.article_id}`} className="text-gray-800 hover:underline">
+                                <a href={`/qna/${post.article_id}`} className="text-gray-800 hover:underline">
                                     {post.title}
                                 </a>
                             </td>

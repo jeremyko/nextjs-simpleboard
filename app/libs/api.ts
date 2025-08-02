@@ -48,7 +48,7 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
                 COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
                 A.VIEWS
         FROM    ARTICLES A 
-                INNER JOIN CATEGORIES B ON B.CATERORY_ID = A.CATERORY_ID 
+                INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
         GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.NAME, A.VIEWS
         ORDER BY A.CREATED DESC 

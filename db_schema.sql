@@ -7,10 +7,10 @@ drop table public.users CASCADE ;
 drop table public.categories CASCADE ;
 
 create table public.categories (
-  caterory_id serial not null,
+  category_id serial not null,
   name character varying(100) not null,
   
-  constraint categories_pkey primary key (caterory_id)
+  constraint categories_pkey primary key (category_id)
 ) TABLESPACE pg_default;
 
 create table public.users (
@@ -30,10 +30,10 @@ create table public.articles (
   views integer null default 0,  
   created timestamp with time zone not null default now(),
   user_id serial not null,
-  caterory_id serial not null,
+  category_id serial not null,
   
   constraint articles_pkey primary key (article_id),
-  constraint fk_categories_to_articles foreign KEY (caterory_id) references categories (caterory_id),
+  constraint fk_categories_to_articles foreign KEY (category_id) references categories (category_id),
   constraint fk_users_to_articles foreign KEY (user_id) references users (user_id)
 ) TABLESPACE pg_default;
 
@@ -86,7 +86,7 @@ CREATE TABLE articles
   contents    varchar(300) NOT NULL,
   created     timestamptz default now()   NOT NULL,
   user_id     serial       NOT NULL,
-  caterory_id serial       NOT NULL,
+  category_id serial       NOT NULL,
   PRIMARY KEY (article_id)
 );
 COMMENT ON TABLE articles IS '게시물';
@@ -95,9 +95,9 @@ COMMENT ON COLUMN articles.user_id IS '사용자ID';
 
 CREATE TABLE categories
 (
-  caterory_id serial       NOT NULL,
+  category_id serial       NOT NULL,
   name        varchar(100) NOT NULL,
-  PRIMARY KEY (caterory_id)
+  PRIMARY KEY (category_id)
 );
 COMMENT ON TABLE categories IS '카테고리관리';
 
@@ -129,8 +129,8 @@ ALTER TABLE comments
 
 ALTER TABLE articles
   ADD CONSTRAINT FK_categories_TO_articles
-    FOREIGN KEY (caterory_id)
-    REFERENCES categories (caterory_id);
+    FOREIGN KEY (category_id)
+    REFERENCES categories (category_id);
 */
 
 

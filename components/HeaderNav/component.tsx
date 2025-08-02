@@ -29,16 +29,6 @@ export default function HeaderNav() {
                                     Q&A
                                 </Link>
                             </li>
-                            <li className="pl-6">
-                                <Link href="/qna" className="hover:underline ">
-                                    Q&A
-                                </Link>
-                            </li>
-                            <li className="pl-6">
-                                <Link href="/qna" className="hover:underline ">
-                                    Q&A
-                                </Link>
-                            </li>
                         </ul>
                     </div>
                 </div>

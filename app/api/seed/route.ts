@@ -59,70 +59,70 @@ const articles = [
         contents: 'test contents 1',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 2',
         contents: 'test contents 2',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 3',
         contents: 'test contents 3',
         views: 1,
         user_id: 1,
-        caterory_id: 2,
+        category_id: 2,
     },
     {
         title: 'test title 4',
         contents: 'test contents 4',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 5',
         contents: 'test contents 5',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 6',
         contents: 'test contents 6',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 7',
         contents: 'test contents 7',
         views: 1,
         user_id: 1,
-        caterory_id: 2,
+        category_id: 2,
     },
     {
         title: 'test title 8',
         contents: 'test contents 8',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 9',
         contents: 'test contents 9',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     },
     {
         title: 'test title 10',
         contents: 'test contents 10',
         views: 1,
         user_id: 1,
-        caterory_id: 1,
+        category_id: 1,
     }
 ];
 
@@ -136,15 +136,15 @@ async function seedArticles() {
         contents text not null,
         created timestamp with time zone not null default now(),
         user_id serial not null,
-        caterory_id serial not null,
+        category_id serial not null,
         views integer not null default 0,
         constraint articles_pkey primary key (article_id)
     ); `;
 
     const insertedArticles = await Promise.all(
         articles.map(
-            (article) => sql` INSERT INTO articles(title, contents, views, user_id, caterory_id)
-        VALUES (${article.title}, ${article.contents}, ${article.views}, ${article.user_id}, ${article.caterory_id});`));
+            (article) => sql` INSERT INTO articles(title, contents, views, user_id, category_id)
+        VALUES (${article.title}, ${article.contents}, ${article.views}, ${article.user_id}, ${article.category_id});`));
     return insertedArticles;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -196,9 +196,9 @@ async function seedCategories() {
 
     await sql`
     create table public.categories (
-        caterory_id serial not null,
+        category_id serial not null,
         name character varying(100) not null,
-        constraint categories_pkey primary key (caterory_id)
+        constraint categories_pkey primary key (category_id)
     ) ; `;
 
     const insertedCategories = await Promise.all(
