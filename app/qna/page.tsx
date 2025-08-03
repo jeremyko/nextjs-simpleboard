@@ -1,10 +1,9 @@
 import BoardDataTable from "@/components/BoardDataTable/component";
 import Pagination from "@/components/Pagination/component";
-import { getAllPostsCount, getTotalPagesCount } from "../libs/api";
+import { getTotalPagesCount } from "../libs/api";
 import Button from "@/components/Button/component";
 import Link from "next/link";
-
-const POSTS_PER_PAGE = 10; // 페이지당 게시글 수
+import { getPostsPerPage } from "@/global_const/global_const";
 
 export default async function Page(props: {
     // props 인자 :
@@ -27,7 +26,7 @@ export default async function Page(props: {
     searchParams?: Promise<{
         query?: string;
         page?: string;
-    }>;
+    }>
 }) {
     // 검색과 페이지네이션을 위한 쿼리 파라미터 처리
     const searchParams = await props.searchParams;
@@ -36,12 +35,12 @@ export default async function Page(props: {
     console.log("search query", searchQuery);
     console.log("current page", page);
 
-    const totalPagesCnt = await getTotalPagesCount(POSTS_PER_PAGE);
-    console.log("totalPages", totalPagesCnt);
+    const totalPagesCnt = await getTotalPagesCount(10);
+    // console.log("totalPages", totalPagesCnt);
 
     return (
         <div className="min-h-screen max-w-3xl mx-auto font-sans">
-            <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={POSTS_PER_PAGE} />
+            <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
             <div className="flex justify-between items-center p-4">
                 <Link href="/qna/search">
                     <Button>검색</Button>

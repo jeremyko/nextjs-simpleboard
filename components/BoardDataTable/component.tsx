@@ -15,6 +15,7 @@ export default async function BoardDataTable({
         fetchPagedBoardItems(currentPage, postsPerPage)
     ]);
     console.log("data", data);
+    console.log("currentPage(table)", currentPage);
     const totalPostCount = Number(data[0] ?? '0');
     console.log("totalPostCount", totalPostCount);
     const totalPages = Math.ceil(totalPostCount / postsPerPage);
@@ -22,8 +23,7 @@ export default async function BoardDataTable({
     const posts = data[1];
 
     // const posts = await fetchPagedBoardItems(currentPage, postsPerPage);
-
-    const startIndex = (currentPage - 1) * postsPerPage;
+    // const startIndex = (currentPage - 1) * postsPerPage;
     // const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
 
 
@@ -55,7 +55,7 @@ export default async function BoardDataTable({
                                         {post.comment_count}
                                     </span>
                                 )}
-                                <a href={`/qna/${post.article_id}`} className="text-gray-800 hover:underline">
+                                <a href={`/qna/${post.article_id}?page=${currentPage}`} className="text-gray-800 hover:underline">
                                     {post.title}
                                 </a>
                             </td>

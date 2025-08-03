@@ -1,14 +1,27 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-// import React, { useState } from "react";
 
-export default function Pagination({ totalPagesCnt = 0 }: { totalPagesCnt?: number }) {
-    const pathname = usePathname();
+export default function Pagination({
+    isFromViewPage = false,
+    totalPagesCnt = 0,
+}: {
+    isFromViewPage?: boolean; // 개별 게시글 페이지에서 페이지네이션을 사용하는 경우
+    totalPagesCnt?: number;
+}) {
+    let pathname = usePathname();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get("page")) || 1;
-    // const allPages = generatePagination(currentPage, totalPages);
+    if(isFromViewPage) {
+        //XXX 개별 게시글 페이지에서 페이지네이션을 사용하는 경우에는 /qna 로 이동하게
+        // 왜냐하면, /qna/19?page=2 이런식으로 만들어지기 때문.
+        // 즉, 게시물 내용을 보여주면서 페이지 이동 안되게 처리함.
+        pathname = "/qna" ;
+    }
+    console.log("currentPage:", currentPage);
+    console.log("isFromViewPage:", isFromViewPage);
+    console.log("pathname:", pathname);
 
     const createPageURL = (pageNumber: number | string) => {
         const params = new URLSearchParams(searchParams);
