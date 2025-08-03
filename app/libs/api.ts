@@ -10,6 +10,15 @@ export type BoardItems = {
     comment_count: number;
     views: number;
 };
+export type BoardItemById = {
+    article_id: number;
+    title: string;
+    contents: string;
+    created: string;
+    category_name: string;
+    comment_count: number;
+    views: number;
+};
 
 export async function getTotalPagesCount(postPerPage: number): Promise<number> {
     try {
@@ -60,6 +69,31 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
         throw new Error("Failed to fetch board items.");
     }
 }
+
+export async function fetchOneQnaById(id: string) {
+    try {
+        const data = await sql<BoardItemById[]>`
+        SELECT  A.ARTICLE_ID, 
+                A.TITLE, 
+                A.CONTENTS,
+                TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
+                B.NAME AS CATEGORY_NAME, 
+                COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
+                A.VIEWS
+        FROM    ARTICLES A 
+                INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
+                LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
+        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.NAME, A.VIEWS
+        having A.article_id = ${id}; `;
+
+        return data[0];
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch QnA.");
+    }
+}
+
 
 // export async function fetchCardData() {
 //     try {
