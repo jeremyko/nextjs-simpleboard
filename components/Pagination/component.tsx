@@ -19,14 +19,14 @@ export default function Pagination({
         // 즉, 게시물 내용을 보여주면서 페이지 이동 안되게 처리함.
         pathname = "/qna" ;
     }
-    console.log("currentPage:", currentPage);
-    console.log("isFromViewPage:", isFromViewPage);
-    console.log("pathname:", pathname);
+    // console.log("currentPage:", currentPage);
+    // console.log("isFromViewPage:", isFromViewPage);
+    // console.log("pathname:", pathname);
 
     const createPageURL = (pageNumber: number | string) => {
         const params = new URLSearchParams(searchParams);
         params.set("page", pageNumber.toString());
-        console.log(`${pathname}?${params.toString()}`);
+        // console.log(`${pathname}?${params.toString()}`);
         return `${pathname}?${params.toString()}`;
     };
 

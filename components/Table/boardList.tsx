@@ -1,4 +1,4 @@
-import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/api";
+import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/serverDb";
 
 export default async function BoardDataTable({
     searchQuery,
@@ -17,18 +17,12 @@ export default async function BoardDataTable({
     console.log("data", data);
     console.log("currentPage(table)", currentPage);
     const totalPostCount = Number(data[0] ?? '0');
-    console.log("totalPostCount", totalPostCount);
+    // console.log("totalPostCount", totalPostCount);
     const totalPages = Math.ceil(totalPostCount / postsPerPage);
-    console.log("totalPages", totalPages);
+    // console.log("totalPages", totalPages);
     const posts = data[1];
 
-    // const posts = await fetchPagedBoardItems(currentPage, postsPerPage);
-    // const startIndex = (currentPage - 1) * postsPerPage;
-    // const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
-
-
     return (
-        // <div className="min-h-screen max-w-3xl mx-auto font-sans">
         <div>
             <div className="text-2xl font-bold p-4 mb-4 text-left">
                 <h1> Q&A </h1>
@@ -65,7 +59,7 @@ export default async function BoardDataTable({
                     ))}
                 </tbody>
             </table>
-            <div className="text-right  mt-8 mb-8">전체 {totalPostCount}개의 게시글 중 {postsPerPage} 개 표시 </div>
+            <div className="text-right  mt-8 mb-8">전체 {totalPostCount}개의 게시글 </div>
         </div>
     );
 }

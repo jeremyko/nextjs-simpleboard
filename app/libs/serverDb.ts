@@ -6,6 +6,7 @@ export type BoardItems = {
     article_id: number;
     title: string;
     created: string;
+    category_id: number;
     category_name: string;
     comment_count: number;
     views: number;
@@ -15,10 +16,16 @@ export type BoardItemById = {
     title: string;
     contents: string;
     created: string;
+    category_id: number;
     category_name: string;
     comment_count: number;
     views: number;
 };
+
+export type CategoryItem = {
+    category_id: number;
+    name: string;
+}
 
 export async function getTotalPagesCount(postPerPage: number): Promise<number> {
     try {
@@ -53,13 +60,14 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
         SELECT  A.ARTICLE_ID, 
                 A.TITLE, 
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
+                B.CATEGORY_ID , 
                 B.NAME AS CATEGORY_NAME, 
                 COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
                 A.VIEWS
         FROM    ARTICLES A 
                 INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
-        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.NAME, A.VIEWS
+        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED,B.CATEGORY_ID, B.NAME, A.VIEWS
         ORDER BY A.CREATED DESC 
         LIMIT ${itemsPerPage} OFFSET ${offset} `;
 
@@ -70,27 +78,41 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
     }
 }
 
-export async function fetchOneQnaById(id: string) {
+export async function fetchOneQnaById(id: string): Promise<BoardItemById> {
     try {
         const data = await sql<BoardItemById[]>`
         SELECT  A.ARTICLE_ID, 
                 A.TITLE, 
                 A.CONTENTS,
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
+                B.CATEGORY_ID , 
                 B.NAME AS CATEGORY_NAME, 
                 COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
                 A.VIEWS
         FROM    ARTICLES A 
                 INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
-        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.NAME, A.VIEWS
+        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.CATEGORY_ID, B.NAME, A.VIEWS
         having A.article_id = ${id}; `;
 
         return data[0];
-
     } catch (error) {
         console.error("Database Error:", error);
         throw new Error("Failed to fetch QnA.");
+    }
+}
+
+export async function fetchCategoryData(): Promise<CategoryItem[]> {
+    try {
+        const data = await sql<CategoryItem[]>`
+        SELECT  A.CATEGORY_ID, 
+                A.NAME 
+        FROM    CATEGORIES A `;
+
+        return data;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch Categoryes.");
     }
 }
 

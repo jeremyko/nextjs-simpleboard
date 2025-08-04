@@ -1,16 +1,19 @@
-import { fetchOneQnaById, getTotalPagesCount } from "@/app/libs/api";
-import BoardDataTable from "@/components/BoardDataTable/component";
+import { fetchOneQnaById, getTotalPagesCount } from "@/app/libs/serverDb";
+import BoardDataTable from "@/components/Table/boardList";
 import Button from "@/components/Button/component";
 import Pagination from "@/components/Pagination/component";
 import { getPostsPerPage } from "@/global_const/global_const";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+// 개별 게시물 보기 
+
 export default async function Page(props: {
     params: Promise<{ id: string }>;
     searchParams?: Promise<{
         query?: string;
         page?: string;
+        // action?: string; // new, edit, delete
     }>
 }) {
     const params = await props.params;
@@ -18,11 +21,13 @@ export default async function Page(props: {
     const searchParams = await props.searchParams;
     const searchQuery = searchParams?.query || "";
     const page = Number(searchParams?.page) || 1;
+    // const action = searchParams?.action || "";
     const totalPagesCnt = await getTotalPagesCount(getPostsPerPage());
 
-    console.log("search query", searchQuery);
-    console.log("current page", page);
-    console.log("QnA ID:", id);
+    console.log("[view] search query", searchQuery);
+    console.log("[view] current page", page);
+    console.log("[view] QnA ID:", id);
+    // console.log("[view] action:", action);
 
     const oneQnA = await fetchOneQnaById(id);
     if (!oneQnA) {
@@ -32,7 +37,7 @@ export default async function Page(props: {
 
     return (
         <div className="min-h-screen max-w-3xl mx-auto ">
-            <div className="flex flex-col text-sm  font-medium p-4 mb-4 text-left ">
+            <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
                 <div className="rounded-md p-4 md:p-6">
                     {/* --------------------- */}
                     <div className="flex flex-row border-t border-b border-gray-600 ">
@@ -45,22 +50,12 @@ export default async function Page(props: {
 
                     {/* --------------------- */}
                     <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">
-                        {/* <Link href="/qna" >
-                            <Button> 취소</Button>
-                        </Link> */}
-
-                        <button
-                            type="submit"
-                            className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-                            삭제
-                        </button>
-                        <button
-                            type="submit"
-                            className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-                            수정
-                        </button>
+                        <Link href={`/qna/${id}/delete?page=${page}`}>
+                            <Button>삭제</Button>
+                        </Link>
+                        <Link href={`/qna/${id}/edit?page=${page}`} >
+                            <Button>수정</Button>
+                        </Link>
                     </div>
                     {/* --------------------- */}
                     <div className="pt-2 pb-2 flex justify-between item-center gap-4">comments</div>

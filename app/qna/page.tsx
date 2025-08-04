@@ -1,9 +1,11 @@
-import BoardDataTable from "@/components/BoardDataTable/component";
+import BoardDataTable from "@/components/Table/boardList";
 import Pagination from "@/components/Pagination/component";
-import { getTotalPagesCount } from "../libs/api";
+import { getTotalPagesCount } from "../libs/serverDb";
 import Button from "@/components/Button/component";
 import Link from "next/link";
 import { getPostsPerPage } from "@/global_const/global_const";
+
+// 게시판 메인 페이지
 
 export default async function Page(props: {
     // props 인자 :
