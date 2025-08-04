@@ -1,7 +1,7 @@
 export default function Page() {
     return (
         <div className="w-full h-screen bg-cover bg-center flex items-center justify-center">
-            <div className="text-white font-bold text-4xl">signin page</div>
+            <div className="text-lime-200 font-bold text-4xl">signin page</div>
         </div>
     );
 }

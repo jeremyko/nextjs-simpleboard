@@ -52,7 +52,7 @@ export default async function Page(props: {
                         name="content"
                         rows={20}
                         readOnly={true}
-                        className=" mt-2 pt-2 block w-full py-2 pl-4  "
+                        className=" mt-2 pt-2 block w-full py-2 "
                         defaultValue={oneQnA.contents}
                     ></textarea>
 

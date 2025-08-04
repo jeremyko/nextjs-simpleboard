@@ -41,7 +41,7 @@ export default async function BoardDataTable({
                 <tbody>
                     {posts.map((post) => (
                         <tr key={post.article_id} className="border-b border-gray-700 ">
-                            <td className="p-3 text-center">{post.article_id}</td>
+                            <td className="p-3 text-center">{post.rownum}</td>
                             <td className="p-3 text-center">{post.category_name}</td>
                             <td className="p-3 text-left">
                                 {post.comment_count > 0 && (

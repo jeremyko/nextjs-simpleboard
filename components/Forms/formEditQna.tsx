@@ -36,7 +36,7 @@ export default function EditQuestionForm({
                                 <select
                                     id="categoryId"
                                     name="categoryId"
-                                    className="block w-full cursor-pointer rounded-md py-2 pl-4 outline-1 "
+                                    className="block w-full cursor-pointer rounded-md py-2 pl-2 outline-1 "
                                     defaultValue={oneQnA.category_id}
                                     aria-describedby="qna-category-error"
                                 >
@@ -69,7 +69,7 @@ export default function EditQuestionForm({
                                         type="text"
                                         id="title"
                                         name="title"
-                                        className="peer block w-full rounded-md  py-2 pl-4 outline-1 "
+                                        className="peer block w-full rounded-md  py-2 pl-2 outline-1 "
                                         defaultValue={oneQnA.title}
                                         aria-describedby="qna-title-error"
                                         required
@@ -97,7 +97,7 @@ export default function EditQuestionForm({
                                         id="content"
                                         name="content"
                                         rows={20}
-                                        className=" mt-2 pt-2 block w-full py-2 pl-4  outline-1 "
+                                        className=" mt-2 pt-2 block w-full py-2 pl-2 outline-1 "
                                         defaultValue={oneQnA.contents}
                                         aria-describedby="qna-content-error"
                                         required

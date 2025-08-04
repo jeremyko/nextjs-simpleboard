@@ -3,6 +3,7 @@ import postgres from "postgres";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export type BoardItems = {
+    rownum : number;
     article_id: number;
     title: string;
     created: string;
@@ -57,7 +58,8 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
 
     try {
         const boardItems = await sql<BoardItems[]>`
-        SELECT  A.ARTICLE_ID, 
+        SELECT  (row_number() over(ORDER BY a.article_id )) as rownum,
+                A.ARTICLE_ID, 
                 A.TITLE, 
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
                 B.CATEGORY_ID , 
@@ -68,7 +70,7 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
                 INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
         GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED,B.CATEGORY_ID, B.NAME, A.VIEWS
-        ORDER BY A.CREATED DESC 
+        ORDER BY A.ARTICLE_ID DESC 
         LIMIT ${itemsPerPage} OFFSET ${offset} `;
 
         return boardItems;
