@@ -17,7 +17,6 @@ export default function EditQuestionForm({
     categoryList: { category_id: number; name: string }[];
     currentPage: number;
 }) {
-    //XXX {} 를 사용하는 이유: 객체로 전달받기 때문
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
     const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
@@ -25,19 +24,19 @@ export default function EditQuestionForm({
     return (
         <form action={formAction}>
             <div className="min-h-screen max-w-3xl mx-auto  ">
-                <div className="flex flex-col text-2xl  p-4 mb-4 text-left ">
-                    <h1> 질문 하기</h1>
-                    <div className="rounded-md p-4 md:p-6">
+                <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
+                    <h1 className="pl-4 text-2xl"> 질문 하기</h1>
+                    <div className="p-4 md:p-6">
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="category" className="mb-2 block text-sm font-bold">
+                            <label htmlFor="category" className="mb-2 block  font-bold">
                                 분류
                             </label>
                             <div className="relative">
                                 <select
                                     id="categoryId"
                                     name="categoryId"
-                                    className="peer block w-full cursor-pointer rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                    className="block w-full cursor-pointer rounded-md py-2 pl-4 outline-1 "
                                     defaultValue={oneQnA.category_id}
                                     aria-describedby="qna-category-error"
                                 >
@@ -61,7 +60,7 @@ export default function EditQuestionForm({
 
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="title" className="mb-2 block text-sm font-bold">
+                            <label htmlFor="title" className="mb-2 block font-bold">
                                 제목
                             </label>
                             <div className="relative mt-2 rounded-md">
@@ -70,7 +69,7 @@ export default function EditQuestionForm({
                                         type="text"
                                         id="title"
                                         name="title"
-                                        className="peer block w-full rounded-md  py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                        className="peer block w-full rounded-md  py-2 pl-4 outline-1 "
                                         defaultValue={oneQnA.title}
                                         aria-describedby="qna-title-error"
                                         required
@@ -89,16 +88,16 @@ export default function EditQuestionForm({
                         </div>
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="content" className="mb-2 block text-sm font-bold">
+                            <label htmlFor="content" className="mb-2 block font-bold">
                                 본문
                             </label>
-                            <div className="relative mt-2 rounded-md">
+                            <div className="relative mt-2 ">
                                 <div className="relative">
                                     <textarea
                                         id="content"
                                         name="content"
                                         rows={20}
-                                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                        className=" mt-2 pt-2 block w-full py-2 pl-4  outline-1 "
                                         defaultValue={oneQnA.contents}
                                         aria-describedby="qna-content-error"
                                         required

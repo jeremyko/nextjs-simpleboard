@@ -21,8 +21,8 @@
 
 body {
     /* background: var(--background); */
-    background: url("/coolbackgrounds-fractalize-wooded_flora.png") no-repeat center;
-    background-size: cover;
+    /* background: url("/coolbackgrounds-fractalize-wooded_flora.png") no-repeat center;
+    background-size: cover; */
 
     color: var(--foreground);
     font-family: Arial, Helvetica, sans-serif;

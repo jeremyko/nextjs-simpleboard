@@ -40,20 +40,28 @@ export default async function Page(props: {
             <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
                 <div className="rounded-md p-4 md:p-6">
                     {/* --------------------- */}
-                    <div className="flex flex-row border-t border-b border-gray-600 ">
+                    <div className="flex flex-row  ">
                         <label className="mt-2 mb-2 block font-light bg-gray-500 text-white pr-2 pl-2 rounded-sm ">
                             {oneQnA.category_name}
                         </label>
                         <label className="mt-2 ml-4 mb-2 block font-bold">{oneQnA.title}</label>
                     </div>
-                    <div className="pt-2 pb-2 border-b border-gray-600 ">{oneQnA.contents}</div>
+                    {/* <div className="pt-2 pb-2 border-b border-gray-600 ">{oneQnA.contents}</div> */}
+                    <textarea
+                        id="content"
+                        name="content"
+                        rows={20}
+                        readOnly={true}
+                        className=" mt-2 pt-2 block w-full py-2 pl-4  "
+                        defaultValue={oneQnA.contents}
+                    ></textarea>
 
                     {/* --------------------- */}
                     <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">
                         <Link href={`/qna/${id}/delete?page=${page}`}>
                             <Button>삭제</Button>
                         </Link>
-                        <Link href={`/qna/${id}/edit?page=${page}`} >
+                        <Link href={`/qna/${id}/edit?page=${page}`}>
                             <Button>수정</Button>
                         </Link>
                     </div>

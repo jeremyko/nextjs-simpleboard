@@ -1,9 +1,9 @@
 /* globals.css에서 처리하므로 여기는 주석 처리합니다 */
 
-/* .body {
+.body {
     background: url('/coolbackgrounds-fractalize-wooded_flora.png') no-repeat center;
     background-size: cover;
-} */
+}
     /* background-image: url('/coolbackgrounds-fractalize-wooded_flora.png');
     background-size: cover;
     background-position: center;

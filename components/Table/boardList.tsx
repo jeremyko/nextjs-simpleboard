@@ -30,7 +30,7 @@ export default async function BoardDataTable({
 
             <table className="w-full border-collapse text-sm">
                 <thead>
-                    <tr className="border-b border-green-700">
+                    <tr className="border-b border-gray-700">
                         <th className="p-3 text-center">번호</th>
                         <th className="p-3 text-center">분류</th>
                         <th className="p-3 text-center">제목</th>
@@ -40,7 +40,7 @@ export default async function BoardDataTable({
                 </thead>
                 <tbody>
                     {posts.map((post) => (
-                        <tr key={post.article_id} className="border-b border-green-700 ">
+                        <tr key={post.article_id} className="border-b border-gray-700 ">
                             <td className="p-3 text-center">{post.article_id}</td>
                             <td className="p-3 text-center">{post.category_name}</td>
                             <td className="p-3 text-left">
