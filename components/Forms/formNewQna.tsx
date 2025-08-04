@@ -41,12 +41,15 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             </div>
                             {/* error handling */}
                             <div id="qna-category-error" aria-live="polite" aria-atomic="true">
-                                {state?.errors?.categoryId &&
+                                {state?.errors?.categoryId && (
+                                    <p className="mt-2 text-sm text-red-500">{"분류를 선택하세요"}</p>
+                                )}
+                                {/* {state?.errors?.categoryId &&
                                     state?.errors.categoryId.map((error: string) => (
                                         <p className="mt-2 text-sm text-red-500" key={error}>
-                                            {error}
+                                            {"분류를 선택하세요"}
                                         </p>
-                                    ))}
+                                    ))} */}
                             </div>
                         </div>
 
