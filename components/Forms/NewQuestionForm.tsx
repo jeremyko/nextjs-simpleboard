@@ -1,45 +1,55 @@
 "use client";
 
-import { updateQuestion, State } from "@/actions/actionQna";
-import { BoardItemById } from "@/app/libs/serverDb";
-import Button from "@/components/Button/component";
+import { createQuestion, State } from "@/actions/actionQna";
+import Button from "@/components/Button/Button";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useLayoutEffect, useRef } from "react";
+import TextareaAutosize from "react-textarea-autosize";
 
-// 게시물 수정 form
+// 새 게시물 작성 form
 
-export default function EditQuestionForm({
-    oneQnA,
-    categoryList,
-    currentPage,
-}: {
-    oneQnA: BoardItemById;
-    categoryList: { category_id: number; name: string }[];
-    currentPage: number;
-}) {
+export default function NewQuestionForm({ categoryList }: { categoryList: { category_id: number; name: string }[] } ) {
     const initialState: State = { message: null, errors: {} };
-    const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
-    const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
+    const [state, formAction] = useActionState(createQuestion, initialState);
+
+    // 글입력시 자동 높이 조정 -----------------
+    // const textbox = useRef<HTMLTextAreaElement>(null);
+    // function adjustHeight() {
+    //     console.log("adjustHeight called");
+    //     if (textbox.current) {
+    //         textbox.current.style.height = "inherit";
+    //         textbox.current.style.height = `${textbox.current.scrollHeight}px`;
+    //     }
+    // }
+    // useLayoutEffect(adjustHeight, []);
+
+    // function handleKeyDown() {
+    //     adjustHeight();
+    // }
+    // 글입력시 자동 높이 조정 -----------------
 
     return (
         <form action={formAction}>
-            <div className="min-h-screen max-w-3xl mx-auto  ">
-                <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
-                    <h1 className="pl-4 text-2xl"> 질문 하기</h1>
-                    <div className="p-4 md:p-6">
+            <div className="min-h-screen max-w-3xl mx-auto ">
+                <div className="flex flex-col text-2xl p-4 mb-4 text-left ">
+                    <h1> 질문 하기</h1>
+                    <div className="rounded-md p-4 md:p-6">
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="category" className="mb-2 block  font-bold">
+                            <label htmlFor="category" className="mb-2 block text-sm font-bold">
                                 분류
                             </label>
                             <div className="relative">
                                 <select
                                     id="categoryId"
                                     name="categoryId"
-                                    className="block w-full cursor-pointer rounded-md py-2 pl-2 outline-1 "
-                                    defaultValue={oneQnA.category_id}
+                                    className="peer block w-full cursor-pointer rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                    defaultValue=""
                                     aria-describedby="qna-category-error"
                                 >
+                                    <option value="" disabled>
+                                        분류를 선택 하세요
+                                    </option>
                                     {categoryList.map((category) => (
                                         <option key={category.name} value={category.category_id}>
                                             {category.name}
@@ -49,18 +59,21 @@ export default function EditQuestionForm({
                             </div>
                             {/* error handling */}
                             <div id="qna-category-error" aria-live="polite" aria-atomic="true">
-                                {state?.errors?.categoryId &&
+                                {state?.errors?.categoryId && (
+                                    <p className="mt-2 text-sm text-red-500">{"분류를 선택하세요"}</p>
+                                )}
+                                {/* {state?.errors?.categoryId &&
                                     state?.errors.categoryId.map((error: string) => (
                                         <p className="mt-2 text-sm text-red-500" key={error}>
-                                            {error}
+                                            {"분류를 선택하세요"}
                                         </p>
-                                    ))}
+                                    ))} */}
                             </div>
                         </div>
 
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="title" className="mb-2 block font-bold">
+                            <label htmlFor="title" className="mb-2 block text-sm font-bold">
                                 제목
                             </label>
                             <div className="relative mt-2 rounded-md">
@@ -69,8 +82,8 @@ export default function EditQuestionForm({
                                         type="text"
                                         id="title"
                                         name="title"
-                                        className="peer block w-full rounded-md  py-2 pl-2 outline-1 "
-                                        defaultValue={oneQnA.title}
+                                        className="peer block w-full rounded-md  py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                        placeholder="제목을 입력하세요"
                                         aria-describedby="qna-title-error"
                                         required
                                     ></input>
@@ -88,20 +101,21 @@ export default function EditQuestionForm({
                         </div>
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="content" className="mb-2 block font-bold">
+                            <label htmlFor="content" className="mb-2 block text-sm font-bold">
                                 본문
                             </label>
-                            <div className="relative mt-2 ">
+                            <div className="relative mt-2 rounded-md">
                                 <div className="relative">
-                                    <textarea
+                                    <TextareaAutosize
+                                        // ref={textbox}
+                                        // onChange={handleKeyDown}
                                         id="content"
                                         name="content"
-                                        rows={20}
-                                        className=" mt-2 pt-2 block w-full py-2 pl-2 outline-1 "
-                                        defaultValue={oneQnA.contents}
+                                        rows={10}
+                                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
                                         aria-describedby="qna-content-error"
                                         required
-                                    ></textarea>
+                                    ></TextareaAutosize>
                                 </div>
                             </div>
                             {/* error handling */}
@@ -121,11 +135,15 @@ export default function EditQuestionForm({
                                 <Button> 취소</Button>
                             </Link>
 
+                            {/* 에러 ? */}
+                            {/* <Link href="/qna" >
+                            <Button type="submit"> 저장</Button>
+                            </Link> */}
+
                             <button
                                 type="submit"
                                 className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             >
-                                {" "}
                                 저장
                             </button>
                         </div>

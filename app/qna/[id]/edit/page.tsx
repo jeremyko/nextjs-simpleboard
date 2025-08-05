@@ -1,5 +1,5 @@
 import { fetchCategoryData, fetchOneQnaById } from "@/app/libs/serverDb";
-import EditQuestionForm from "@/components/Forms/formEditQna";
+import EditQuestionForm from "@/components/Forms/EditQuestionForm";
 import { notFound } from "next/navigation";
 
 // 개별 게시물 수정 페이지
@@ -30,6 +30,6 @@ export default async function Page(props: {
         notFound();
     }
 
-    console.log("qna data:", oneQnA);
+    // console.log("qna data:", oneQnA);
     return <EditQuestionForm oneQnA={oneQnA} categoryList={categoryList} currentPage={page} />;
 }

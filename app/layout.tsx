@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import Footer from "@/components/Footer/component";
-import HeaderNav from "@/components/HeaderNav/component";
+import Footer from "@/components/Footer/Footer";
+import HeaderNav from "@/components/HeaderNav/HeaderNav";
 
 config.autoAddCss = false;
 

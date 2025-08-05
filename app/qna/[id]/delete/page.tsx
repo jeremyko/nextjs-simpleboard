@@ -1,4 +1,4 @@
-import Button from "@/components/Button/component";
+import Button from "@/components/Button/Button";
 import Link from "next/link";
 
 // 개별 게시물 삭제 페이지

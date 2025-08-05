@@ -27,7 +27,6 @@ export default async function BoardDataTable({
             <div className="text-2xl font-bold p-4 mb-4 text-left">
                 <h1> Q&A </h1>
             </div>
-
             <table className="w-full border-collapse text-sm">
                 <thead>
                     <tr className="border-b border-gray-700">

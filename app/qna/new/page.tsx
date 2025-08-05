@@ -1,5 +1,5 @@
 import { fetchCategoryData } from "@/app/libs/serverDb";
-import NewQuestionForm from "@/components/Forms/formNewQna";
+import NewQuestionForm from "@/components/Forms/NewQuestionForm";
 import { notFound } from "next/navigation";
 
 // 새 게시물 작성 페이지
