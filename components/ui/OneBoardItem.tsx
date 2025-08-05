@@ -2,18 +2,29 @@
 
 import { deleteQuestion } from "@/actions/actionQna";
 import { BoardItemById } from "@/app/libs/serverDb";
-// import Button from "@/components/Button/Button";
 import Link from "next/link";
 import TextareaAutosize from "react-textarea-autosize";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+// import {
+//     Dialog,
+//     DialogClose,
+//     DialogContent,
+//     DialogHeader,
+//     DialogTitle,
+//     DialogTrigger,
+// } from "@/components/ui/dialog";
+
 import { Button } from "./button";
 
 // 높이 조절 textarea 를 사용하려면 client에서만 가능하므로 별로도 만듬.
@@ -61,20 +72,16 @@ export default function ViewOneBoardItem({
                 {/* <form action={deleteQuestionWithId}>
                     <Button type="submit" > 삭제 </Button>
                 </form> */}
-                <Dialog>
+
+                {/* <Dialog>
                     <DialogTrigger asChild>
-                        {/* 바깥에서 보이는 삭제 버튼 */}
-                        <Button> 삭제 </Button>
+                        <Button> 삭제 </Button> 
                     </DialogTrigger>
                     <DialogContent showCloseButton={false} className="bg-lime-200 sm:max-w-70 ">
                         <DialogHeader>
                             <DialogTitle>정말 삭제 하시겠습니까?</DialogTitle>
-                            {/* <DialogDescription>
-                                이 작업은 되돌릴 수 없습니다. 
-                            </DialogDescription> */}
                         </DialogHeader>
-                        {/* 모달 내에서 보이는 진짜 삭제 버튼 */}
-                        <form action={deleteQuestionWithId}>
+                        <form action={deleteQuestionWithId}> 
                             <div className="text-sm pr-10 pl-10 flex justify-between items-center pt-4 ">
                                 <button
                                     type="submit"
@@ -94,7 +101,29 @@ export default function ViewOneBoardItem({
                             </div>
                         </form>
                     </DialogContent>
-                </Dialog>
+                </Dialog> */}
+
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        {/* 바깥에서 보이는 삭제 버튼 */}
+                        <Button> 삭제 </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
+                            {/* <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your account and remove your
+                                data from our servers.
+                            </AlertDialogDescription> */}
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>취소</AlertDialogCancel>
+                            <form action={deleteQuestionWithId}>
+                                <AlertDialogAction type="submit">삭제</AlertDialogAction>
+                            </form>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
 
                 <Link href={`/qna/${id}/edit?page=${page}`}>
                     <Button>수정</Button>
