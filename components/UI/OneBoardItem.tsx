@@ -39,7 +39,7 @@ export default function ViewOneBoardItem({
     // }
     // 글입력시 자동 높이 조정 -----------------
     return (
-        <div className="rounded-md p-4 md:p-6">
+        <div className=" max-w-3xl mx-auto ">
             {/* --------------------- */}
             <div className="flex flex-row  ">
                 <label className="mt-2 mb-2 block font-light bg-gray-500 text-white pr-2 pl-2 rounded-sm ">
@@ -55,7 +55,7 @@ export default function ViewOneBoardItem({
                 name="content"
                 rows={10}
                 readOnly={true}
-                className=" mt-2 pt-2 block w-full py-2 "
+                className="mt-2 pt-2 block w-full py-2 "
                 defaultValue={oneQnA.contents}
             ></TextareaAutosize>
 

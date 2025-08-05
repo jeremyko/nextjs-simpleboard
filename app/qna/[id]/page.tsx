@@ -37,7 +37,7 @@ export default async function Page(props: {
 
     return (
         <>
-            <div className="min-h-screen max-w-3xl mx-auto ">
+            <div className="max-w-3xl mx-auto ">
                 <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
                     <div className="rounded-md p-4 md:p-6">
 
