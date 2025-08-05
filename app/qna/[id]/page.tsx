@@ -5,7 +5,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import { getPostsPerPage } from "@/global_const/global_const";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ViewOneBoardItem from "@/components/UI/ViewOneBoardItem";
+import ViewOneBoardItem from "@/components/UI/OneBoardItem";
 
 // XXX 개별 게시물 보기
 
