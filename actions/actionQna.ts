@@ -1,5 +1,6 @@
 'use server'
 
+//XXX client component 에서 server action 을 사용하려면 use server 를 선언해야 한다.
 import { z } from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";

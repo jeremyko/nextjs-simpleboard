@@ -1,11 +1,11 @@
 import { fetchOneQnaById, getTotalPagesCount } from "@/app/libs/serverDb";
 import BoardDataTable from "@/components/Table/BoardDataTable";
-import Button from "@/components/Button/Button";
 import Pagination from "@/components/Pagination/Pagination";
 import { getPostsPerPage } from "@/global_const/global_const";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ViewOneBoardItem from "@/components/UI/OneBoardItem";
+import ViewOneBoardItem from "@/components/ui/OneBoardItem";
+import { Button } from "@/components/ui/button";
 
 // XXX 개별 게시물 보기
 

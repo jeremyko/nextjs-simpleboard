@@ -1,10 +1,10 @@
 "use client";
 
 import { createQuestion, State } from "@/actions/actionQna";
-import Button from "@/components/Button/Button";
 import Link from "next/link";
 import { useActionState, useLayoutEffect, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import { Button } from "../ui/button";
 
 // 새 게시물 작성 form
 
@@ -43,9 +43,10 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                 <select
                                     id="categoryId"
                                     name="categoryId"
-                                    className="peer block w-full cursor-pointer rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                    className="peer block w-full cursor-pointer rounded-md py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
                                     defaultValue=""
                                     aria-describedby="qna-category-error"
+                                    required
                                 >
                                     <option value="" disabled>
                                         분류를 선택 하세요
@@ -82,7 +83,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                         type="text"
                                         id="title"
                                         name="title"
-                                        className="peer block w-full rounded-md  py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                        className="peer block w-full rounded-md  py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
                                         placeholder="제목을 입력하세요"
                                         aria-describedby="qna-title-error"
                                         required
@@ -112,8 +113,9 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                         id="content"
                                         name="content"
                                         rows={10}
-                                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
                                         aria-describedby="qna-content-error"
+                                        placeholder="본문을 입력하세요"
                                         required
                                     ></TextareaAutosize>
                                 </div>
@@ -140,12 +142,17 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             <Button type="submit"> 저장</Button>
                             </Link> */}
 
-                            <button
+                            {/* <button
                                 type="submit"
                                 className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             >
                                 저장
-                            </button>
+                            </button> */}
+                            <Button
+                                type="submit"
+                            >
+                                저장
+                            </Button>
                         </div>
                     </div>
                 </div>

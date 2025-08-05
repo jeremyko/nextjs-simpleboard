@@ -2,11 +2,11 @@
 
 import { updateQuestion, State } from "@/actions/actionQna";
 import { BoardItemById } from "@/app/libs/serverDb";
-import Button from "@/components/Button/Button";
 import Link from "next/link";
 import { useActionState, useLayoutEffect, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import ViewOneBoardItem from "@/components/UI/OneBoardItem";
+import ViewOneBoardItem from "@/components/ui/OneBoardItem";
+import { Button } from "@/components/ui/button";
 
 //XXX 게시물 수정 form
 
@@ -55,7 +55,7 @@ export default function EditQuestionForm({
                                 <select
                                     id="categoryId"
                                     name="categoryId"
-                                    className="block w-full cursor-pointer rounded-md py-2 pl-2 outline-1 "
+                                    className="block w-full cursor-pointer rounded-md py-2 pl-2 outline-2 "
                                     defaultValue={oneQnA.category_id}
                                     aria-describedby="qna-category-error"
                                 >
@@ -88,7 +88,7 @@ export default function EditQuestionForm({
                                         type="text"
                                         id="title"
                                         name="title"
-                                        className="peer block w-full rounded-md  py-2 pl-2 outline-1 "
+                                        className="peer block w-full rounded-md  py-2 pl-2 outline-2 "
                                         defaultValue={oneQnA.title}
                                         aria-describedby="qna-title-error"
                                         required
@@ -118,7 +118,7 @@ export default function EditQuestionForm({
                                         id="content"
                                         name="content"
                                         rows={3}
-                                        className=" mt-2 pt-2 block w-full py-2 pl-2 outline-1 "
+                                        className=" mt-2 pt-2 block w-full py-2 pl-2 outline-2 "
                                         defaultValue={oneQnA.contents}
                                         aria-describedby="qna-content-error"
                                         required
@@ -142,13 +142,7 @@ export default function EditQuestionForm({
                                 <Button> 취소</Button>
                             </Link>
 
-                            <button
-                                type="submit"
-                                className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            >
-                                {" "}
-                                저장
-                            </button>
+                            <Button type="submit" > 저장 </Button>
                         </div>
                     </div>
                 </div>

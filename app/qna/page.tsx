@@ -1,9 +1,9 @@
 import BoardDataTable from "@/components/Table/BoardDataTable";
 import Pagination from "@/components/Pagination/Pagination";
 import { getTotalPagesCount } from "../libs/serverDb";
-import Button from "@/components/Button/Button";
 import Link from "next/link";
 import { getPostsPerPage } from "@/global_const/global_const";
+import { Button } from "@/components/ui/button";
 
 // 게시판 메인 페이지
 
