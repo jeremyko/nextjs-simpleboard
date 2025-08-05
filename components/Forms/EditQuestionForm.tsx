@@ -6,8 +6,9 @@ import Button from "@/components/Button/Button";
 import Link from "next/link";
 import { useActionState, useLayoutEffect, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import ViewOneBoardItem from "@/components/UI/OneBoardItem";
 
-// 게시물 수정 form
+//XXX 게시물 수정 form
 
 export default function EditQuestionForm({
     oneQnA,
@@ -21,6 +22,7 @@ export default function EditQuestionForm({
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
     const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
+
 
     // 글입력시 자동 높이 조정 -----------------
     // const textbox = useRef<HTMLTextAreaElement>(null);
@@ -37,6 +39,7 @@ export default function EditQuestionForm({
     //     adjustHeight();
     // }
     // 글입력시 자동 높이 조정 -----------------
+
     return (
         <form action={formAction}>
             <div className="min-h-screen max-w-3xl mx-auto  ">

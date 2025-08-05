@@ -17,7 +17,7 @@ export default async function Page(props: {
     }>;
 }) {
     const params = await props.params;
-    const id = params.id;
+    const id = Number(params.id);
     const searchParams = await props.searchParams;
     const searchQuery = searchParams?.query || "";
     const page = Number(searchParams?.page) || 1;
@@ -55,7 +55,7 @@ export default async function Page(props: {
 
                         <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={10} />
 
-                        <div className="flex justify-between items-center p-4">
+                        <div className="flex justify-between items-center pt-4">
                             <Link href="/qna/search">
                                 <Button>검색</Button>
                             </Link>

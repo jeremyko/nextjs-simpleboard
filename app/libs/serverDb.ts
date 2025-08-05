@@ -80,7 +80,7 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
     }
 }
 
-export async function fetchOneQnaById(id: string): Promise<BoardItemById> {
+export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
     try {
         const data = await sql<BoardItemById[]>`
         SELECT  A.ARTICLE_ID, 

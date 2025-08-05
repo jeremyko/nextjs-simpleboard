@@ -147,3 +147,10 @@ export async function updateQuestion(articleId: number, currentPage:number, prev
     revalidatePath(`/qna/${articleId}?page=${currentPage}`);
     redirect(`/qna/${articleId}?page=${currentPage}`);
 }
+
+
+export async function deleteQuestion(articleId: number, currentPage: number) {
+    await sql`DELETE FROM articles WHERE article_id = ${articleId}`;
+    revalidatePath(`/qna?page=${currentPage}`);
+    redirect(`/qna?page=${currentPage}`);
+}

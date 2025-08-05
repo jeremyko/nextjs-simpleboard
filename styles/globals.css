@@ -31,3 +31,7 @@ body {
 textarea {
     resize: none;
 }
+
+textarea:focus {
+    outline: none;
+}
