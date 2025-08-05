@@ -11,7 +11,7 @@ export default async function Page(props: {
     }>
 }) {
     const params = await props.params;
-    const id = params.id;
+    const id = Number(params.id);
     const searchParams = await props.searchParams;
     const searchQuery = searchParams?.query || "";
     const page = Number(searchParams?.page) || 1;
