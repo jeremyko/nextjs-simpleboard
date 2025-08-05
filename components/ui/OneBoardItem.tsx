@@ -49,10 +49,10 @@ export default function ViewOneBoardItem({
         <div className=" max-w-3xl mx-auto ">
             {/* --------------------- */}
             <div className="flex flex-row border-b border-gray-700">
-                <label className="mt-2 mb-2 block font-light bg-gray-500 text-white pr-2 pl-2 rounded-sm ">
+                <p className="mt-2 mb-2 block font-light bg-gray-500 text-white pr-2 pl-2 rounded-sm ">
                     {oneQnA.category_name}
-                </label>
-                <label className="mt-2 ml-4 mb-2 block font-bold">{oneQnA.title}</label>
+                </p>
+                <p className="mt-2 ml-4 mb-2 block font-bold">{oneQnA.title}</p>
             </div>
             {/* <div className="pt-2 pb-2 border-b border-gray-600 ">{oneQnA.contents}</div> */}
             <TextareaAutosize
@@ -111,14 +111,13 @@ export default function ViewOneBoardItem({
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
-                            {/* <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete your account and remove your
-                                data from our servers.
-                            </AlertDialogDescription> */}
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your article.
+                            </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>취소</AlertDialogCancel>
-                            <form action={deleteQuestionWithId}>
+                            <form action={deleteQuestionWithId} id="deleteForm" name="deleteForm">
                                 <AlertDialogAction type="submit">삭제</AlertDialogAction>
                             </form>
                         </AlertDialogFooter>
