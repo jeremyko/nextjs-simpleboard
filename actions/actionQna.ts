@@ -151,8 +151,8 @@ export async function updateQuestion(
             message: "Database Error: Failed to Update QnA.",
         };
     }
-    revalidatePath(`/qna/${articleId}?page=${currentPage}&query=${searchQuery}`);
-    redirect(`/qna/${articleId}?page=${currentPage}&query=${searchQuery}`);
+    revalidatePath(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    redirect(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
 
 export async function deleteQuestion(articleId: number, currentPage: number) {

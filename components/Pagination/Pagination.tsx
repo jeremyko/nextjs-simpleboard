@@ -12,7 +12,7 @@ export default function Pagination({
 }) {
     let pathname = usePathname();
     const searchParams = useSearchParams();
-    const searchQuery = searchParams.get("query") || "";
+    const searchQuery = decodeURIComponent(searchParams.get("query") || "");
     const currentPage = Number(searchParams.get("page")) || 1;
     if(isFromViewPage) {
         //XXX 개별 게시글 페이지에서 페이지네이션을 사용하는 경우에는 /qna 로 이동하게
@@ -28,7 +28,7 @@ export default function Pagination({
     const createPageURL = (pageNumber: number | string) => {
         const params = new URLSearchParams(searchParams);
         params.set("page", pageNumber.toString());
-        params.set("query", searchQuery);
+        params.set("query", encodeURIComponent(searchQuery));
         // console.log(`${pathname}?${params.toString()}`);
         return `${pathname}?${params.toString()}`;
     };

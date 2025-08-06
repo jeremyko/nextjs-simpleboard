@@ -16,7 +16,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
             const params = new URLSearchParams(searchParams);
             params.set("page", "1"); // 여기
             if (event.currentTarget.value) {
-                params.set("query", event.currentTarget.value);
+                params.set("query", encodeURIComponent(event.currentTarget.value));
             } else {
                 params.delete("query");
             }
@@ -33,7 +33,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 placeholder={placeholder}
                 onKeyDown={handleKeyDown}
-                defaultValue={searchParams.get("query")?.toString()}
+                defaultValue={decodeURIComponent(searchParams.get("query") || "")}
             />
             <FontAwesomeIcon
                 icon={faMagnifyingGlass}

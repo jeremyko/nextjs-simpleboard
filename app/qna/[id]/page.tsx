@@ -19,7 +19,7 @@ export default async function Page(props: {
     const params = await props.params;
     const id = Number(params.id);
     const searchParams = await props.searchParams;
-    const searchQuery = searchParams?.query || "";
+    const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
     // const action = searchParams?.action || "";
     const totalPagesCnt = await getTotalPagesCount(searchQuery,getPostsPerPage());

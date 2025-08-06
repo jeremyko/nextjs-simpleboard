@@ -32,7 +32,7 @@ export default async function Page(props: {
 }) {
     // 검색과 페이지네이션을 위한 쿼리 파라미터 처리
     const searchParams = await props.searchParams;
-    const searchQuery = searchParams?.query || "";
+    const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
     console.log("[list] search query:", searchQuery);
     console.log("[list] current page:", page);
