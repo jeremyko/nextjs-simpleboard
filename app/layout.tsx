@@ -33,7 +33,7 @@ export default function RootLayout({
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between `}>
                 <HeaderNav /> {/* components에서 관리  */}
                 {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
-                <main > {children} </main>
+                <main className="pt-14" > {children} </main>
                 <Footer /> {/* components에서 관리  */}
             </body>
         </html>
