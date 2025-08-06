@@ -22,7 +22,7 @@ export default async function Page(props: {
     const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
     // const action = searchParams?.action || "";
-    const totalPagesCnt = await getTotalPagesCount(searchQuery,getPostsPerPage());
+    const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
 
     console.log("[view] search query", searchQuery);
     // console.log("[view] current page", page);
@@ -36,34 +36,32 @@ export default async function Page(props: {
     // console.log("qna data:", oneQnA);
 
     return (
-        <>
-            <div className="max-w-3xl mx-auto ">
-                <div className="flex flex-col text-sm  mb-4 text-left ">
-                    <div className="rounded-md md:p-6">
-                        {/* XXX ViewOneBoardItem 는 client 컴포넌트로 분리되어 사용. */}
-                        <ViewOneBoardItem
-                            oneQnA={oneQnA}
-                            id={id}
-                            page={page}
-                            searchQuery={searchQuery}
-                            // totalPagesCnt={totalPagesCnt}
-                        />
+        <div className="max-w-3xl mx-auto min-h-screen ">
+            <div className="flex flex-col text-sm  mb-4 text-left ">
+                <div className="rounded-md md:p-6">
+                    {/* XXX ViewOneBoardItem 는 client 컴포넌트로 분리되어 사용. */}
+                    <ViewOneBoardItem
+                        oneQnA={oneQnA}
+                        id={id}
+                        page={page}
+                        searchQuery={searchQuery}
+                        // totalPagesCnt={totalPagesCnt}
+                    />
 
-                        {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
-                        <div className="pt-2 pb-2 flex justify-between items-center gap-4">comments</div>
+                    {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
+                    <div className="pt-2 pb-2 flex justify-between items-center gap-4">comments</div>
 
-                        <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
+                    <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
 
-                        <div className="flex justify-end items-center pt-4">
-                            <Link href="/qna/new">
-                                <Button>새 질문</Button>
-                            </Link>
-                        </div>
-
-                        <Pagination totalPagesCnt={totalPagesCnt} isFromViewPage={true} />
+                    <div className="flex justify-end items-center pt-4">
+                        <Link href="/qna/new">
+                            <Button>새 질문</Button>
+                        </Link>
                     </div>
+
+                    <Pagination totalPagesCnt={totalPagesCnt} isFromViewPage={true} />
                 </div>
             </div>
-        </>
+        </div>
     );
 }
