@@ -1,5 +1,5 @@
 import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/serverDb";
-import Search from "../Search/Search";
+// import Search from "../Search/Search";
 
 export default async function BoardDataTable({
     searchQuery,
