@@ -51,14 +51,14 @@ export default function ViewOneBoardItem({
         <div className=" max-w-3xl mx-auto ">
             {/* --------------------- */}
             <div className="flex flex-row border-b border-gray-700">
-                <p className="mt-2 mb-2 block font-light bg-gray-500 text-white pr-2 pl-2 rounded-sm ">
+                <p id="categoryName" className="mt-2 mb-2 block font-light bg-gray-500 text-white pr-2 pl-2 rounded-sm ">
                     {oneQnA.category_name}
                 </p>
-                <p className="mt-2 ml-4 mb-2 block font-bold">{oneQnA.title}</p>
+                <p id="title" className="mt-2 ml-4 mb-2 block font-bold">{oneQnA.title}</p>
             </div>
-            <div style={{ whiteSpace: "pre-wrap" }} className="pt-4 pb-4 w-full border-b border-gray-700 ">
+            <article style={{ whiteSpace: "pre-wrap" }} className="pt-4 pb-4 w-full border-b border-gray-700 ">
                 {oneQnA.contents}
-            </div>
+            </article>
             {/* <TextareaAutosize
                 id="content"
                 name="content"
