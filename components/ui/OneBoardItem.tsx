@@ -116,9 +116,16 @@ export default function ViewOneBoardItem({
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>취소</AlertDialogCancel>
+                            <AlertDialogCancel className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                취소
+                            </AlertDialogCancel>
                             <form action={deleteQuestionWithId} id="deleteForm" name="deleteForm">
-                                <AlertDialogAction type="submit">삭제</AlertDialogAction>
+                                <AlertDialogAction
+                                    type="submit"
+                                    className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                >
+                                    삭제
+                                </AlertDialogAction>
                             </form>
                         </AlertDialogFooter>
                     </AlertDialogContent>

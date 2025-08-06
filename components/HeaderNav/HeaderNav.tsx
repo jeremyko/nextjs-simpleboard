@@ -18,7 +18,7 @@ export default function HeaderNav() {
                 <div className="max-w-4xl mx-auto text-lg flex justify-between items-center">
                     <div className="flex items-center space-x-4">
                         <Link href="/" className="text-xl font-bold hover:underline mr-4">
-                            <FontAwesomeIcon size="xl" icon={faHouse} className="text-zinc-200" />
+                            <FontAwesomeIcon size="xl" icon={faHouse} aria-label="home" className="text-zinc-200" />
                         </Link>
                     </div>
 
