@@ -5,7 +5,6 @@ import { BoardItemById } from "@/app/libs/serverDb";
 import Link from "next/link";
 import { useActionState, useLayoutEffect, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import ViewOneBoardItem from "@/components/ui/OneBoardItem";
 import { Button } from "@/components/ui/button";
 
 //XXX 게시물 수정 form
@@ -14,15 +13,17 @@ export default function EditQuestionForm({
     oneQnA,
     categoryList,
     currentPage,
+    searchQuery,
 }: {
     oneQnA: BoardItemById;
     categoryList: { category_id: number; name: string }[];
     currentPage: number;
+    searchQuery: string;
 }) {
+    console.log("[EditQuestionForm] searchQuery:", searchQuery);
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
     const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
-
 
     // 글입력시 자동 높이 조정 -----------------
     // const textbox = useRef<HTMLTextAreaElement>(null);
@@ -138,11 +139,11 @@ export default function EditQuestionForm({
 
                         {/* --------------------- */}
                         <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">
-                            <Link href="/qna">
+                            <Link href={`/qna/${oneQnA.article_id}?page=${currentPage}&query=${searchQuery}`}>
                                 <Button> 취소</Button>
                             </Link>
 
-                            <Button type="submit" > 저장 </Button>
+                            <Button type="submit"> 저장 </Button>
                         </div>
                     </div>
                 </div>

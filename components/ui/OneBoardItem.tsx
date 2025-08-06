@@ -34,13 +34,13 @@ export default function ViewOneBoardItem({
     oneQnA,
     id,
     page,
-    // searchQuery,
+    searchQuery,
     // totalPagesCnt,
 }: {
     oneQnA: BoardItemById;
     id: number;
     page: number;
-    // searchQuery: string;
+    searchQuery: string;
     // totalPagesCnt: number;
 }) {
     console.log("[ViewOneBoardItem] oneQnA:", oneQnA);
@@ -133,7 +133,7 @@ export default function ViewOneBoardItem({
                     </AlertDialogContent>
                 </AlertDialog>
 
-                <Link href={`/qna/${id}/edit?page=${page}`}>
+                <Link href={`/qna/${id}/edit?page=${page}&query=${searchQuery}`}>
                     <Button>수정</Button>
                 </Link>
             </div>

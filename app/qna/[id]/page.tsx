@@ -45,7 +45,7 @@ export default async function Page(props: {
                             oneQnA={oneQnA}
                             id={id}
                             page={page}
-                            // searchQuery={searchQuery}
+                            searchQuery={searchQuery}
                             // totalPagesCnt={totalPagesCnt}
                         />
 

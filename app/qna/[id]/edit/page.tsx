@@ -31,5 +31,7 @@ export default async function Page(props: {
     }
 
     // console.log("qna data:", oneQnA);
-    return <EditQuestionForm oneQnA={oneQnA} categoryList={categoryList} currentPage={page} />;
+    return (
+        <EditQuestionForm oneQnA={oneQnA} categoryList={categoryList} currentPage={page} searchQuery={searchQuery} />
+    );
 }
