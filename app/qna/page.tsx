@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getPostsPerPage } from "@/global_const/global_const";
 import { Button } from "@/components/ui/button";
 
-// 게시판 메인 페이지
+//XXX 게시판 메인 페이지
 
 export default async function Page(props: {
     // props 인자 :
@@ -34,21 +34,18 @@ export default async function Page(props: {
     const searchParams = await props.searchParams;
     const searchQuery = searchParams?.query || "";
     const page = Number(searchParams?.page) || 1;
-    console.log("search query", searchQuery);
-    console.log("current page", page);
+    console.log("[list] search query:", searchQuery);
+    console.log("[list] current page:", page);
 
-    const totalPagesCnt = await getTotalPagesCount(10);
-    // console.log("totalPages", totalPagesCnt);
+    const totalPagesCnt = await getTotalPagesCount(searchQuery,getPostsPerPage());
+    console.log("[list] totalPages", totalPagesCnt);
 
     return (
         <div className="min-h-screen max-w-3xl mx-auto font-sans">
             <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
-            <div className="flex justify-between items-center p-4">
-                <Link href="/qna/search">
-                    <Button>검색</Button>
-                </Link>
+            <div className="flex justify-end items-center ">
                 <Link href="/qna/new">
-                    <Button>새 질문</Button>
+                    <Button>글쓰기</Button>
                 </Link>
             </div>
 

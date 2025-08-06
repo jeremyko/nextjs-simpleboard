@@ -22,9 +22,9 @@ export default async function Page(props: {
     const searchQuery = searchParams?.query || "";
     const page = Number(searchParams?.page) || 1;
     // const action = searchParams?.action || "";
-    const totalPagesCnt = await getTotalPagesCount(getPostsPerPage());
+    const totalPagesCnt = await getTotalPagesCount(searchQuery,getPostsPerPage());
 
-    // console.log("[view] search query", searchQuery);
+    console.log("[view] search query", searchQuery);
     // console.log("[view] current page", page);
     // console.log("[view] QnA ID:", id);
     // console.log("[view] action:", action);
@@ -40,7 +40,6 @@ export default async function Page(props: {
             <div className="max-w-3xl mx-auto ">
                 <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
                     <div className="rounded-md p-4 md:p-6">
-
                         {/* XXX ViewOneBoardItem 는 client 컴포넌트로 분리되어 사용. */}
                         <ViewOneBoardItem
                             oneQnA={oneQnA}
@@ -53,12 +52,9 @@ export default async function Page(props: {
                         {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
                         <div className="pt-2 pb-2 flex justify-between item-center gap-4">comments</div>
 
-                        <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={10} />
+                        <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
 
-                        <div className="flex justify-between items-center pt-4">
-                            <Link href="/qna/search">
-                                <Button>검색</Button>
-                            </Link>
+                        <div className="flex justify-end items-center pt-4">
                             <Link href="/qna/new">
                                 <Button>새 질문</Button>
                             </Link>
@@ -69,6 +65,5 @@ export default async function Page(props: {
                 </div>
             </div>
         </>
-
     );
 }

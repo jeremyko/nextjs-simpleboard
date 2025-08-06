@@ -29,6 +29,7 @@ import { Button } from "./button";
 
 // 높이 조절 textarea 를 사용하려면 client에서만 가능하므로 별로도 만듬.
 // 서버 컴포넌트에서 이걸 사용하는 방식으로 구현
+// TextareaAutosize 사용시 렌더링 지연이 발생되어 div 로 처리함
 export default function ViewOneBoardItem({
     oneQnA,
     id,
@@ -42,6 +43,7 @@ export default function ViewOneBoardItem({
     // searchQuery: string;
     // totalPagesCnt: number;
 }) {
+    console.log("[ViewOneBoardItem] oneQnA:", oneQnA);
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page);
 
@@ -54,18 +56,18 @@ export default function ViewOneBoardItem({
                 </p>
                 <p className="mt-2 ml-4 mb-2 block font-bold">{oneQnA.title}</p>
             </div>
-            {/* <div className="pt-2 pb-2 border-b border-gray-600 ">{oneQnA.contents}</div> */}
-            <TextareaAutosize
-                // ref={textbox}
-                // onChange={handleKeyDown}
+            <div style={{ whiteSpace: "pre-wrap" }} className="pt-4 pb-4 w-full border-b border-gray-700 ">
+                {oneQnA.contents}
+            </div>
+            {/* <TextareaAutosize
                 id="content"
                 name="content"
                 rows={10}
                 readOnly={true}
                 className="pt-4 pb-4 block w-full border-b border-gray-700 "
+                style={{whiteSpace: "pre-wrap"  }}
                 defaultValue={oneQnA.contents}
-                // cacheMeasurements={true}
-            ></TextareaAutosize>
+            ></TextareaAutosize> */}
 
             {/* --------------------- */}
             <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">

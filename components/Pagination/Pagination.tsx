@@ -12,6 +12,7 @@ export default function Pagination({
 }) {
     let pathname = usePathname();
     const searchParams = useSearchParams();
+    const searchQuery = searchParams.get("query") || "";
     const currentPage = Number(searchParams.get("page")) || 1;
     if(isFromViewPage) {
         //XXX 개별 게시글 페이지에서 페이지네이션을 사용하는 경우에는 /qna 로 이동하게
@@ -19,6 +20,7 @@ export default function Pagination({
         // 즉, 게시물 내용을 보여주면서 페이지 이동 안되게 처리함.
         pathname = "/qna" ;
     }
+    console.log("[Pagination] searchQuery:", searchQuery);
     // console.log("currentPage:", currentPage);
     // console.log("isFromViewPage:", isFromViewPage);
     // console.log("pathname:", pathname);
@@ -26,12 +28,13 @@ export default function Pagination({
     const createPageURL = (pageNumber: number | string) => {
         const params = new URLSearchParams(searchParams);
         params.set("page", pageNumber.toString());
+        params.set("query", searchQuery);
         // console.log(`${pathname}?${params.toString()}`);
         return `${pathname}?${params.toString()}`;
     };
 
     return (
-        <div className="flex justify-center items-center mt-4 space-x-2">
+        <div className="flex justify-center items-center mt-2 mb-4 space-x-2">
             <Link href={createPageURL(currentPage - 1)}>
                 <button
                     disabled={currentPage === 1}
@@ -57,7 +60,7 @@ export default function Pagination({
 
             <Link href={createPageURL(currentPage + 1)}>
                 <button
-                    disabled={currentPage === totalPagesCnt}
+                    disabled={totalPagesCnt==0 || currentPage === totalPagesCnt}
                     className="cursor-pointer px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
                 >
                     다음

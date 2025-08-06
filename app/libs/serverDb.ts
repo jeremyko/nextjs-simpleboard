@@ -3,7 +3,7 @@ import postgres from "postgres";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export type BoardItems = {
-    rownum : number;
+    rownum: number;
     article_id: number;
     title: string;
     created: string;
@@ -26,12 +26,14 @@ export type BoardItemById = {
 export type CategoryItem = {
     category_id: number;
     name: string;
-}
+};
 
-export async function getTotalPagesCount(postPerPage: number): Promise<number> {
+export async function getTotalPagesCount(searchQuery: string, postPerPage: number): Promise<number> {
     try {
         const result = await sql<{ count: number }[]>`
-            SELECT COUNT(*) AS count FROM ARTICLES;
+            SELECT COUNT(*) AS count FROM ARTICLES A 
+            WHERE (A.TITLE ILIKE '%' || ${searchQuery} || '%' OR 
+                A.CONTENTS ILIKE '%' || ${searchQuery} || '%');
         `;
         const totalPages = Math.ceil(result[0].count / postPerPage);
         return totalPages;
@@ -41,10 +43,12 @@ export async function getTotalPagesCount(postPerPage: number): Promise<number> {
     }
 }
 
-export async function getAllPostsCount(): Promise<number> {
+export async function getAllPostsCount(searchQuery: string): Promise<number> {
     try {
         const result = await sql<{ count: number }[]>`
-            SELECT COUNT(*) AS count FROM ARTICLES;
+            SELECT COUNT(*) AS count FROM ARTICLES A
+            WHERE (A.TITLE ILIKE '%' || ${searchQuery} || '%' OR 
+                A.CONTENTS ILIKE '%' || ${searchQuery} || '%');
         `;
         return result[0].count;
     } catch (error) {
@@ -53,7 +57,11 @@ export async function getAllPostsCount(): Promise<number> {
     }
 }
 
-export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: number): Promise<BoardItems[]> {
+export async function fetchPagedBoardItems(
+    currentPage: number,
+    itemsPerPage: number,
+    searchQuery: string,
+): Promise<BoardItems[]> {
     const offset = (currentPage - 1) * itemsPerPage;
 
     try {
@@ -69,6 +77,8 @@ export async function fetchPagedBoardItems(currentPage: number, itemsPerPage: nu
         FROM    ARTICLES A 
                 INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
+        WHERE  (A.TITLE ILIKE '%' || ${searchQuery} || '%' OR     
+                A.CONTENTS ILIKE '%' || ${searchQuery} || '%')
         GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED,B.CATEGORY_ID, B.NAME, A.VIEWS
         ORDER BY A.ARTICLE_ID DESC 
         LIMIT ${itemsPerPage} OFFSET ${offset} `;
@@ -117,7 +127,6 @@ export async function fetchCategoryData(): Promise<CategoryItem[]> {
         throw new Error("Failed to fetch Categoryes.");
     }
 }
-
 
 // export async function fetchCardData() {
 //     try {
