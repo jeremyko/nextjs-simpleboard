@@ -20,15 +20,6 @@ export type State = {
     message?: string | null;
 };
 
-// export type UpdateState = {
-//     errors?: {
-//         categoryId?: string[];
-//         title?: string[];
-//         content?: string[];
-//         // userId?: string[]; //TODO
-//     };
-//     message?: string | null;
-// };
 //XXX 위 State 와 아래 Schema 의 필드들은 일치해야 함
 //    왜냐하면, createQuestion 함수에서 State를 검증할 때,
 //    CreateQnA.safeParse() 를 사용하기 때문
@@ -55,6 +46,13 @@ const CreateQnA = CreateFormSchema.omit({ date: true });
 const UpdateQnA = UpdateFormSchema.omit({});
 // const UpdateQnA = UpdateFormSchema;
 
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * QnA 게시글을 생성하는 서버 액션 함수입니다.
+ * @param prevState - 이전 상태 객체(State)
+ * @param formData - 폼 데이터(FormData)
+ * @returns 생성 성공 시 리다이렉트, 실패 시 에러 메시지와 필드 에러 반환
+ */
 export async function createQuestion(prevState: State, formData: FormData) {
     //XXX 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.log("==> createQuestion called with formData:", formData);
@@ -102,6 +100,16 @@ export async function createQuestion(prevState: State, formData: FormData) {
     redirect("/qna");
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * QnA 게시글을 수정하는 서버 액션 함수입니다.
+ * @param articleId - 수정할 게시글의 ID
+ * @param currentPage - 현재 페이지 번호
+ * @param searchQuery - 현재 검색어
+ * @param prevState - 이전 상태 객체(State)
+ * @param formData - 폼 데이터(FormData)
+ * @returns 수정 성공 시 리다이렉트, 실패 시 에러 메시지와 필드 에러 반환
+ */
 export async function updateQuestion(
     articleId: number,
     currentPage: number,
@@ -155,7 +163,15 @@ export async function updateQuestion(
     redirect(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * QnA 게시글을 삭제하는 서버 액션 함수입니다.
+ * @param articleId - 삭제할 게시글의 ID
+ * @param currentPage - 현재 페이지 번호
+ * @returns 삭제 후 해당 페이지로 리다이렉트
+ */
 export async function deleteQuestion(articleId: number, currentPage: number) {
+    //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
     await sql`DELETE FROM articles WHERE article_id = ${articleId}`;
     revalidatePath(`/qna?page=${currentPage}`);
     redirect(`/qna?page=${currentPage}`);

@@ -57,11 +57,11 @@
   }
 }  */
 
-body {
-    /* background: var(--background); */
-    /* background: url("/coolbackgrounds-fractalize-wooded_flora.png") no-repeat center;
-    background-size: cover; */
-}
+/* body {
+    background: var(--background); 
+    background: url("/coolbackgrounds-fractalize-wooded_flora.png") no-repeat center;
+    background-size: cover; 
+} */
 
 textarea {
     resize: none;

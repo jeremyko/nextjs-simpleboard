@@ -132,7 +132,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                         </div>
 
                         {/* --------------------- */}
-                        <div className="mt-6 pt-2 pb-2 flex justify-between item-center gap-4">
+                        <div className="mt-6 pt-2 pb-2 flex justify-between items-center gap-4">
                             <Link href="/qna">
                                 <Button> 취소</Button>
                             </Link>
