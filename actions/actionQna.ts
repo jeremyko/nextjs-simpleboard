@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 //XXX client component 에서 server action 을 사용하려면 use server 를 선언해야 한다.
 import { z } from "zod";
@@ -12,7 +12,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 export type State = {
     //XXX 왜 배열 type 을 지정해야 하는가 ==> zod 에서 그렇게 리턴해준다..
     errors?: {
-        categoryId?: string[]; 
+        categoryId?: string[];
         title?: string[];
         content?: string[];
         // userId?: string[]; //TODO
@@ -22,7 +22,7 @@ export type State = {
 
 // export type UpdateState = {
 //     errors?: {
-//         categoryId?: string[]; 
+//         categoryId?: string[];
 //         title?: string[];
 //         content?: string[];
 //         // userId?: string[]; //TODO
@@ -30,10 +30,10 @@ export type State = {
 //     message?: string | null;
 // };
 //XXX 위 State 와 아래 Schema 의 필드들은 일치해야 함
-//    왜냐하면, createQuestion 함수에서 State를 검증할 때, 
+//    왜냐하면, createQuestion 함수에서 State를 검증할 때,
 //    CreateQnA.safeParse() 를 사용하기 때문
 //    따라서, State의 필드가 Schema에 정의되어 있지 않으면, 검증에 실패하게 된다
-// XXX 일치하지 않으면 useActionState 에서 에러 발생됨 
+// XXX 일치하지 않으면 useActionState 에서 에러 발생됨
 
 const CreateFormSchema = z.object({
     categoryId: z.string().trim().nonempty({ message: "분류를 선택하세요" }),
@@ -56,7 +56,6 @@ const UpdateQnA = UpdateFormSchema.omit({});
 // const UpdateQnA = UpdateFormSchema;
 
 export async function createQuestion(prevState: State, formData: FormData) {
-
     //XXX 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.log("==> createQuestion called with formData:", formData);
 
@@ -64,7 +63,7 @@ export async function createQuestion(prevState: State, formData: FormData) {
         categoryId: formData.get("categoryId"),
         title: formData.get("title"),
         content: formData.get("content"),
-        // userId: formData.get("userId"), //TODO 
+        // userId: formData.get("userId"), //TODO
     });
 
     if (!validatedFields.success) {
@@ -103,13 +102,20 @@ export async function createQuestion(prevState: State, formData: FormData) {
     redirect("/qna");
 }
 
-export async function updateQuestion(articleId: number, currentPage:number, prevState: State, formData: FormData) {
+export async function updateQuestion(
+    articleId: number,
+    currentPage: number,
+    searchQuery: string,
+    prevState: State,
+    formData: FormData,
+) {
     //XXX 인자를 받기 위해서는 호출시 bind 을 사용해야 한다.
     // const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
 
     // 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.log("edit action ==> updateQuestion formData:", formData);
     console.log("            ==> article_id :", articleId, " currentPage:", currentPage);
+    console.log("            ==> searchQuery :", searchQuery);
 
     const validatedFields = UpdateQnA.safeParse({
         categoryId: formData.get("categoryId"),
@@ -145,10 +151,9 @@ export async function updateQuestion(articleId: number, currentPage:number, prev
             message: "Database Error: Failed to Update QnA.",
         };
     }
-    revalidatePath(`/qna/${articleId}?page=${currentPage}`);
-    redirect(`/qna/${articleId}?page=${currentPage}`);
+    revalidatePath(`/qna/${articleId}?page=${currentPage}&query=${searchQuery}`);
+    redirect(`/qna/${articleId}?page=${currentPage}&query=${searchQuery}`);
 }
-
 
 export async function deleteQuestion(articleId: number, currentPage: number) {
     await sql`DELETE FROM articles WHERE article_id = ${articleId}`;
