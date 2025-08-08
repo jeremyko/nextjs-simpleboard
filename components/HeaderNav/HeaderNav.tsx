@@ -1,10 +1,9 @@
-"use client";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Search from "../Search/Search";
 import { Suspense } from "react";
+import UserButton from "../UserButton/UserButton";
 
 export default function HeaderNav() {
     return (
@@ -24,12 +23,13 @@ export default function HeaderNav() {
                         <Search placeholder="검색어를 입력하세요" />
                     </Suspense>
                     <div className="flex justify-end items-center pl-4">
-                        <Link href="/signin" className="pl-8 hover:underline ">
+                        {/* <Link href="/signin" className="pl-8 hover:underline ">
                             로그인
-                        </Link>
-                        <Link href="/signup" className="pl-8 hover:underline  ">
+                        </Link> */}
+                        <UserButton />
+                        {/* <Link href="/signup" className="pl-8 hover:underline  ">
                             회원가입
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
             </div>
