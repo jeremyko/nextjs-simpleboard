@@ -1,5 +1,4 @@
 // from official example: https://github.com/nextauthjs/next-auth-example
-
 import NextAuth from "next-auth";
 import "next-auth/jwt";
 
@@ -107,12 +106,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     callbacks: {
         authorized({ request, auth }) {
             const { pathname } = request.nextUrl;
-            if (pathname === "/middleware-example") {
-                return !!auth;
-            }
-            return true;
+            console.log("pathname:", pathname);
+            // if (pathname === "/middleware-example") {
+            // 로그인한 사용자는 인증을 받고, 그렇지 않으면 로그인 페이지로 리디렉션됩니다.
+            return !!auth;
+            // }
+            // return true;
         },
         jwt({ token, trigger, session, account }) {
+            console.log("session:", session);
             if (trigger === "update") {
                 token.name = session.user.name;
             }

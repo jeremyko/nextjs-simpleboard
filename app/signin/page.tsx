@@ -1,7 +1,0 @@
-export default function Page() {
-    return (
-        <div className="w-full h-screen bg-cover bg-center flex items-center justify-center">
-            <div className="font-bold text-4xl">signin page</div>
-        </div>
-    );
-}
