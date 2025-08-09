@@ -5,6 +5,7 @@ import { z } from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { checkIsAuthenticated } from "@/app/libs/checkIsAuthenticated";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -170,7 +171,13 @@ export async function updateQuestion(
  * @returns 삭제 후 해당 페이지로 리다이렉트
  */
 export async function deleteQuestion(articleId: number, currentPage: number) {
-    //TODO : 로그인된 상태에서만 처리되어야 함
+    // 로그인된 상태에서만 처리되어야 함
+    const isAuthenticated = await checkIsAuthenticated();
+    if (!isAuthenticated) {
+        console.log("[deleteQuestion] 로그인 안된 상태로 접근함");
+        redirect("/api/auth/signin");
+    }
+
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
     await sql`DELETE FROM articles WHERE article_id = ${articleId}`;
     revalidatePath(`/qna?page=${currentPage}`);

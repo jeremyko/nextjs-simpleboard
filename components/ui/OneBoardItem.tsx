@@ -16,15 +16,6 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-// import {
-//     Dialog,
-//     DialogClose,
-//     DialogContent,
-//     DialogHeader,
-//     DialogTitle,
-//     DialogTrigger,
-// } from "@/components/ui/dialog";
-
 import { Button } from "./button";
 
 // 높이 조절 textarea 를 사용하려면 client에서만 가능하므로 별로도 만듬.
@@ -46,6 +37,13 @@ export default function ViewOneBoardItem({
     console.log("[ViewOneBoardItem] oneQnA:", oneQnA);
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page);
+
+    //XXX 다음은 에러 발생. async --> server 컴포넌트에서만 사용 가능
+    //TODO : 삭제,수정 버튼을 분리해야 할거 같다.
+    // const isAuthenticated = await checkIsAuthenticated();
+    // if (!isAuthenticated) {
+    //     console.log("[ViewOneBoardItem] 로그인 안된 상태로 접근함");
+    // }
 
     return (
         <div className=" max-w-3xl mx-auto ">
