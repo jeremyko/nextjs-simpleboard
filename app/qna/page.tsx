@@ -30,6 +30,7 @@ export default async function Page(props: {
         page?: string;
     }>
 }) {
+    //XXX 게시판 메인 페이지
     // 검색과 페이지네이션을 위한 쿼리 파라미터 처리
     const searchParams = await props.searchParams;
     const searchQuery = decodeURIComponent(searchParams?.query || "");
@@ -41,7 +42,7 @@ export default async function Page(props: {
     console.log("[list] totalPages", totalPagesCnt);
 
     return (
-        <div className="min-h-screen max-w-3xl mx-auto font-sans">
+        <div className="min-h-screen max-w-4xl mx-auto font-sans">
             <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
             <div className="flex justify-end items-center ">
                 <Link href="/qna/new">

@@ -30,22 +30,22 @@ export default async function BoardDataTable({
                 <h1> Q&A </h1>
             </div>
             {/* <Search placeholder="검색어를 입력하세요" /> */}
-            <table className="w-full border-collapse text-sm">
+            <table className=" w-full table-auto border-collapse  text-sm">
                 <thead>
-                    <tr className="border-b border-gray-700">
-                        <th className="p-3 text-center">번호</th>
-                        <th className="p-3 text-center">분류</th>
-                        <th className="p-3 text-center">제목</th>
-                        <th className="p-3 text-center">날짜</th>
-                        <th className="p-3 text-center">조회수</th>
+                    <tr className="text-center border-b border-gray-700 bg-indigo-700 text-zinc-300 ">
+                        <th className="p-2 font-medium">번호</th>
+                        <th className="p-2 font-medium">분류</th>
+                        <th className="p-2 font-medium">제목</th>
+                        <th className="p-2 font-medium">날짜</th>
+                        <th className="p-2 font-medium">조회수</th>
                     </tr>
                 </thead>
                 <tbody>
                     {posts.map((post) => (
                         <tr key={post.article_id} className="border-b border-gray-700 ">
-                            <td className="p-3 text-center">{post.rownum}</td>
-                            <td className="p-3 text-center">{post.category_name}</td>
-                            <td className="p-3 text-left">
+                            <td className="p-2 text-center">{post.rownum}</td>
+                            <td className="p-2 text-center">{post.category_name}</td>
+                            <td className="p-2 text-left">
                                 {post.comment_count > 0 && (
                                     <span className="bg-gray-500 text-white pr-2 pl-2 rounded-sm font-light mr-2">
                                         {post.comment_count}
@@ -55,11 +55,11 @@ export default async function BoardDataTable({
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
                                     className="text-gray-800 hover:underline"
                                 >
-                                    {post.title}
+                                    {post.title.substring(0, 50)+"..."}
                                 </a>
                             </td>
-                            <td className="p-3 text-center">{post.created}</td>
-                            <td className="p-3 text-center">{post.views}</td>
+                            <td className="p-2 text-center">{post.created}</td>
+                            <td className="p-2 text-center">{post.views}</td>
                         </tr>
                     ))}
                 </tbody>
