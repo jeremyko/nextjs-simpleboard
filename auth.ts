@@ -114,7 +114,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // return true;
         },
         jwt({ token, trigger, session, account }) {
-            console.log("session:", session);
             if (trigger === "update") {
                 token.name = session.user.name;
             }

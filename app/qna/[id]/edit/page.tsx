@@ -10,6 +10,13 @@ export default async function Page(props: {
         page?: string;
     }>
 }) {
+
+    //middleware 에서 이미 필터링되므로 코드는 실행안됨.
+    // const isAuthenticated = await checkIsAuthenticated();
+    // if (!isAuthenticated) {
+    //     console.log("[edit qna] 로그인 안된 상태로 접근함");
+    //     redirect("/api/auth/signin");
+    // }
     const params = await props.params;
     const id = Number(params.id);
     const searchParams = await props.searchParams;
