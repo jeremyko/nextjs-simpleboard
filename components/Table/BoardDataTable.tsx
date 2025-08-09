@@ -1,24 +1,27 @@
 import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/serverDb";
-// import Search from "../Search/Search";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 export default async function BoardDataTable({
     searchQuery,
     currentPage,
     postsPerPage,
+    currentPostId = -1, // 현재 보고있는 게시물 강조표시 위함
 }: {
     searchQuery: string;
     currentPage: number;
     postsPerPage: number;
+    currentPostId: number;
 }) {
     console.log("currentPage(table)", currentPage);
     console.log("searchQuery(table)", searchQuery);
     // 한번에 두 개의 쿼리를 실행
     const data = await Promise.all([
         getAllPostsCount(searchQuery),
-        fetchPagedBoardItems( currentPage, postsPerPage, searchQuery)
+        fetchPagedBoardItems(currentPage, postsPerPage, searchQuery),
     ]);
     console.log("data", data);
-    const totalPostCount = Number(data[0] ?? '0');
+    const totalPostCount = Number(data[0] ?? "0");
     // console.log("totalPostCount", totalPostCount);
     // const totalPages = Math.ceil(totalPostCount / postsPerPage);
     // console.log("totalPages", totalPages);
@@ -42,8 +45,25 @@ export default async function BoardDataTable({
                 </thead>
                 <tbody>
                     {posts.map((post) => (
-                        <tr key={post.article_id} className="border-b border-gray-700 ">
-                            <td className="p-2 text-center font-light">{post.rownum}</td>
+                        <tr
+                            key={post.article_id}
+                            className={
+                                currentPostId === post.article_id
+                                    ? "bg-sky-200 border-b border-gray-700 "
+                                    : "border-b border-gray-700"
+                            }
+                        >
+                            <td className="p-2 text-center font-light">
+                                {currentPostId === post.article_id && (
+                                    <FontAwesomeIcon
+                                        size="sm"
+                                        icon={faLocationDot}
+                                        aria-label="current"
+                                        className="text-red-500 pr-1"
+                                    />
+                                )}
+                                {post.rownum}
+                            </td>
                             <td className="p-2 text-center">{post.category_name}</td>
                             <td className="p-2 text-left">
                                 {post.comment_count > 0 && (
@@ -55,7 +75,7 @@ export default async function BoardDataTable({
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
                                     className="text-gray-800 hover:underline"
                                 >
-                                    {post.title.substring(0, 50)+"..."}
+                                    {post.title.substring(0, 50) + "..."}
                                 </a>
                             </td>
                             <td className="p-2 text-center">{post.created}</td>

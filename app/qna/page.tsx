@@ -43,7 +43,7 @@ export default async function Page(props: {
 
     return (
         <div className="min-h-screen max-w-4xl mx-auto font-sans">
-            <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
+            <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} currentPostId={-1} />
             <div className="flex justify-end items-center ">
                 <Link href="/qna/new">
                     <Button>글쓰기</Button>

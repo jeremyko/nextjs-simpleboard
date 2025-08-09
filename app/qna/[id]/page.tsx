@@ -107,7 +107,7 @@ export default async function Page(props: {
                     {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
                     <div className="mt-4 pb-2 flex justify-between items-center gap-4">comments</div>
 
-                    <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} />
+                    <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} currentPostId={id} />
 
                     <div className="flex justify-end items-center pt-4">
                         <Link href="/qna/new">
