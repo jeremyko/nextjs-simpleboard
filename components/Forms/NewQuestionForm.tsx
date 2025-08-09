@@ -30,7 +30,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
 
     return (
         <form action={formAction}>
-            <div className="min-h-screen max-w-3xl mx-auto ">
+            <div className="min-h-screen max-w-4xl mx-auto ">
                 <div className="flex flex-col text-2xl p-4 mb-4 text-left ">
                     <h1> 질문 하기</h1>
                     <div className="rounded-md p-4 md:p-6">

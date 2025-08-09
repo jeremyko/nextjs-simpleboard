@@ -10,7 +10,7 @@ export default function ViewOneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) 
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
 
     return (
-        <div className=" max-w-3xl mx-auto ">
+        <div className=" max-w-4xl mx-auto ">
             {/* --------------------- */}
             <div className="border-b border-gray-700">
                 <p id="title" className="mt-2 mb-2 block font-bold">

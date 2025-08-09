@@ -43,7 +43,7 @@ export default function EditQuestionForm({
 
     return (
         <form action={formAction}>
-            <div className="min-h-screen max-w-3xl mx-auto  ">
+            <div className="min-h-screen max-w-4xl mx-auto  ">
                 <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
                     <h1 className="pl-4 text-2xl"> 질문 하기</h1>
                     <div className="p-4 md:p-6">
