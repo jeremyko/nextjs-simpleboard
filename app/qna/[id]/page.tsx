@@ -98,7 +98,7 @@ export default async function Page(props: {
                                 </AlertDialogContent>
                             </AlertDialog>
 
-                            <Link href={`/qna/${id}/edit?page=${page}&query=${searchQuery}`}>
+                            <Link href={`/qna/edit/${id}?page=${page}&query=${searchQuery}`}>
                                 <Button>수정</Button>
                             </Link>
                         </div>

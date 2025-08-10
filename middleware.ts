@@ -20,10 +20,11 @@ export { auth as middleware } from "@/auth";
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 export const config = {
     //적용 필요한 경로를 나열하는 식으로 간단하게 처리
-    matcher: ["/qna/new", "/qna/:id/edit"],
+    // matcher: ["/qna/new", "/qna/edit/:id"],
 
     // /api, /_next/static, /_next/image, favicon.ico 로 시작하는 경로에는 미들웨어가 실행되지 않고,
     // 나머지 모든 경로에는 미들웨어가 실행
+    matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
     // matcher: ["/((?!api|_next/static|_next/image|$|.*\\.png$).*)"],
     // matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
