@@ -3,6 +3,8 @@ import { SupabaseAdapter } from "@auth/supabase-adapter";
 import "next-auth/jwt";
 
 import Google from "next-auth/providers/google";
+import Kakao from "next-auth/providers/kakao";
+import Naver, { NaverProfile } from "next-auth/providers/naver";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     debug: !!process.env.AUTH_DEBUG,
@@ -11,9 +13,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         url: process.env.SUPABASE_URL!,
         secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
     }),
-    providers: [
-        Google,
-    ],
+    providers: [Google, Kakao, Naver],
     basePath: "/api/auth", //XXX XXX XXX
     session: { strategy: "jwt" }, //XXX 세션 관리 방식
     callbacks: {
@@ -34,14 +34,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // 홈페이지는 인증 필요 없고, 신규 게시물 작성과 게시물 수정은 인증 필요
             // const protectedPath = ["/qna/new", "/qna/:id/edit"]; //XXX :id 동적 경로는 지원하지 않음
 
-            // 수정 화면에서 버튼 보여주는것을 로그인 했을때만 보여주고 있어서 
+            // 수정 화면에서 버튼 보여주는것을 로그인 했을때만 보여주고 있어서
             // 여기서는 신규 작성만 막으면 됨.
             // const protectedPathPrefix = ["/qna/new", "/qna/edit/"];
             const protectedPathPrefix = ["/qna/new"];
-            if(pathname=== "/") {
-                isProtected=false;
-            }else{
-                isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix))
+            if (pathname === "/") {
+                isProtected = false;
+            } else {
+                isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix));
             }
             console.log("isProtected:", isProtected);
 
@@ -99,6 +99,52 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // }
             //============
             return session;
+        },
+    },
+    // XXX 내가 추가 한것. XXX
+    events: {
+        // next-auth will create the `User` object implicitly through the Prisma adapter
+        createUser: async ({ user }) => {
+            console.log("[event callback] createUser", user);
+        },
+        updateUser: async ({ user }) => {
+            console.log("[event callback] updateUser =>", user);
+        },
+        linkAccount: async ({ user, account, profile }) => {
+            console.log("[event callback] linkAccount =>", user, account, profile); 
+        },
+        signIn: async ({ user, account, profile, isNewUser }) => {
+            console.log("[event callback] singIn(user) =>", user);
+            console.log("[event callback] singIn(account) =>", account);
+            console.log("[event callback] singIn(profile) =>", profile);
+            // naver 는 이미지가 profile_imagae 에 있음 .
+            // const naverP = profile as NaverProfile;
+            // console.log("[event callback] singIn(naver profile_image) =>", naverP.response.profile_image);
+            // {
+            //     resultcode: '00',
+            //     message: 'success',
+            //     response: {
+            //         id: 'WKHyLUQ6D4PTKL8RSoyuYKbh3NDGu52INhR2RBuyIuA',
+            //         nickname: 'ahahTl',
+            //         profile_image: 'https://phinf.pstatic.net/contact/20250811_236/1754885644142dbcmO_PNG/avatar_profile.png',
+            //         age: '50-59',
+            //         gender: 'M',
+            //         email: 'jeremyko69@gmail.com',
+            //         name: '고정현',
+            //         birthday: '10-17'
+            //     }
+            // }
+            console.log("[event callback] singIn(isNewUser) =>", isNewUser);
+        },
+        signOut: async (payload) => {
+            // payload can be { session } or { token }
+            if ("session" in payload) {
+                console.log("[event callback] signOut (session)=>", payload.session);
+            } else if ("token" in payload) {
+                console.log("[event callback] signOut (token)=>", payload.token);
+            } else {
+                console.log("[event callback] signOut=>", payload);
+            }
         },
     },
     experimental: { enableWebAuthn: true },

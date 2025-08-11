@@ -23,9 +23,9 @@ export default async function Page(props: {
     const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
 
-    console.log("[edit] search query", searchQuery);
-    console.log("[edit] current page", page);
-    console.log("[edit] QnA ID:", id);
+    // console.log("[edit] search query", searchQuery);
+    // console.log("[edit] current page", page);
+    // console.log("[edit] QnA ID:", id);
 
     //XXX 다시 한번 가져오게 일단 처리하자.. TODO : 어떤 좋은 방법이 있을까
     const oneQnA = await fetchOneQnaById(id);
