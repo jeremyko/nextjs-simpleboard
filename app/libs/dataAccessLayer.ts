@@ -34,15 +34,17 @@ export const checkIsThisMine = async (postUserId:string) => {
     return false;
 };
 
-export const isAuthenticatedAndMine = async (postUserId: string) => {
+export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToLogin = false) => {
     //TODO : userId 는 db 에서 찾아야 ??? 왜냐하면 이정보를 FE 로 넘겨주면 안될거 같은데???
     // author_id 대신 isAuthor: true/false 만 내려주는 방법도 있음
     // → 이렇게 하면 클라이언트는 작성자 여부만 알고, 실제 ID는 모름
     const session = await auth();
     if (!session) {
         console.error("로그인 안된 상태로 접근함");
-        redirect("/api/auth/signin");
-        // return false;
+        if (needRedirectToLogin) {
+            redirect("/api/auth/signin");
+        }
+        return false;
     }
     if (!postUserId) {
         return false;
