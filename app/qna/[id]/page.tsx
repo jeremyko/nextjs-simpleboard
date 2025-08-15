@@ -19,7 +19,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { checkIsAuthenticated } from "@/app/libs/checkIsAuthenticated";
+import { isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 
 // XXX 개별 게시물 보기
 
@@ -38,7 +38,7 @@ export default async function Page(props: {
     // const action = searchParams?.action || "";
     const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
 
-    console.log("[view] search query", searchQuery);
+    // console.log("[view] search query", searchQuery);
     // console.log("[view] current page", page);
     // console.log("[view] QnA ID:", id);
     // console.log("[view] action:", action);
@@ -47,13 +47,11 @@ export default async function Page(props: {
     if (!oneQnA) {
         notFound();
     }
-    // console.log("qna data:", oneQnA);
+    // console.log("post userId:", oneQnA.user_id);
 
-    const isAuthenticated = await checkIsAuthenticated();
-    // if (!isAuthenticated) {
-    //     console.log("[개별게시물보기] 로그인 안된 상태로 접근함");
-    // }
-    const deleteQuestionWithId = deleteQuestion.bind(null, id, page);
+    const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id );
+
+    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
 
     return (
         <div className="max-w-4xl mx-auto min-h-screen ">
@@ -68,7 +66,7 @@ export default async function Page(props: {
                         // totalPagesCnt={totalPagesCnt}
                     />
 
-                    {isAuthenticated && (
+                    {isLoggedInAndMine && (
                         <div className="mt-6 mb-6 flex justify-between items-center gap-4">
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
@@ -102,12 +100,17 @@ export default async function Page(props: {
                                 <Button>수정</Button>
                             </Link>
                         </div>
-                    ) }
+                    )}
 
                     {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
                     <div className="mt-4 pb-2 flex justify-between items-center gap-4">comments</div>
 
-                    <BoardDataTable searchQuery={searchQuery} currentPage={page} postsPerPage={getPostsPerPage()} currentPostId={id} />
+                    <BoardDataTable
+                        searchQuery={searchQuery}
+                        currentPage={page}
+                        postsPerPage={getPostsPerPage()}
+                        currentPostId={id}
+                    />
 
                     <div className="flex justify-end items-center pt-4">
                         <Link href="/qna/new">

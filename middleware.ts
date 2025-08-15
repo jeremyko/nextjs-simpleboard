@@ -1,3 +1,5 @@
+// 미들웨어는 모든 경로, 특히  prefetched routes(미리 로드된 경로)에서도 
+// 실행되므로 성능 문제를 방지해야 한다.
 export { auth as middleware } from "@/auth";
 
 // import { auth } from "@/auth";

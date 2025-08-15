@@ -5,6 +5,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 export type BoardItems = {
     rownum: number;
     article_id: number;
+    user_id: string; 
     title: string;
     created: string;
     category_id: number;
@@ -14,6 +15,7 @@ export type BoardItems = {
 };
 export type BoardItemById = {
     article_id: number;
+    user_id: string; 
     title: string;
     contents: string;
     created: string;
@@ -21,6 +23,7 @@ export type BoardItemById = {
     category_name: string;
     comment_count: number;
     views: number;
+    isMine: boolean; // 게시물이 내가 작성한건지 여부
 };
 
 export type CategoryItem = {
@@ -68,6 +71,7 @@ export async function fetchPagedBoardItems(
         const boardItems = await sql<BoardItems[]>`
         SELECT  (row_number() over(ORDER BY a.article_id )) as rownum,
                 A.ARTICLE_ID, 
+                A.USER_ID, 
                 A.TITLE, 
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
                 B.CATEGORY_ID , 
@@ -89,11 +93,12 @@ export async function fetchPagedBoardItems(
         throw new Error("Failed to fetch board items.");
     }
 }
-
+//TODO : userId 인자로 받아서 해당 게시물의 작성자 여부 정보도 추가 
 export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
     try {
         const data = await sql<BoardItemById[]>`
         SELECT  A.ARTICLE_ID, 
+                A.USER_ID, 
                 A.TITLE, 
                 A.CONTENTS,
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
@@ -128,37 +133,3 @@ export async function fetchCategoryData(): Promise<CategoryItem[]> {
     }
 }
 
-// export async function fetchCardData() {
-//     try {
-//         // You can probably combine these into a single SQL query
-//         // However, we are intentionally splitting them to demonstrate
-//         // how to initialize multiple queries in parallel with JS.
-//         const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-//         const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-//         const invoiceStatusPromise = sql`SELECT
-//          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-//          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-//          FROM invoices`;
-
-//         const data = await Promise.all([
-//             invoiceCountPromise,
-//             customerCountPromise,
-//             invoiceStatusPromise,
-//         ]);
-
-//         const numberOfInvoices = Number(data[0][0].count ?? '0');
-//         const numberOfCustomers = Number(data[1][0].count ?? '0');
-//         const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0');
-//         const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0');
-
-//         return {
-//             numberOfCustomers,
-//             numberOfInvoices,
-//             totalPaidInvoices,
-//             totalPendingInvoices,
-//         };
-//     } catch (error) {
-//         console.error('Database Error:', error);
-//         throw new Error('Failed to fetch card data.');
-//     }
-// }

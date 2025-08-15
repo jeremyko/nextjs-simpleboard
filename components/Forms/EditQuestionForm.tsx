@@ -22,7 +22,7 @@ export default function EditQuestionForm({
 }) {
     console.log("[EditQuestionForm] searchQuery:", searchQuery);
     const initialState: State = { message: null, errors: {} };
-    const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage, searchQuery);
+    const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery);
     const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
 
     // 글입력시 자동 높이 조정 -----------------

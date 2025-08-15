@@ -6,6 +6,11 @@ import Google from "next-auth/providers/google";
 import Kakao from "next-auth/providers/kakao";
 import Naver, { NaverProfile } from "next-auth/providers/naver";
 
+// session.user 객체에 userId를 추가하기 위해
+// - JWT 콜백, trigger: "signIn"에서 userId 정보를 추가하고,
+// - session 콜백에서 해당 userId를 세션에 추가
+// 게시물 수정, 삭제시 자신의 게시물인지 확인하기 위해 사용
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
     debug: !!process.env.AUTH_DEBUG,
     theme: { logo: "https://authjs.dev/img/logo-sm.png" },
@@ -13,20 +18,53 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         url: process.env.SUPABASE_URL!,
         secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
     }),
-    providers: [Google, Kakao, Naver],
-    basePath: "/api/auth", //XXX XXX XXX
-    session: { strategy: "jwt" }, //XXX 세션 관리 방식
-    callbacks: {
-        // 각 콜백의 호출 순서는 다음과 같습니다.
-        // - 사용자가 로그인(회원가입) => signIn => (redirect) => jwt => session
-        // - 세션 업데이트 => jwt => session
-        // - 세션 확인 => session
+    providers: [
+        // 여러 provider 를 같은 유저로 묶음.
+        Google({ allowDangerousEmailAccountLinking: true }),
+        Kakao({ allowDangerousEmailAccountLinking: true }),
+        Naver({ allowDangerousEmailAccountLinking: true }),
+    ],
 
+    //basePath: "/api/auth", //XXX
+    //default "/api/auth" in "next-auth"; "/auth" with all other frameworks
+
+    session: {
+        strategy: "jwt",
+        //----------------------
+        // maxAge: 60 * 60 * 24 * 30, // JWT & 세션 30 일 만료
+        maxAge: 60 * 60 * 1, // 1 시간
+        // maxAge: 60 * 1, // 1 분
+        //----------------------
+        updateAge: 60 * 5, // 5분마다 토큰 갱신
+        // updateAge: 60 * 1, // 1분마다 토큰 갱신
+    }, //XXX 세션 관리 방식
+    jwt: {
+        // maxAge: 60 * 60 * 24 * 30, // 30일 default
+        maxAge: 60 * 30, // JWT 자체 만료 시간 (30분)
+    },
+    // cookies: {
+    //     // https://wonderfulwonder.tistory.com/111
+    //     sessionToken: {
+    //         name:
+    //             process.env.NODE_ENV === "production" ? `__Secure-next-auth.session-token` : `next-auth.session-token`,
+    //             // 이거 안해도 동일하게 처리됨
+    //         options: {
+    //             httpOnly: true,
+    //             sameSite: "lax",
+    //             secure: process.env.NODE_ENV === "production",
+    //         },
+    //     },
+    // }, //XXX 쿠키 설정
+
+    callbacks: {
         // XXX  인증 및 세션 관리 중 호출되는 각 핸들러
+        // =====================================================================
         authorized({ request, auth }) {
+            // console.log("\n====>> [authorized_callback] : request :", request);
+            // console.log("       [authorized_callback] : auth :", auth);
             const { pathname } = request.nextUrl;
-            console.log("[auth] pathname:", pathname); // "/", "/qna", "/qna/edit/35"
-            console.log("    -- session:", auth);
+            // console.log("[auth] pathname:", pathname); // "/", "/qna", "/qna/edit/35"
+            // console.log("    -- session:", auth);
             // return !!auth;
 
             const isLoggedIn = !!auth?.user;
@@ -43,36 +81,74 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             } else {
                 isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix));
             }
-            console.log("isProtected:", isProtected);
+            // console.log("isProtected:", isProtected);
 
             if (isProtected) {
                 if (isLoggedIn) {
                     return true;
                 }
                 // 로그인 페이지로 리디렉션됩니다.
-                console.log("return false");
+                console.log("not logged in : redirect to login");
                 return false;
             }
-            console.log("return true");
+            // console.log("return true");
             return true;
         },
-        jwt({ token, trigger, session, account }) {
+        // async redirect({ url, baseUrl }) {
+        //     return url;
+        // },
+
+        // =====================================================================
+        // https://next-auth.js.org/configuration/callbacks#jwt-callback
+        // user, account, profile 및 isNewUser는 사용자가 로그인한 후 새 세션에서
+        // 이 콜백이 처음 호출될 때만 전달됩니다. 이후 호출에서는 토큰만 사용할 수 있습니다.
+        // /api/auth/signin, /api/auth/session에 대한 요청과
+        // getSession(), getServerSession(), useSession()에 대한 호출은
+        // 이 함수를 호출하지만, JWT 세션을 사용하는 경우에만 해당됩니다.
+        // 데이터베이스에서 세션을 유지하는 경우 호출되지 않습니다
+        // 사용자, 계정, 프로필, isNewUser 등의 내용은 제공업체와 데이터베이스 사용 여부에 따라 달라집니다
+        jwt({ token, trigger, session, account, user, profile }) {
             //XXX JWT가 생성되거나 업데이트될 때 호출되며, 반환하는 값은 암호화되어 쿠키에 저장됩니다.
-            console.log("====>> jwt callback : token :", token);
-            console.log("====>> jwt callback : trigger :", trigger);
-            console.log("====>> jwt callback : account :", account);
+            if (trigger !== undefined) {
+                console.log("\n====>> [jwt_callback] : trigger :", trigger);
+                console.log("       [jwt_callback] : account :", account);
+                console.log("       [jwt_callback] : session :", session);
+                console.log("       [jwt_callback] : profile :", profile);
+                console.log("       [jwt_callback] : user :", user); //!!! XXX 추가한것.
+            }
+            console.log("\n====>> [jwt_callback] : token :", token);
+
+            // if (token.expires_at && Date.now() / 1000 >= Number(token.expires_at)) {
+            //     // await updateOauthToken(token);
+            //     console.log("!!! [jwt_callback] 토큰 만료됨, 갱신 필요 !!!");
+            // }
+            if (user && trigger === "signIn") {
+                //XXX 여기서 자신의 글만 수정, 삭제할 수 있도록 userId 를 추가
+                // 임의로 key 를 생성해서 저장 가능함
+                // return { ...token, userId: user.id, providerAccountId: account?.providerAccountId };
+                return { ...token, userId: user.id }; // providerAccountId 이것도 민감 정보라서 제외
+            }
             if (trigger === "update") {
                 token.name = session.user.name;
             }
-            if (account?.provider === "keycloak") {
-                return { ...token, accessToken: account.access_token };
-            }
             return token;
         },
+        // =====================================================================
         async session({ session, token }) {
             //XXX jwt 콜백이 반환하는 token을 받아, 세션이 확인될 때마다 호출
-            console.log("====>> session callback : session :", session);
-            console.log("====>> session callback : token   :", token);
+            // 브라우져 콘솔에 내용이 표시되므로 주의 !!!
+            // console.log("\n====>> [session_callback] : session :", session);
+            // console.log("       [session_callback] : token   :", token);
+            // if (!session) {
+            //     console.log(">>>>>>>>> 세션이 만료됨 또는 로그아웃됨");
+            // }
+
+            // 토큰 만료 여부 확인 및 백그라운드 토큰 갱신
+            // if (token.expires_at && Date.now() / 1000 >= Number(token.expires_at)) {
+            //     // await updateOauthToken(token);
+            //     console.log("!!! 토큰 만료됨, 갱신 필요 !!!");
+            // }
+
             // iss: 토큰 발급자(issuer)
             // sub: 토큰 제목(subject)
             // aud: 토큰 대상자(audience)
@@ -81,177 +157,103 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // iat: 토큰 발급 시간(issued at), 토큰 발급 이후의 경과 시간을 알 수 있음
             // jti: JWT 토큰 식별자(JWT ID), 중복 방지를 위해 사용하며, 일회용 토큰(Access Token) 등에 사용
 
-            if (token?.accessToken) {
-                session.accessToken = token.accessToken;
+            // XXX 위 jwt 에서 넘겨준 userId,providerAccountId 를 세션에 추가한다.
+            if (token?.userId) {
+                session.userId = token.userId;
+            }
+            if (token?.providerAccountId) {
+                session.providerAccountId = token.providerAccountId;
             }
 
-            //============ supabase use
-            // const signingSecret = process.env.SUPABASE_JWT_SECRET;
-            // if (signingSecret) {
-            //     const payload = {
-            //         aud: "authenticated",
-            //         exp: Math.floor(new Date(session.expires).getTime() / 1000),
-            //         sub: token.id,
-            //         email: token.email,
-            //         role: "authenticated",
-            //     };
-            //     session.accessToken = jwt.sign(payload, signingSecret);
-            // }
-            //============
             return session;
         },
-    },
-    // XXX 내가 추가 한것. XXX
-    events: {
-        // next-auth will create the `User` object implicitly through the Prisma adapter
-        createUser: async ({ user }) => {
-            console.log("[event callback] createUser", user);
-        },
-        updateUser: async ({ user }) => {
-            console.log("[event callback] updateUser =>", user);
-        },
-        linkAccount: async ({ user, account, profile }) => {
-            console.log("[event callback] linkAccount =>", user, account, profile); 
-        },
-        signIn: async ({ user, account, profile, isNewUser }) => {
-            console.log("[event callback] singIn(user) =>", user);
-            console.log("[event callback] singIn(account) =>", account);
-            console.log("[event callback] singIn(profile) =>", profile);
-            // naver 는 이미지가 profile_imagae 에 있음 .
-            // const naverP = profile as NaverProfile;
-            // console.log("[event callback] singIn(naver profile_image) =>", naverP.response.profile_image);
-            // {
-            //     resultcode: '00',
-            //     message: 'success',
-            //     response: {
-            //         id: 'WKHyLUQ6D4PTKL8RSoyuYKbh3NDGu52INhR2RBuyIuA',
-            //         nickname: 'ahahTl',
-            //         profile_image: 'https://phinf.pstatic.net/contact/20250811_236/1754885644142dbcmO_PNG/avatar_profile.png',
-            //         age: '50-59',
-            //         gender: 'M',
-            //         email: 'jeremyko69@gmail.com',
-            //         name: '고정현',
-            //         birthday: '10-17'
-            //     }
+        // =====================================================================
+        //XXX-------------------------------------------------------------------XXX
+        async signIn({ user, account, profile }) {
+            //XXX 사용자가 로그인할 때 호출되며, 반환하는 값이 true이면 로그인 성공, false이면 로그인 실패
+            // console.log("\n====>> [signIn_callback] : user :", user);
+            // console.log("       [signIn_callback] : account :", account);
+            // console.log("       [signIn_callback] : profile :", profile);
+
+            // if (account?.provider === "google") {
             // }
-            console.log("[event callback] singIn(isNewUser) =>", isNewUser);
-        },
-        signOut: async (payload) => {
-            // payload can be { session } or { token }
-            if ("session" in payload) {
-                console.log("[event callback] signOut (session)=>", payload.session);
-            } else if ("token" in payload) {
-                console.log("[event callback] signOut (token)=>", payload.token);
-            } else {
-                console.log("[event callback] signOut=>", payload);
+            // if (account?.provider === "naver") {
+            //     const naverProfile = profile as NaverProfile;
+            //     console.log("naverProfile:", naverProfile);
+            // }
+            //     return true;
+            if (account && account.provider !== "credentials" && profile) {
+                // const body = {
+                //     provider: account.provider,
+                //     socialUserId: account.providerAccountId,
+                // };
+                // const res = await server.post("/api/auth/social-login", body);
+                // const data = await res.json();
+                // if (data.status === "성공") {
+                //     // 로그인 성공 처리
+                //     return true;
+                // } else {
+                //     // 로그인 실패시 url redirection or 회원가입 처리
+                //     const params = new URLSearchParams();
+                //     params.set("provider", account.provider);
+                //     params.set("id", account.providerAccountId);
+                //     return `/join?${params.toString()}`;
+                // }
             }
+            return true;
         },
     },
+    // =====================================================================
+    // XXX 내가 추가 한것. XXX
+    // events: {
+    //     createUser: async ({ user }) => {
+    //         console.log("====>> [event callback] createUser", user);
+    //     },
+    //     updateUser: async ({ user }) => {
+    //         console.log("====>> [event callback] updateUser =>", user);
+    //     },
+    //     linkAccount: async ({ user, account, profile }) => {
+    //         console.log("====>> [event callback] linkAccount =>", user, account, profile);
+    //     },
+    //     signIn: async ({ user, account, profile, isNewUser }) => {
+    //         console.log("====>> [event_callback] singIn(user) =>", user);
+    //         console.log("       [event_callback] singIn(account) =>", account);
+    //         console.log("       [event_callback] singIn(profile) =>", profile);
+    //         console.log("       [event_callback] singIn(isNewUser) =>", isNewUser);
+    //     },
+    //     signOut: async (payload) => {
+    //         // payload can be { session } or { token }
+    //         if ("session" in payload) {
+    //             console.log("====>> [event_callback] signOut (session)=>", payload.session);
+    //         } else if ("token" in payload) {
+    //             console.log("====>> [event_callback] signOut (token)=>", payload.token);
+    //         } else {
+    //             console.log("====>> [event_callback] signOut=>", payload);
+    //         }
+    //     },
+    // },
     experimental: { enableWebAuthn: true },
 });
 
 declare module "next-auth" {
     interface Session {
-        accessToken?: string;
+        userId?: string;
+        providerAccountId?: string;
+
+        nickName?: string; 
+        imageUrl?: string; 
+        email?: string; 
+        // kakao :
+        //  profile.kakao_account.profile.nickname 
+        //  profile.kakao_account.profile.thumbnail_image_url 
+        //  profile.kakao_account.email 
+
     }
 }
 
 declare module "next-auth/jwt" {
     interface JWT {
-        accessToken?: string;
+        userId?: string;
+        providerAccountId?: string;
     }
 }
-
-// import Apple from "next-auth/providers/apple";
-// import Atlassian from "next-auth/providers/atlassian"
-// import Auth0 from "next-auth/providers/auth0";
-// import AzureB2C from "next-auth/providers/azure-ad-b2c";
-// import BankIDNorway from "next-auth/providers/bankid-no";
-// import BoxyHQSAML from "next-auth/providers/boxyhq-saml";
-// import Cognito from "next-auth/providers/cognito";
-// import Coinbase from "next-auth/providers/coinbase";
-// import Discord from "next-auth/providers/discord";
-// import Dropbox from "next-auth/providers/dropbox";
-// import Facebook from "next-auth/providers/facebook";
-// import GitHub from "next-auth/providers/github";
-// import GitLab from "next-auth/providers/gitlab";
-// import Hubspot from "next-auth/providers/hubspot";
-// import Keycloak from "next-auth/providers/keycloak";
-// import LinkedIn from "next-auth/providers/linkedin";
-// import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
-// import Netlify from "next-auth/providers/netlify";
-// import Okta from "next-auth/providers/okta";
-// import Passage from "next-auth/providers/passage";
-// import Passkey from "next-auth/providers/passkey";
-// import Pinterest from "next-auth/providers/pinterest";
-// import Reddit from "next-auth/providers/reddit";
-// import Slack from "next-auth/providers/slack";
-// import Salesforce from "next-auth/providers/salesforce";
-// import Spotify from "next-auth/providers/spotify";
-// import Twitch from "next-auth/providers/twitch";
-// import Twitter from "next-auth/providers/twitter";
-// import Vipps from "next-auth/providers/vipps";
-// import WorkOS from "next-auth/providers/workos";
-// import Zoom from "next-auth/providers/zoom";
-// import { createStorage } from "unstorage";
-// import memoryDriver from "unstorage/drivers/memory";
-// import vercelKVDriver from "unstorage/drivers/vercel-kv";
-// import { UnstorageAdapter } from "@auth/unstorage-adapter";
-
-// const storage = createStorage({
-//     driver: process.env.VERCEL
-//         ? vercelKVDriver({
-//               url: process.env.AUTH_KV_REST_API_URL,
-//               token: process.env.AUTH_KV_REST_API_TOKEN,
-//               env: false,
-//           })
-//         : memoryDriver(),
-// });
-        // Apple,
-        // Atlassian,
-        // Auth0,
-        // AzureB2C,
-        // BankIDNorway,
-        // BoxyHQSAML({
-        //     clientId: "dummy",
-        //     clientSecret: "dummy",
-        //     issuer: process.env.AUTH_BOXYHQ_SAML_ISSUER,
-        // }),
-        // Cognito,
-        // Coinbase,
-        // Discord,
-        // Dropbox,
-        // Facebook,
-        // GitHub,
-        // GitLab,
-        // Hubspot,
-        // Keycloak({ name: "Keycloak (bob/bob)" }),
-        // LinkedIn,
-        // MicrosoftEntraId,
-        // Netlify,
-        // Okta,
-        // Passkey({
-        //     formFields: {
-        //         email: {
-        //             label: "Username",
-        //             required: true,
-        //             autocomplete: "username webauthn",
-        //         },
-        //     },
-        // }),
-        // Passage,
-        // Pinterest,
-        // Reddit,
-        // Salesforce,
-        // Slack,
-        // Spotify,
-        // Twitch,
-        // Twitter,
-        // Vipps({
-        //     issuer: "https://apitest.vipps.no/access-management-1.0/access/",
-        // }),
-        // WorkOS({ connection: process.env.AUTH_WORKOS_CONNECTION! }),
-        // Zoom,
-
-
-    // adapter: UnstorageAdapter(storage),

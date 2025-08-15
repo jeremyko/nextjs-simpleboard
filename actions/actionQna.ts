@@ -5,7 +5,9 @@ import { z } from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { checkIsAuthenticated } from "@/app/libs/checkIsAuthenticated";
+import { isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
+import { auth } from "@/auth";
+import { is } from "zod/v4/locales";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -84,10 +86,29 @@ export async function createQuestion(prevState: State, formData: FormData) {
     //const date = new Date().toISOString().split("T")[0];
     console.log("==> createQuestion :", categoryId, title, content);
 
+    //userId 
+    const session = await auth();
+    if (!session) {
+        console.log("[createQuestion] 로그인 안된 상태로 접근함");
+        return {
+            message: "로그인 후 다시 시도하세요.",
+            errors: { categoryId: ["로그인 후 다시 시도하세요."] },
+        };
+    }
+    console.log("==> createQuestion session:", session);
+    const userId = session.userId;
+    console.log("==> createQuestion userId:", userId);
+    if (!userId) {
+        console.log("재 로그인 필요");
+        return {
+            message: "유저 정보가 올바르지 않습니다. 다시 로그인 해주세요.",
+            errors: { categoryId: ["유저 정보가 없습니다."] },
+        };
+    }
     try {
         await sql`
             INSERT INTO articles (title, contents, user_id, category_id) 
-            VALUES ( ${title}, ${content}, 999, ${categoryId} )`;
+            VALUES ( ${title}, ${content}, ${userId}, ${categoryId} )`;
     } catch (error) {
         console.error(error);
         return {
@@ -111,6 +132,7 @@ export async function createQuestion(prevState: State, formData: FormData) {
  * @returns 수정 성공 시 리다이렉트, 실패 시 에러 메시지와 필드 에러 반환
  */
 export async function updateQuestion(
+    postUserId: string, // 게시글 작성자 ID
     articleId: number,
     currentPage: number,
     searchQuery: string,
@@ -122,6 +144,7 @@ export async function updateQuestion(
 
     // 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.log("edit action ==> updateQuestion formData:", formData);
+    console.log("            ==> post userId :",postUserId );
     console.log("            ==> article_id :", articleId, " currentPage:", currentPage);
     console.log("            ==> searchQuery :", searchQuery);
 
@@ -148,11 +171,20 @@ export async function updateQuestion(
     }
     const { categoryId, title, content } = validatedFields.data;
 
+    const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId );
+    if (!isLoggedInAndMine) {
+        console.error("로그인 안된 상태 혹은 본인 게시물 아님");
+        return {
+            message: "로그인 후 다시 시도하세요. 본인의 게시물만 수정할 수 있습니다",
+        };
+    }
+
     try {
         await sql` 
         UPDATE articles 
         SET    title= ${title}, contents=${content}, category_id= ${categoryId} 
-        WHERE  article_id = ${articleId}`;
+        WHERE  article_id = ${articleId}
+        AND    user_id = ${postUserId}`;
     } catch (error) {
         console.error(error);
         return {
@@ -170,16 +202,15 @@ export async function updateQuestion(
  * @param currentPage - 현재 페이지 번호
  * @returns 삭제 후 해당 페이지로 리다이렉트
  */
-export async function deleteQuestion(articleId: number, currentPage: number) {
+export async function deleteQuestion(articleId: number, currentPage: number, postUserId: string) {
     // 로그인된 상태에서만 처리되어야 함
-    const isAuthenticated = await checkIsAuthenticated();
-    if (!isAuthenticated) {
-        console.log("[deleteQuestion] 로그인 안된 상태로 접근함");
-        redirect("/api/auth/signin");
+    const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId );
+    if (!isLoggedInAndMine) {
+        console.error("로그인 안된 상태 혹은 본인 게시물 아님");
     }
 
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
-    await sql`DELETE FROM articles WHERE article_id = ${articleId}`;
+    await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
     revalidatePath(`/qna?page=${currentPage}`);
     redirect(`/qna?page=${currentPage}`);
 }

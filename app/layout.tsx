@@ -5,6 +5,8 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import Footer from "@/components/Footer/Footer";
 import HeaderNav from "@/components/HeaderNav/HeaderNav";
+import SessionWatcher from "@/components/SessionWatcher/SessionWatcher";
+import { SessionProvider } from "next-auth/react";
 
 config.autoAddCss = false;
 
@@ -31,10 +33,13 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between `}>
-                <HeaderNav /> {/* components에서 관리  */}
-                {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
-                <main className="pt-14" > {children} </main>
-                <Footer /> {/* components에서 관리  */}
+                {/* <SessionProvider> */}
+                    {/* <SessionWatcher /> */}
+                    <HeaderNav /> {/* components에서 관리  */}
+                    {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
+                    <main className="pt-14"> {children} </main>
+                    <Footer /> {/* components에서 관리  */}
+                {/* </SessionProvider> */}
             </body>
         </html>
     );
