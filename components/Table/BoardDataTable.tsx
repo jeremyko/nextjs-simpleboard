@@ -1,6 +1,7 @@
 import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/serverDb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { Avatar, AvatarImage } from "../ui/avatar";
 
 export default async function BoardDataTable({
     searchQuery,
@@ -20,12 +21,12 @@ export default async function BoardDataTable({
         getAllPostsCount(searchQuery),
         fetchPagedBoardItems(currentPage, postsPerPage, searchQuery),
     ]);
-    // console.log("--data", data);
     const totalPostCount = Number(data[0] ?? "0");
     // console.log("totalPostCount", totalPostCount);
     // const totalPages = Math.ceil(totalPostCount / postsPerPage);
     // console.log("totalPages", totalPages);
     const posts = data[1];
+    // console.log("posts:", posts);
 
     return (
         <div>
@@ -34,15 +35,16 @@ export default async function BoardDataTable({
             </div>
             {/* <Search placeholder="검색어를 입력하세요" /> */}
             <table className=" w-full table-auto border-collapse  text-sm">
-                <thead>
+                {/* <thead>
                     <tr className="text-center border-b border-gray-700 bg-indigo-700 text-zinc-300 ">
                         <th className="p-2 font-medium">번호</th>
                         <th className="p-2 font-medium">분류</th>
                         <th className="p-2 font-medium">제목</th>
+                        <th className="p-2 font-medium min-w-[130px]">작성자</th>
                         <th className="p-2 font-medium">날짜</th>
                         <th className="p-2 font-medium">조회수</th>
                     </tr>
-                </thead>
+                </thead> */}
                 <tbody>
                     {posts.map((post) => (
                         <tr
@@ -75,10 +77,16 @@ export default async function BoardDataTable({
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
                                     className="text-gray-800 hover:underline"
                                 >
-                                    {post.title.substring(0, 50) + "..."}
+                                    {post.title.substring(0, 40) + "..."}
                                 </a>
                             </td>
-                            <td className="p-2 text-center">{post.created}</td>
+                            <td className="p-2 flex items-center gap-1 min-w-[100px]">
+                                <Avatar className="h-4 w-4">
+                                    <AvatarImage src={post.user_image ?? undefined} />
+                                </Avatar>
+                                <span>{post.user_name}</span>
+                            </td>
+                            <td className="p-2 text-center min-w-[90]">{post.created}</td>
                             <td className="p-2 text-center">{post.views}</td>
                         </tr>
                     ))}

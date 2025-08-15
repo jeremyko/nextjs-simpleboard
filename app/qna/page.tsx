@@ -42,7 +42,7 @@ export default async function Page(props: {
     // console.log("[list] totalPages", totalPagesCnt);
 
     return (
-        <div className="min-h-screen max-w-4xl mx-auto font-sans">
+        <div className="min-h-screen max-w-3xl mx-auto font-sans">
             <BoardDataTable
                 searchQuery={searchQuery}
                 currentPage={page}

@@ -269,7 +269,7 @@ export default function Page() {
     };
 
     return (
-        <div className="min-h-screen max-w-4xl mx-auto font-sans">
+        <div className="min-h-screen max-w-3xl mx-auto font-sans">
             <div className="text-2xl font-bold p-4 mb-4 text-left">
                 <h1> Q&A </h1>
             </div>

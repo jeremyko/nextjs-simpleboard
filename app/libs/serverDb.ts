@@ -6,16 +6,19 @@ export type BoardItems = {
     rownum: number;
     article_id: number;
     user_id: string; 
+    user_name: string; 
     title: string;
     created: string;
     category_id: number;
     category_name: string;
     comment_count: number;
     views: number;
+    user_image: string | null; // 사용자 이미지
 };
 export type BoardItemById = {
     article_id: number;
     user_id: string; 
+    user_name: string; 
     title: string;
     contents: string;
     created: string;
@@ -23,7 +26,8 @@ export type BoardItemById = {
     category_name: string;
     comment_count: number;
     views: number;
-    isMine: boolean; // 게시물이 내가 작성한건지 여부
+    user_image: string | null; // 사용자 이미지
+    // isMine: boolean; // 게시물이 내가 작성한건지 여부
 };
 
 export type CategoryItem = {
@@ -72,18 +76,21 @@ export async function fetchPagedBoardItems(
         SELECT  (row_number() over(ORDER BY a.article_id )) as rownum,
                 A.ARTICLE_ID, 
                 A.USER_ID, 
+                X.NAME AS USER_NAME,
                 A.TITLE, 
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
                 B.CATEGORY_ID , 
                 B.NAME AS CATEGORY_NAME, 
                 COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
-                A.VIEWS
+                A.VIEWS,
+                X.image AS USER_IMAGE
         FROM    ARTICLES A 
                 INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
+                INNER join next_auth.users X on X.id = A.user_id
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
         WHERE  (A.TITLE ILIKE '%' || ${searchQuery} || '%' OR     
                 A.CONTENTS ILIKE '%' || ${searchQuery} || '%')
-        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED,B.CATEGORY_ID, B.NAME, A.VIEWS
+        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED,B.CATEGORY_ID, B.NAME, A.VIEWS,X.image,X.name
         ORDER BY A.ARTICLE_ID DESC 
         LIMIT ${itemsPerPage} OFFSET ${offset} `;
 
@@ -99,17 +106,20 @@ export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
         const data = await sql<BoardItemById[]>`
         SELECT  A.ARTICLE_ID, 
                 A.USER_ID, 
+                X.NAME AS USER_NAME,
                 A.TITLE, 
                 A.CONTENTS,
                 TO_CHAR(A.CREATED, 'YYYY-MM-DD') AS CREATED, 
                 B.CATEGORY_ID , 
                 B.NAME AS CATEGORY_NAME, 
                 COUNT(C.COMMENT_ID) AS COMMENT_COUNT, 
-                A.VIEWS
+                A.VIEWS,
+                X.image AS USER_IMAGE
         FROM    ARTICLES A 
                 INNER JOIN CATEGORIES B ON B.CATEGORY_ID = A.CATEGORY_ID 
+                INNER join next_auth.users X on X.id = A.user_id
                 LEFT OUTER JOIN COMMENTS C ON C.ARTICLE_ID = A.ARTICLE_ID     
-        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.CATEGORY_ID, B.NAME, A.VIEWS
+        GROUP BY A.ARTICLE_ID, A.TITLE, A.CREATED, B.CATEGORY_ID, B.NAME, A.VIEWS, X.image,X.name
         having A.article_id = ${id}; `;
 
         return data[0];

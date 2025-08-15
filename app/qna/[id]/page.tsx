@@ -54,9 +54,9 @@ export default async function Page(props: {
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
 
     return (
-        <div className="max-w-4xl mx-auto min-h-screen ">
+        <div className="max-w-3xl mx-auto min-h-screen ">
             <div className="flex flex-col text-sm  mb-4 text-left ">
-                <div className="rounded-md md:p-6">
+                <div className="rounded-md md:p-3">
                     {/* XXX ViewOneBoardItem 는 client 컴포넌트로 분리되어 사용. */}
                     <ViewOneBoardItem
                         oneQnA={oneQnA}

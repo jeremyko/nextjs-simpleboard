@@ -40,8 +40,8 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
     // → 이렇게 하면 클라이언트는 작성자 여부만 알고, 실제 ID는 모름
     const session = await auth();
     if (!session) {
-        console.error("로그인 안된 상태로 접근함");
         if (needRedirectToLogin) {
+            console.error("로그인 안된 상태로 접근함");
             redirect("/api/auth/signin");
         }
         return false;
@@ -54,7 +54,7 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
     if(session.userId === postUserId) {
         return true;
     }
-    console.error("본인의 게시물이 아님");
+    // console.log("본인의 게시물이 아님");
     return false;
 }
 
