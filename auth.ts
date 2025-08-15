@@ -19,10 +19,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
     }),
     providers: [
-        // 여러 provider 를 같은 유저로 묶음.
-        Google({ allowDangerousEmailAccountLinking: true }),
-        Kakao({ allowDangerousEmailAccountLinking: true }),
-        Naver({ allowDangerousEmailAccountLinking: true }),
+        // 여러 provider 를 같은 유저로 묶음 => 이미지가 일치하지 않음. db 에서 처음것으로 처리됨 
+        // Google({ allowDangerousEmailAccountLinking: true }),
+        // Kakao({ allowDangerousEmailAccountLinking: true }),
+        // Naver({ allowDangerousEmailAccountLinking: true }),
+        Google,
+        Kakao,
+        Naver
     ],
 
     //basePath: "/api/auth", //XXX
