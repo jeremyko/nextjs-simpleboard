@@ -111,11 +111,12 @@ export default async function Page(props: {
 
                         {/* comments 목록 표시  */}
                         <section className="mt-2">
-                            <ul>
+                            {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
+                            <ul className="divide divide-y divide-gray-400 " >
                                 {comments.map((comment) => (
                                     <li
                                         key={comment.comment_id.toString()}
-                                        className="mt-2 mb-2 pt-4 pb-4 border-t border-gray-500 "
+                                        className="mt-2  pt-4 "
                                     >
                                         <OneCommentData
                                             userId={currUserId}

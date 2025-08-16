@@ -165,7 +165,7 @@ export default function OneCommentData({
             )}
 
             {userId && (
-                <div className="flex flex-row justify-end items-center gap-2 mt-2 mb-4">
+                <div className="flex flex-row justify-end items-center gap-2 mt-2 mb-1">
                     <a href="#" className="block px-4 py-2 hover:text-cyan-600 rounded-sm">
                         댓글달기
                     </a>
