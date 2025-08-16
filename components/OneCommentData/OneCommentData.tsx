@@ -37,7 +37,7 @@ export default function OneCommentData({
     currentPage: number;
     searchQuery: string;
 }) {
-    console.log("OneCommentData : userId=>", userId);
+    // console.log("OneCommentData : userId=>", userId);
     const [isOpen, setIsOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const deleteCommentWithParams = deleteComment.bind(

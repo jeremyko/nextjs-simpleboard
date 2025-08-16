@@ -17,7 +17,7 @@ export default function NewCommentForm({
     currentPage: number;
     searchQuery: string;
 }) {
-    console.log("[NewCommentForm] currentPostId:", currentPostId, " / userId:",userId);
+    // console.log("[NewCommentForm] currentPostId:", currentPostId, " / userId:",userId);
     // if (!userId) {
     //     redirect("/api/auth/signin");
     // }
