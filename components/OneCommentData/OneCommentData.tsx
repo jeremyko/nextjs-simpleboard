@@ -67,7 +67,9 @@ export default function OneCommentData({
             <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm">
                 <div className="flex flex-row items-center gap-2 mb-4">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src={comment.comment_user_image ?? undefined} />
+                        <AvatarImage src={comment.comment_user_image ?? undefined} 
+                        alt=""
+                        />
                     </Avatar>
                     <span className="text-base font-semibold">{comment.comment_user_name}</span>
                 </div>

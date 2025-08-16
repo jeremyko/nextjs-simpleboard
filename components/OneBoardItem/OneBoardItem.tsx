@@ -25,7 +25,8 @@ export default function OneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) {
             </div>
             <div className="flex flex-row items-center gap-2 mb-4">
                 <Avatar className="h-10 w-10">
-                    <AvatarImage src={oneQnA.user_image ?? undefined} />
+                    <AvatarImage src={oneQnA.user_image ?? undefined} 
+                                alt="" />
                 </Avatar>
                 <span className="text-base font-semibold">{oneQnA.user_name}</span>
             </div>

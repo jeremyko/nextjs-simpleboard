@@ -82,7 +82,8 @@ export default async function BoardDataTable({
                             </td>
                             <td className="p-2 flex items-center gap-1 min-w-[100px]">
                                 <Avatar className="h-4 w-4">
-                                    <AvatarImage src={post.user_image ?? undefined} />
+                                    <AvatarImage src={post.user_image ?? undefined} 
+                                    alt=""/>
                                 </Avatar>
                                 <span>{post.user_name}</span>
                             </td>
