@@ -5,9 +5,8 @@ import { z } from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
+import { checkIsAuthenticated, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import { auth } from "@/auth";
-import { is } from "zod/v4/locales";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -22,6 +21,12 @@ export type State = {
     message?: string | null;
 };
 
+export type CommentState = {
+    errors?: {
+        content?: string[];
+    };
+    message?: string | null;
+};
 //XXX 위 State 와 아래 Schema 의 필드들은 일치해야 함
 //    왜냐하면, createQuestion 함수에서 State를 검증할 때,
 //    CreateQnA.safeParse() 를 사용하기 때문
@@ -32,9 +37,7 @@ const CreateFormSchema = z.object({
     categoryId: z.string().trim().nonempty({ message: "분류를 선택하세요" }),
     title: z.string().trim().nonempty({ message: "제목을 입력하세요" }),
     content: z.string().trim().nonempty({ message: "내용을 입력하세요" }),
-    date: z.string().trim().nonempty().optional(),
-    // views: z.number(),
-    // userId: z.string(), //TODO
+    // date: z.string().trim().nonempty().optional(),
 });
 
 const UpdateFormSchema = z.object({
@@ -44,9 +47,13 @@ const UpdateFormSchema = z.object({
     content: z.string().trim().nonempty({ message: "공백은 불가합니다" }),
 });
 
-const CreateQnA = CreateFormSchema.omit({ date: true });
+const CreateCommentFormSchema = z.object({
+    content: z.string().trim().nonempty({ message: "내용을 입력하세요" }),
+});
+
+const CreateQnA = CreateFormSchema.omit({});
 const UpdateQnA = UpdateFormSchema.omit({});
-// const UpdateQnA = UpdateFormSchema;
+const CreateQnAComment = CreateCommentFormSchema.omit({});
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
@@ -86,7 +93,7 @@ export async function createQuestion(prevState: State, formData: FormData) {
     //const date = new Date().toISOString().split("T")[0];
     console.log("==> createQuestion :", categoryId, title, content);
 
-    //userId 
+    //userId
     const session = await auth();
     if (!session) {
         console.log("[createQuestion] 로그인 안된 상태로 접근함");
@@ -144,7 +151,7 @@ export async function updateQuestion(
 
     // 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.log("edit action ==> updateQuestion formData:", formData);
-    console.log("            ==> post userId :",postUserId );
+    console.log("            ==> post userId :", postUserId);
     console.log("            ==> article_id :", articleId, " currentPage:", currentPage);
     console.log("            ==> searchQuery :", searchQuery);
 
@@ -171,7 +178,7 @@ export async function updateQuestion(
     }
     const { categoryId, title, content } = validatedFields.data;
 
-    const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId );
+    const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
         return {
@@ -204,13 +211,145 @@ export async function updateQuestion(
  */
 export async function deleteQuestion(articleId: number, currentPage: number, postUserId: string) {
     // 로그인된 상태에서만 처리되어야 함
-    const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId );
+    const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
+        redirect("/api/auth/signin");
     }
 
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
     await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
     revalidatePath(`/qna?page=${currentPage}`);
     redirect(`/qna?page=${currentPage}`);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * QnA 게시글 댓글 생성하는 서버 액션 .
+ */
+export async function createComment(
+    userId: string, // 댓글 작성자 ID
+    currentPage: number,
+    searchQuery: string,
+    currentPostId: number,
+    prevState: State,
+    formData: FormData,
+) {
+    console.log("==> createComment called with formData:", formData);
+    const isIsAuthenticated = await checkIsAuthenticated();
+    if (!isIsAuthenticated) {
+        // console.error("로그인 안된 상태 ");
+        redirect("/api/auth/signin");
+        // return {
+        //     message: "로그인 후 다시 시도하세요.",
+        // };
+    }
+
+    const validatedFields = CreateQnAComment.safeParse({
+        content: formData.get("content"),
+    });
+
+    if (!validatedFields.success) {
+        console.error("Validation failed:", validatedFields.error.flatten().fieldErrors);
+        const pretty = z.prettifyError(validatedFields.error);
+        console.error("Validation error details:", pretty);
+        const flattened = z.flattenError(validatedFields.error);
+        console.error("Flattened error details:", flattened);
+
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: prevState.message + "==> Missing Fields. Failed to Create Comment.",
+        };
+    }
+    const { content } = validatedFields.data;
+
+    try {
+        await sql` 
+        INSERT INTO comments (article_id, comment, comment_user_id) 
+        VALUES ( ${currentPostId}, ${content}, ${userId} )`;
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "Database Error: Failed to create QnA comment.",
+        };
+    }
+    revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * QnA 게시글 댓글 update
+ */
+export async function updateComment(
+    userId: string, // 댓글 작성자 ID
+    currentPage: number,
+    searchQuery: string,
+    currentPostId: number,
+    currentCommentId: number,
+    prevState: State,
+    formData: FormData,
+) {
+    // console.log("==> updateComment called with formData:", formData);
+    // console.log("==> updateComment -> currentCommentId:", currentCommentId);
+    const isIsAuthenticated = await checkIsAuthenticated();
+    if (!isIsAuthenticated) {
+        redirect("/api/auth/signin");
+    }
+
+    const validatedFields = CreateQnAComment.safeParse({
+        content: formData.get("content"),
+    });
+
+    if (!validatedFields.success) {
+        console.error("Validation failed:", validatedFields.error.flatten().fieldErrors);
+        const pretty = z.prettifyError(validatedFields.error);
+        console.error("Validation error details:", pretty);
+        const flattened = z.flattenError(validatedFields.error);
+        console.error("Flattened error details:", flattened);
+
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: prevState.message + "==> Missing Fields. Failed to update Comment.",
+        };
+    }
+    const { content } = validatedFields.data;
+
+    try {
+        await sql` 
+        UPDATE comments 
+        SET COMMENT = ${content}
+        WHERE comment_id= ${currentCommentId} `;
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "Database Error: Failed to update QnA comment.",
+        };
+    }
+    revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * comment 삭제
+ */
+export async function deleteComment(
+    commentUserId: string, // 댓글 작성자 ID
+    currentPage: number,
+    searchQuery: string,
+    currentPostId: number,
+    commentId: number,
+) {
+    const isLoggedInAndMine = await isAuthenticatedAndMine(commentUserId);
+    if (!isLoggedInAndMine) {
+        console.error("본인 댓글 아님");
+        revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+        redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+        //XXX 위에서처럼 error 객체 리턴하면 안됨 .에러발생됨.
+    }
+
+    await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
+    revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }

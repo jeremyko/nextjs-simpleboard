@@ -48,7 +48,7 @@ export default function EditQuestionForm({
                     <div className="p-4 md:p-6">
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="category" className="mb-2 block  font-bold">
+                            <label htmlFor="categoryId" className="mb-2 block  font-bold">
                                 분류
                             </label>
                             <div className="relative">

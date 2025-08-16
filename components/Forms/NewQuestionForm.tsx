@@ -36,7 +36,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                     <div className="rounded-md p-4 md:p-6">
                         {/* --------------------- */}
                         <div className="mb-4">
-                            <label htmlFor="category" className="mb-2 block text-sm font-bold">
+                            <label htmlFor="categoryId" className="mb-2 block text-sm font-bold">
                                 분류
                             </label>
                             <div className="relative">
@@ -148,11 +148,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             >
                                 저장
                             </button> */}
-                            <Button
-                                type="submit"
-                            >
-                                저장
-                            </Button>
+                            <Button type="submit">저장</Button>
                         </div>
                     </div>
                 </div>

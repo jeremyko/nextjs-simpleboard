@@ -29,13 +29,14 @@ export default function Search({ placeholder }: { placeholder: string }) {
 
     return (
         <div className="mt-2 mb-2 relative flex items-center flex-shrink-0 ">
-            <label htmlFor="search" className="sr-only">
+            <label id="search" htmlFor="searchInput" className="sr-only">
                 Search
             </label>
             <input
                 className="peer block w-full rounded-md border-1 border-gray-200 py-[6px] pl-10 text-sm outline-1 placeholder:text-gray-500"
                 placeholder={placeholder}
                 onKeyDown={handleKeyDown}
+                id = "searchInput"
                 defaultValue={decodeURIComponent(searchParams.get("query") || "")}
             />
             <FontAwesomeIcon

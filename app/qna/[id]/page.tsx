@@ -1,12 +1,11 @@
-import { fetchOneQnaById, getTotalPagesCount } from "@/app/libs/serverDb";
+import { fetchOneQnaById, getComments, getTotalPagesCount } from "@/app/libs/serverDb";
 import BoardDataTable from "@/components/Table/BoardDataTable";
 import Pagination from "@/components/Pagination/Pagination";
 import { getPostsPerPage } from "@/global_const/global_const";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ViewOneBoardItem from "@/components/ui/OneBoardItem";
+import OneBoardItem from "@/components/OneBoardItem/OneBoardItem"; //TODO : 경로가 이게 맞는건지 ..
 import { Button } from "@/components/ui/button";
-
 import { deleteQuestion } from "@/actions/actionQna";
 import {
     AlertDialog,
@@ -19,7 +18,9 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
+import { checkIsAuthenticated, getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
+import NewCommentForm from "@/components/Forms/NewCommentForm";
+import OneCommentData from "@/components/OneCommentData/OneCommentData";
 
 // XXX 개별 게시물 보기
 
@@ -35,36 +36,31 @@ export default async function Page(props: {
     const searchParams = await props.searchParams;
     const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
-    // const action = searchParams?.action || "";
     const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
 
+    console.log("[view] 개별 게시물 보기");
     // console.log("[view] search query", searchQuery);
     // console.log("[view] current page", page);
     // console.log("[view] QnA ID:", id);
     // console.log("[view] action:", action);
 
+    const currUserId = await getSessionUserId();
     const oneQnA = await fetchOneQnaById(id);
     if (!oneQnA) {
         notFound();
     }
-    // console.log("post userId:", oneQnA.user_id);
-
-    const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id );
-
+    const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id);
+    const isLogged = await checkIsAuthenticated();
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
+    const comments = await getComments(oneQnA.article_id);
+    // console.log("comments:", comments);
 
     return (
         <div className="max-w-3xl mx-auto min-h-screen ">
             <div className="flex flex-col text-sm  mb-4 text-left ">
                 <div className="rounded-md md:p-3">
                     {/* XXX ViewOneBoardItem 는 client 컴포넌트로 분리되어 사용. */}
-                    <ViewOneBoardItem
-                        oneQnA={oneQnA}
-                        // id={id}
-                        // page={page}
-                        // searchQuery={searchQuery}
-                        // totalPagesCnt={totalPagesCnt}
-                    />
+                    <OneBoardItem oneQnA={oneQnA} />
 
                     {isLoggedInAndMine && (
                         <div className="mt-6 mb-6 flex justify-between items-center gap-4">
@@ -102,9 +98,40 @@ export default async function Page(props: {
                         </div>
                     )}
 
-                    {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
-                    <div className="mt-4 pb-2 flex justify-between items-center gap-4">comments</div>
+                    <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">
+                        <h2 id="notes-title" className="pl-1 font-semibold text-sm">
+                            총 {comments.length}개의 댓글
+                        </h2>
+                        <NewCommentForm
+                            userId={currUserId}
+                            currentPostId={id}
+                            currentPage={page}
+                            searchQuery={searchQuery}
+                        />
 
+                        {/* comments 목록 표시  */}
+                        <section className="mt-2">
+                            <ul>
+                                {comments.map((comment) => (
+                                    <li
+                                        key={comment.comment_id.toString()}
+                                        className="mt-2 mb-2 pt-4 pb-4 border-t border-gray-500 "
+                                    >
+                                        <OneCommentData
+                                            userId={currUserId}
+                                            comment={comment}
+                                            isMine={currUserId === comment.comment_user_id}
+                                            currentPostId={id}
+                                            currentPage={page}
+                                            searchQuery={searchQuery}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    </div>
+
+                    {/* XXX BoardDataTable 이 server component 다. ViewOneBoardItem 내에서 호출 불가 !!! */}
                     <BoardDataTable
                         searchQuery={searchQuery}
                         currentPage={page}

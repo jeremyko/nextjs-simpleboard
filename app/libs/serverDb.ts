@@ -35,6 +35,16 @@ export type CategoryItem = {
     name: string;
 };
 
+export type OneComment = {
+    comment_id: number;
+    article_id: number;
+    comment: string;
+    comment_user_id: string;
+    comment_user_name: string;
+    comment_user_image: string;
+    // created:
+};
+
 export async function getTotalPagesCount(searchQuery: string, postPerPage: number): Promise<number> {
     try {
         const result = await sql<{ count: number }[]>`
@@ -126,6 +136,28 @@ export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
     } catch (error) {
         console.error("Database Error:", error);
         throw new Error("Failed to fetch QnA.");
+    }
+}
+
+export async function getComments(articleId: number): Promise<OneComment[]> {
+    try {
+        const data = await sql<OneComment[]>`
+        SELECT  A.COMMENT_ID, 
+                A.ARTICLE_ID, 
+                A.COMMENT,
+                A.COMMENT_USER_ID,
+                B.NAME AS COMMENT_USER_NAME,
+                B.IMAGE AS COMMENT_USER_IMAGE,
+                A.CREATED 
+        FROM    COMMENTS A ,
+                NEXT_AUTH.USERS B
+        WHERE   A.ARTICLE_ID = ${articleId}
+        AND     B.ID = A.COMMENT_USER_ID ; `;
+
+        return data;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch QnA comments.");
     }
 }
 

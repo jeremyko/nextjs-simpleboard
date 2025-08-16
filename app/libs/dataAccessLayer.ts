@@ -10,8 +10,8 @@ export const checkIsAuthenticated = async () => {
     if (session) {
         return true;
     }
-    redirect("/api/auth/signin");
-    // return false;
+    // redirect("/api/auth/signin");
+    return false;
 };
 
 export const checkIsThisMine = async (postUserId:string) => {
@@ -24,8 +24,8 @@ export const checkIsThisMine = async (postUserId:string) => {
         // return false;
     }
     // console.log("*** checkIsThisMine: session", session);
-    console.log("*** userId (session) :", session.userId);
-    console.log("           (post   ) :", postUserId);
+    // console.log("*** userId (session) :", session.userId);
+    // console.log("           (post   ) :", postUserId);
     if(session.userId === postUserId) {
         // console.log("checkIsThisMine: true");
         return true;
@@ -49,8 +49,8 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
     if (!postUserId) {
         return false;
     }
-    console.log("*** userId (session) :", session.userId);
-    console.log("           (post   ) :", postUserId);
+    // console.log("*** userId (session) :", session.userId);
+    // console.log("           (post   ) :", postUserId);
     if(session.userId === postUserId) {
         return true;
     }
@@ -63,7 +63,7 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
 export const getSessionUserId = async () => {
     const session = await auth();
     if (!session) {
-        console.log("[createQuestion] 로그인 안된 상태로 접근함");
+        console.log("[getSessionUserId] 로그인 안된 상태로 접근함");
         return null;
     }
     const userId = session.userId;
@@ -71,6 +71,6 @@ export const getSessionUserId = async () => {
         console.log("재 로그인 필요");
         return null;
     }
-    console.log("==> getUserId userId:", userId);
+    // console.log("==> getUserId userId:", userId);
     return userId;
 };

@@ -114,12 +114,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             //XXX JWT가 생성되거나 업데이트될 때 호출되며, 반환하는 값은 암호화되어 쿠키에 저장됩니다.
             if (trigger !== undefined) {
                 console.log("\n====>> [jwt_callback] : trigger :", trigger);
+                console.log("       [jwt_callback] : token :", token);
                 console.log("       [jwt_callback] : account :", account);
                 console.log("       [jwt_callback] : session :", session);
                 console.log("       [jwt_callback] : profile :", profile);
                 console.log("       [jwt_callback] : user :", user); //!!! XXX 추가한것.
             }
-            console.log("\n====>> [jwt_callback] : token :", token);
 
             // if (token.expires_at && Date.now() / 1000 >= Number(token.expires_at)) {
             //     // await updateOauthToken(token);

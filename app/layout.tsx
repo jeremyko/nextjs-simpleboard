@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -7,6 +6,8 @@ import Footer from "@/components/Footer/Footer";
 import HeaderNav from "@/components/HeaderNav/HeaderNav";
 import SessionWatcher from "@/components/SessionWatcher/SessionWatcher";
 import { SessionProvider } from "next-auth/react";
+// import { Nanum_Gothic } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
 config.autoAddCss = false;
 
@@ -19,6 +20,7 @@ const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
     subsets: ["latin"],
 });
+// export const nanumGothic = Nanum_Gothic({weight:'400', subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "simple board",
@@ -33,13 +35,14 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between `}>
-                {/* <SessionProvider> */}
+                {/* <body className={`${nanumGothic.className} antialiased flex flex-col justify-between `} > */}
+                <SessionProvider>
                     {/* <SessionWatcher /> */}
                     <HeaderNav /> {/* components에서 관리  */}
                     {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
                     <main className="pt-14"> {children} </main>
                     <Footer /> {/* components에서 관리  */}
-                {/* </SessionProvider> */}
+                </SessionProvider>
             </body>
         </html>
     );
