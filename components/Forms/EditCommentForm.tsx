@@ -35,6 +35,11 @@ export default function EditCommentForm({
     );
     const [state, formAction] = useActionState(updateCommentWithParams, initialState);
 
+    function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
+        setIsEditing(false);
+        e.preventDefault(); // Form submission canceled because the form is not connected 경고 방지
+    }
+
     return (
         <form action={formAction}>
             <div className="relative mt-2 rounded-md ">
@@ -53,7 +58,7 @@ export default function EditCommentForm({
                 <div className="flex flex-row justify-between mt-4">
                     <Button
                         className=" px-4 py-2 hover:bg-blue-700 rounded-sm"
-                        onClick={() => setIsEditing(false)} 
+                        onClick={onCancel} 
                     >
                         취소
                     </Button>
