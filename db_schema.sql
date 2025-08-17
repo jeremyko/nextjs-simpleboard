@@ -24,15 +24,19 @@ CREATE TABLE public.categories (
 	CONSTRAINT categories_pkey PRIMARY KEY (category_id)
 );
 
+
 CREATE TABLE public."comments" (
 	comment_id int4 DEFAULT nextval('comment_id_seq'::regclass) NOT NULL,
 	article_id int8 NOT NULL,
 	"comment" text NOT NULL,
 	comment_user_id uuid NOT NULL,
+	created timestamptz DEFAULT now() NULL,
+	p_comment_id int4 NULL,
 	CONSTRAINT comments_pkey PRIMARY KEY (comment_id),
 	CONSTRAINT comments_article_id_fkey FOREIGN KEY (article_id) REFERENCES public.articles(article_id)
 );
 CREATE INDEX comments_article_id_idx ON public.comments USING btree (article_id);
+CREATE INDEX comments_p_comment_id_idx ON public.comments USING btree (p_comment_id);
 
 CREATE TABLE public.users (
 	user_id uuid NOT NULL,

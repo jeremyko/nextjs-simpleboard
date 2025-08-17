@@ -20,26 +20,28 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import ReplyCommentForm from "../Forms/ReplyCommentForm";
 
 // Comment 이건 이미 nextjs 가 사용중인 이름이라서 에러발생됨
 export default function OneCommentData({
-    userId,
+    currUserId,
     comment,
     isMine,
     currentPostId,
     currentPage,
     searchQuery,
 }: {
-    userId?: string | null;
+    currUserId?: string | null;
     comment: OneComment;
     isMine: boolean;
     currentPostId: number;
     currentPage: number;
     searchQuery: string;
 }) {
-    // console.log("OneCommentData : userId=>", userId);
+    // console.log("OneCommentData : currUserId=>", currUserId); 
     const [isOpen, setIsOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(false); //TODO 리렌더링 발생됨
+    const [isReplying, setIsReplying] = useState(false); // 대댓글 작성 중 여부 TODO 리렌더링 문제
     const deleteCommentWithParams = deleteComment.bind(
         null,
         comment.comment_user_id,
@@ -60,10 +62,19 @@ export default function OneCommentData({
     //         setIsLoggedIn(true);
     //     }
     // }, [status]);
+    const depthPixel = (10 * comment.depth).toString();
+    // console.log("depthPixel=>", depthPixel);
+    // console.log(`ml-[${depthPixel}px] ==>`, comment.comment);
 
     return (
         //TODO : 시간정보 표시. 10분전...
-        <>
+        <div
+            className={
+                comment.depth == 1
+                    ? "border-t-2  border-zinc-300 mt-6"
+                    : `ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300`
+            }
+        >
             <div className="flex flex-row justify-between items-center gap-2 mt-4 mb-4 font-sm">
                 <div className="flex flex-row items-center gap-2 mb-4">
                     <Avatar className="h-10 w-10">
@@ -108,15 +119,17 @@ export default function OneCommentData({
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild className="w-full">
                                             {/* 바깥에서 보이는 삭제 버튼 */}
-                                            <Button className="px-4 py-2 hover:bg-blue-700 rounded-sm">삭제</Button>
+                                            <Button className="px-4 py-2 hover:bg-blue-700 rounded-sm">
+                                                삭제
+                                            </Button>
                                             {/* <Button variant="destructive"> 삭제 </Button> */}
                                         </AlertDialogTrigger>
                                         <AlertDialogContent>
                                             <AlertDialogHeader>
                                                 <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete your
-                                                    article.
+                                                    This action cannot be undone. This will permanently delete
+                                                    your article.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter className="flex justify-end items-center gap-8">
@@ -147,15 +160,21 @@ export default function OneCommentData({
                     </div>
                 )}
             </div>
-
+            {/* 댓글 본문 -------------------------------------------------- */}
             {/* 수정하는 경우 구분해서 .. */}
-            {!isEditing && <p className=""> {comment.comment} </p>}
-
+            {/* {!isEditing && <p className=""> {"@"+comment.reply_to+ " " + comment.comment} </p>} */}
+            {!isEditing && (
+                <p className="">
+                    <span className="text-blue-700 font-bold">{"@" + comment.reply_to + " "}</span>
+                    {comment.comment}
+                </p>
+            )}
+            <p> depth : {comment.depth} </p> {/* TEST */}
             {/* 수정하는 경우에만 보여준다 */}
             {/* 별도 component로 분리 : 입력할때마다 렌더링 발생 방지  */}
             {isEditing && (
                 <EditCommentForm
-                    userId={userId}
+                    currUserId={currUserId}
                     comment={comment}
                     currentPostId={currentPostId}
                     currentPage={currentPage}
@@ -163,14 +182,34 @@ export default function OneCommentData({
                     setIsEditing={setIsEditing}
                 ></EditCommentForm>
             )}
-
-            {userId && (
+            {/* TODO : currUserId */}
+            {isReplying && currUserId && (
+                <div className="w-full mt-6 mb-4 pl-4 ">
+                    <div className="pl-2  border-l-4 border-l-zinc-500">
+                        <ReplyCommentForm
+                            currUserId={currUserId}
+                            // commentUserId={comment.comment_user_id}
+                            currentPostId={currentPostId}
+                            commentId={comment.comment_id}
+                            commentUserName={comment.comment_user_name}
+                            currentPage={currentPage}
+                            searchQuery={searchQuery}
+                            setIsReplying={setIsReplying}
+                        />
+                    </div>
+                </div>
+            )}
+            {currUserId && !isReplying && (
                 <div className="flex flex-row justify-end items-center gap-2 mt-2 mb-1">
-                    <a href="#" className="block px-4 py-2 hover:text-cyan-600 rounded-sm">
+                    <a
+                        href="#"
+                        className="block px-4 py-2 hover:text-cyan-600 rounded-sm"
+                        onClick={() => setIsReplying(true)}
+                    >
                         댓글달기
                     </a>
                 </div>
             )}
-        </>
+        </div>
     );
 }

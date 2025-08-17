@@ -37,11 +37,15 @@ export type CategoryItem = {
 
 export type OneComment = {
     comment_id: number;
+    p_comment_id: number;
     article_id: number;
     comment: string;
     comment_user_id: string;
     comment_user_name: string;
     comment_user_image: string;
+    reply_to:string;
+    depth: number;
+    path:string;
     // created:
 };
 
@@ -142,17 +146,44 @@ export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
 export async function getComments(articleId: number): Promise<OneComment[]> {
     try {
         const data = await sql<OneComment[]>`
-        SELECT  A.COMMENT_ID, 
-                A.ARTICLE_ID, 
-                A.COMMENT,
-                A.COMMENT_USER_ID,
-                B.NAME AS COMMENT_USER_NAME,
-                B.IMAGE AS COMMENT_USER_IMAGE,
-                A.CREATED 
-        FROM    COMMENTS A ,
-                NEXT_AUTH.USERS B
-        WHERE   A.ARTICLE_ID = ${articleId}
-        AND     B.ID = A.COMMENT_USER_ID ; `;
+
+        WITH RECURSIVE COMMENT_TREE AS (
+            SELECT  A.COMMENT_ID, 
+                    A.ARTICLE_ID, 
+                    A.P_COMMENT_ID, 
+                    A.COMMENT_USER_ID, 
+                    A.COMMENT,
+                    B.NAME  AS COMMENT_USER_NAME,
+                    B.IMAGE AS COMMENT_USER_IMAGE,
+                    A.REPLY_TO,
+                    A.CREATED,
+                    1 AS DEPTH,
+                    CAST(COMMENT_ID AS TEXT) AS PATH
+            FROM    COMMENTS        A,
+                    NEXT_AUTH.USERS B
+            WHERE   A.ARTICLE_ID = ${articleId} 
+            AND     A.P_COMMENT_ID IS null
+            AND     B.ID = A.COMMENT_USER_ID 
+            UNION ALL
+            SELECT  C.COMMENT_ID, 
+                    C.ARTICLE_ID, 
+                    C.P_COMMENT_ID, 
+                    C.COMMENT_USER_ID, 
+                    C.COMMENT,
+                    D.NAME  AS COMMENT_USER_NAME,
+                    D.IMAGE AS COMMENT_USER_IMAGE,
+                    C.REPLY_TO,
+                    C.CREATED,
+                    CT.DEPTH + 1,
+                    CT.PATH || '>' || C.COMMENT_ID
+            FROM    COMMENTS        C ,
+                    COMMENT_TREE    CT,
+                    NEXT_AUTH.USERS D
+            WHERE   C.P_COMMENT_ID = CT.COMMENT_ID
+            AND     D.ID = C.COMMENT_USER_ID
+        )
+        SELECT * FROM COMMENT_TREE
+        ORDER BY PATH; `;
 
         return data;
     } catch (error) {

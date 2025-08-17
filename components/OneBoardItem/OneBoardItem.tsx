@@ -6,8 +6,10 @@ import { BoardItemById } from "@/app/libs/serverDb";
 
 // No SSR ==> CSR 처리 명시
 import dynamic from "next/dynamic";
-const Avatar = dynamic(() => import("../ui/avatar").then(mod => mod.Avatar), { ssr: false });
-const AvatarImage = dynamic(() => import("../ui/avatar").then(mod => mod.AvatarImage), { ssr: false });
+const Avatar = dynamic(() => import("../ui/avatar").then((mod) => mod.Avatar), { ssr: false });
+const AvatarImage = dynamic(() => import("../ui/avatar").then((mod) => mod.AvatarImage), {
+    ssr: false,
+});
 
 // 높이 조절 textarea 를 사용하려면 client에서만 가능하므로 별로도 만듬.
 // 서버 컴포넌트에서 이걸 사용하는 방식으로 구현
@@ -19,14 +21,16 @@ export default function OneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) {
     return (
         <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">
             <div className="flex flex-row justify-between items-center  ">
-                <p id="categoryName" className="font-light bg-gray-500 text-white  mb-2 pr-2 pl-2 rounded-sm ">
+                <p
+                    id="categoryName"
+                    className="font-light bg-gray-500 text-white  mb-2 pr-2 pl-2 rounded-sm "
+                >
                     {oneQnA.category_name}
                 </p>
             </div>
             <div className="flex flex-row items-center gap-2 mb-4">
                 <Avatar className="h-10 w-10">
-                    <AvatarImage src={oneQnA.user_image ?? undefined} 
-                                alt="" />
+                    <AvatarImage src={oneQnA.user_image ?? undefined} alt="" />
                 </Avatar>
                 <span className="text-base font-semibold">{oneQnA.user_name}</span>
             </div>

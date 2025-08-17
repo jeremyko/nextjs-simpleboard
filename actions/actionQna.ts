@@ -198,7 +198,9 @@ export async function updateQuestion(
             message: "Database Error: Failed to Update QnA.",
         };
     }
-    revalidatePath(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    revalidatePath(
+        `/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+    );
     redirect(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
 
@@ -229,6 +231,7 @@ export async function deleteQuestion(articleId: number, currentPage: number, pos
  */
 export async function createComment(
     userId: string, // 댓글 작성자 ID
+    currentPostUserName:string,
     currentPage: number,
     searchQuery: string,
     currentPostId: number,
@@ -262,15 +265,17 @@ export async function createComment(
 
     try {
         await sql` 
-        INSERT INTO comments (article_id, comment, comment_user_id) 
-        VALUES ( ${currentPostId}, ${content}, ${userId} )`;
+        INSERT INTO comments (article_id, comment, comment_user_id,reply_to) 
+        VALUES ( ${currentPostId}, ${content}, ${userId}, ${currentPostUserName} )`;
     } catch (error) {
         console.error(error);
         return {
             message: "Database Error: Failed to create QnA comment.",
         };
     }
-    revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    revalidatePath(
+        `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+    );
     redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
 
@@ -324,7 +329,9 @@ export async function updateComment(
             message: "Database Error: Failed to update QnA comment.",
         };
     }
-    revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    revalidatePath(
+        `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+    );
     redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
 
@@ -342,12 +349,73 @@ export async function deleteComment(
     const isLoggedInAndMine = await isAuthenticatedAndMine(commentUserId);
     if (!isLoggedInAndMine) {
         console.error("본인 댓글 아님");
-        revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
-        redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+        revalidatePath(
+            `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+        );
+        redirect(
+            `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+        );
         //XXX 위에서처럼 error 객체 리턴하면 안됨 .에러발생됨.
     }
 
     await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
+    revalidatePath(
+        `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+    );
+    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+}
+
+//////////////////////////////////////////////////////////////////////////////// comment
+/**
+ * QnA 게시글 대댓글 생성
+ */
+export async function createReply(
+    currUserId: string, // 댓글 작성자 ID
+    // commentUserId: string, // 응답할 댓글의 작성자
+    commentId: number, //응답할 comment id
+    commentUserName:string,
+    currentPage: number,
+    searchQuery: string,
+    currentPostId: number,
+    prevState: State,
+    formData: FormData,
+) {
+    // console.log("==> createReply called with formData:", formData);
+    const isIsAuthenticated = await checkIsAuthenticated();
+    if (!isIsAuthenticated) {
+        // console.error("로그인 안된 상태 ");
+        redirect("/api/auth/signin");
+    }
+
+    const validatedFields = CreateQnAComment.safeParse({
+        content: formData.get("content"),
+    });
+
+    if (!validatedFields.success) {
+        console.error("Validation failed:", validatedFields.error.flatten().fieldErrors);
+        const pretty = z.prettifyError(validatedFields.error);
+        console.error("Validation error details:", pretty);
+        const flattened = z.flattenError(validatedFields.error);
+        console.error("Flattened error details:", flattened);
+
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: prevState.message + "==> Missing Fields. Failed to Create Comment.",
+        };
+    }
+    const { content } = validatedFields.data;
+
+    console.log("p_comment_id :", commentId);
+    try {
+        await sql` 
+        INSERT INTO comments (article_id, p_comment_id, comment, comment_user_id,reply_to) 
+        VALUES ( ${currentPostId},  ${commentId}, ${content}, ${currUserId},${commentUserName} )`;
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "Database Error: Failed to create QnA reply.",
+        };
+    }
     revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
     redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }

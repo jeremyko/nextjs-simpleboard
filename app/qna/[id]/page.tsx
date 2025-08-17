@@ -53,7 +53,7 @@ export default async function Page(props: {
     const isLogged = await checkIsAuthenticated();
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
     const comments = await getComments(oneQnA.article_id);
-    // console.log("comments:", comments);
+    console.log("comments:", comments);
 
     return (
         <div className="max-w-3xl mx-auto min-h-screen ">
@@ -73,7 +73,8 @@ export default async function Page(props: {
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete your article.
+                                            This action cannot be undone. This will permanently delete your
+                                            article.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter className="flex justify-end items-center gap-8">
@@ -103,7 +104,8 @@ export default async function Page(props: {
                             총 {comments.length}개의 댓글
                         </h2>
                         <NewCommentForm
-                            userId={currUserId}
+                            currUserId={currUserId}
+                            currentPostUserName={oneQnA.user_name}
                             currentPostId={id}
                             currentPage={page}
                             searchQuery={searchQuery}
@@ -112,14 +114,15 @@ export default async function Page(props: {
                         {/* comments 목록 표시  */}
                         <section className="mt-2">
                             {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
-                            <ul className="divide divide-y divide-gray-400 ">
+                            {/* <ul className="divide divide-y divide-gray-400 "> */}
+                            <ul >
                                 {comments.map((comment) => (
                                     <li
                                         key={comment.comment_id.toString()}
                                         // className="pt-2 "
                                     >
                                         <OneCommentData
-                                            userId={currUserId}
+                                            currUserId={currUserId}
                                             comment={comment}
                                             isMine={currUserId === comment.comment_user_id}
                                             currentPostId={id}

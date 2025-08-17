@@ -9,14 +9,14 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "../ui/button";
 
 export default function EditCommentForm({
-    userId,
+    currUserId,
     comment,
     currentPostId,
     currentPage,
     searchQuery,
     setIsEditing,
 }: {
-    userId?: string | null;
+    currUserId?: string | null;
     comment: OneComment;
     currentPostId: number;
     currentPage: number;
@@ -28,7 +28,7 @@ export default function EditCommentForm({
     const initialState: CommentState = { message: null, errors: {} };
     const updateCommentWithParams = updateComment.bind(
         null,
-        userId ?? "",
+        currUserId ?? "",
         currentPage,
         searchQuery,
         currentPostId,
@@ -57,7 +57,11 @@ export default function EditCommentForm({
                     ></TextareaAutosize>
                 </div>
                 <div className="flex flex-row justify-end mt-4 gap-8">
-                    <Button variant="destructive" className=" px-4 py-2 hover:bg-blue-700 rounded-sm" onClick={onCancel}>
+                    <Button
+                        variant="destructive"
+                        className=" px-4 py-2 hover:bg-blue-700 rounded-sm"
+                        onClick={onCancel}
+                    >
                         취소
                     </Button>
                     <Button type="submit"> 저장 </Button>

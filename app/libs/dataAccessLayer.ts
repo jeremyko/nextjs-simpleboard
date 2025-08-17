@@ -14,7 +14,7 @@ export const checkIsAuthenticated = async () => {
     return false;
 };
 
-export const checkIsThisMine = async (postUserId:string) => {
+export const checkIsThisMine = async (postUserId: string) => {
     if (!postUserId) {
         return false;
     }
@@ -26,7 +26,7 @@ export const checkIsThisMine = async (postUserId:string) => {
     // console.log("*** checkIsThisMine: session", session);
     // console.log("*** userId (session) :", session.userId);
     // console.log("           (post   ) :", postUserId);
-    if(session.userId === postUserId) {
+    if (session.userId === postUserId) {
         // console.log("checkIsThisMine: true");
         return true;
     }
@@ -51,12 +51,12 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
     }
     // console.log("*** userId (session) :", session.userId);
     // console.log("           (post   ) :", postUserId);
-    if(session.userId === postUserId) {
+    if (session.userId === postUserId) {
         return true;
     }
     // console.log("본인의 게시물이 아님");
     return false;
-}
+};
 
 
 

@@ -1,37 +1,52 @@
 "use client";
 
-import { createComment, CommentState } from "@/actions/actionQna";
+import { createReply, CommentState } from "@/actions/actionQna";
 import { useActionState, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 
-export default function NewCommentForm({
-    currUserId,
-    currentPostUserName,
+export default function ReplyCommentForm({
+    currUserId, //현재 로그인한 사용자
+    // commentUserId, // 응답할 댓글의 작성자
     currentPostId,
+    commentId, // 응답을 할 댓글의 id
+    commentUserName,
     currentPage,
     searchQuery,
+    setIsReplying,
 }: {
     currUserId: string | null;
-    currentPostUserName: string | null;
+    // commentUserId: string;
     currentPostId: number;
+    commentId: number;
+    commentUserName:string;
     currentPage: number;
     searchQuery: string;
+    setIsReplying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    // console.log("[NewCommentForm] currentPostId:", currentPostId, " / currUserId:", currUserId);
+    console.log(
+        "[ReplyCommentForm] currentPostId:",
+        currentPostId,
+        " / currUserId:",
+        currUserId,
+        " / commentId: ",
+        commentId,
+    );
     const initialState: CommentState = { message: null, errors: {} };
-    const createCommentWithParams = createComment.bind(
+    const createReplyWithParams = createReply.bind(
         null,
         currUserId ?? "",
-        currentPostUserName ?? "",
+        commentId,
+        // commentUserId, // 응답할 댓글의 작성자
+        commentUserName,
         currentPage,
         searchQuery,
         currentPostId,
     );
-    const [state, formAction] = useActionState(createCommentWithParams, initialState);
+    const [state, formAction] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
-    const [isWriting, setIsWriting] = useState(false);
+    // const [isWriting, setIsWriting] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement | null>(null);
     // const [textAreaRows, setTextAreaRows] = useState(10);
 
@@ -39,21 +54,11 @@ export default function NewCommentForm({
         if (!currUserId) {
             redirect("/api/auth/signin");
         }
-        // 버튼을 표시하고, cancel 을 눌러야만 재초기화되게
-        // stackoverflow 댓글 처럼 구현
-        setIsWriting(true);
-
-        // textarea row를 3정도 변경처리,
-        // if (inputRef.current) {
-        //     console.log("inputRef.current.value.length=>", inputRef.current.value.length);
-        //     inputRef.current.setSelectionRange(0, 0);
-        // }
-        // setContentState("\n\n\n");
     }
 
-    function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
+    function cancelReply(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
-        setIsWriting(false);
+        setIsReplying(false);
         e.preventDefault();
     }
 
@@ -70,7 +75,9 @@ export default function NewCommentForm({
                         id="content"
                         name="content"
                         // rows={textAreaRows}
-                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
+                        className={`peer block w-full rounded-md py-2 pl-4 text-sm border 
+                            border-zinc-400 outline-0 placeholder:text-gray-500 
+                            focus:ring-1 focus:ring-blue-400`}
                         aria-describedby="qna-comments-error"
                         placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : ""}
                         readOnly={currUserId ? false : true}
@@ -82,15 +89,15 @@ export default function NewCommentForm({
                 </div>
             </div>
 
-            {currUserId && isWriting && (
-                <div className="flex justify-end items-center gap-4">
+            {currUserId && (
+                <div className="flex justify-end items-center gap-4 ">
                     <div className="mt-2 pt-2 pb-2 ">
-                        <Button variant="destructive" onClick={cancelComment}>
+                        <Button variant="destructive" onClick={cancelReply}>
                             작성취소
                         </Button>
                     </div>
                     <div className="mt-2 pt-2 pb-2 ">
-                        <Button type="submit"> 저장 </Button>
+                        <Button type="submit"> 의견 남기기 </Button>
                     </div>
                 </div>
             )}
