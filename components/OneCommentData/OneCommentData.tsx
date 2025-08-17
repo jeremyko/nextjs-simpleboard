@@ -76,7 +76,7 @@ export default function OneCommentData({
             className={
                 comment.depth == 1
                     ? "border-t-2  border-zinc-300 mt-6"
-                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300 pb-6" 
+                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300 pb-4" 
             }
         >
             <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm pt-4 ">
