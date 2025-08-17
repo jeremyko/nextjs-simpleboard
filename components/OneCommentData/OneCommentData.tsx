@@ -182,10 +182,11 @@ export default function OneCommentData({
                     setIsEditing={setIsEditing}
                 ></EditCommentForm>
             )}
-            {/* TODO : currUserId */}
+
+            {/* 대댓글 작성 ------------------------------------------------ */}
             {isReplying && currUserId && (
-                <div className="w-full mt-6 mb-4 pl-4 ">
-                    <div className="pl-2  border-l-4 border-l-zinc-500">
+                <div className="w-full mt-6 mb-4 ">
+                    <div className="ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300">
                         <ReplyCommentForm
                             currUserId={currUserId}
                             // commentUserId={comment.comment_user_id}
