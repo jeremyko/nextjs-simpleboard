@@ -63,7 +63,7 @@ export default async function Page(props: {
                     <OneBoardItem oneQnA={oneQnA} />
 
                     {isLoggedInAndMine && (
-                        <div className="mt-6 mb-6 flex justify-between items-center gap-4">
+                        <div className="mt-6 mb-6 flex justify-end items-center gap-8">
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     {/* 바깥에서 보이는 삭제 버튼 */}
@@ -76,7 +76,7 @@ export default async function Page(props: {
                                             This action cannot be undone. This will permanently delete your article.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
-                                    <AlertDialogFooter>
+                                    <AlertDialogFooter className="flex justify-end items-center gap-8">
                                         <AlertDialogCancel className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                             취소
                                         </AlertDialogCancel>
@@ -112,7 +112,7 @@ export default async function Page(props: {
                         {/* comments 목록 표시  */}
                         <section className="mt-2">
                             {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
-                            <ul className="divide divide-y divide-gray-400 " >
+                            <ul className="divide divide-y divide-gray-400 ">
                                 {comments.map((comment) => (
                                     <li
                                         key={comment.comment_id.toString()}

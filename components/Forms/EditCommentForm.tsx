@@ -23,6 +23,7 @@ export default function EditCommentForm({
     searchQuery: string;
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+    // console.log("EditCommentForm");
     const [contentState, setContentState] = useState(comment.comment);
     const initialState: CommentState = { message: null, errors: {} };
     const updateCommentWithParams = updateComment.bind(
@@ -55,8 +56,8 @@ export default function EditCommentForm({
                         required
                     ></TextareaAutosize>
                 </div>
-                <div className="flex flex-row justify-between mt-4">
-                    <Button className=" px-4 py-2 hover:bg-blue-700 rounded-sm" onClick={onCancel}>
+                <div className="flex flex-row justify-end mt-4 gap-8">
+                    <Button variant="destructive" className=" px-4 py-2 hover:bg-blue-700 rounded-sm" onClick={onCancel}>
                         취소
                     </Button>
                     <Button type="submit"> 저장 </Button>

@@ -137,9 +137,9 @@ export default function EditQuestionForm({
                         </div>
 
                         {/* --------------------- */}
-                        <div className="mt-6 pt-2 pb-2 flex justify-between items-center gap-4">
+                        <div className="mt-6 pt-2 pb-2 flex justify-end items-center gap-8">
                             <Link href={`/qna/${oneQnA.article_id}?page=${currentPage}&query=${searchQuery}`}>
-                                <Button> 취소</Button>
+                                <Button variant="destructive"> 취소</Button>
                             </Link>
 
                             <Button type="submit"> 저장 </Button>

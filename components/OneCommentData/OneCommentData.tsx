@@ -67,9 +67,7 @@ export default function OneCommentData({
             <div className="flex flex-row justify-between items-center gap-2 mt-4 mb-4 font-sm">
                 <div className="flex flex-row items-center gap-2 mb-4">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src={comment.comment_user_image ?? undefined} 
-                        alt=""
-                        />
+                        <AvatarImage src={comment.comment_user_image ?? undefined} alt="" />
                     </Avatar>
                     <span className="text-base font-semibold">{comment.comment_user_name}</span>
                 </div>
@@ -106,7 +104,7 @@ export default function OneCommentData({
                                     수정
                                 </Button>
 
-                                <div className="w-full flex justify-between items-center gap-4">
+                                <div className="w-full ">
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild className="w-full">
                                             {/* 바깥에서 보이는 삭제 버튼 */}
@@ -121,7 +119,7 @@ export default function OneCommentData({
                                                     article.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
-                                            <AlertDialogFooter>
+                                            <AlertDialogFooter className="flex justify-end items-center gap-8">
                                                 <AlertDialogCancel
                                                     onClick={() => setIsOpen(false)}
                                                     className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
