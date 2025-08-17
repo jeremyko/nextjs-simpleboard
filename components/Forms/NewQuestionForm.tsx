@@ -43,7 +43,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                 <select
                                     id="categoryId"
                                     name="categoryId"
-                                    className="peer block w-full cursor-pointer rounded-md py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+                                    className="peer block w-full cursor-pointer rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
                                     defaultValue=""
                                     aria-describedby="qna-category-error"
                                     required
@@ -83,7 +83,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                         type="text"
                                         id="title"
                                         name="title"
-                                        className="peer block w-full rounded-md  py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+                                        className="peer block w-full rounded-md  py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
                                         placeholder="제목을 입력하세요"
                                         aria-describedby="qna-title-error"
                                         required
@@ -113,7 +113,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                         id="content"
                                         name="content"
                                         rows={10}
-                                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+                                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
                                         aria-describedby="qna-content-error"
                                         placeholder="본문을 입력하세요"
                                         required

@@ -63,8 +63,8 @@ export default function OneCommentData({
 
     return (
         //TODO : 시간정보 표시. 10분전...
-        <div>
-            <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm">
+        <>
+            <div className="flex flex-row justify-between items-center gap-2 mt-4 mb-4 font-sm">
                 <div className="flex flex-row items-center gap-2 mb-4">
                     <Avatar className="h-10 w-10">
                         <AvatarImage src={comment.comment_user_image ?? undefined} 
@@ -173,6 +173,6 @@ export default function OneCommentData({
                     </a>
                 </div>
             )}
-        </div>
+        </>
     );
 }

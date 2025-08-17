@@ -223,9 +223,9 @@ export async function deleteQuestion(articleId: number, currentPage: number, pos
     redirect(`/qna?page=${currentPage}`);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////// comment
 /**
- * QnA 게시글 댓글 생성하는 서버 액션 .
+ * QnA 게시글 댓글 생성
  */
 export async function createComment(
     userId: string, // 댓글 작성자 ID
@@ -240,9 +240,6 @@ export async function createComment(
     if (!isIsAuthenticated) {
         // console.error("로그인 안된 상태 ");
         redirect("/api/auth/signin");
-        // return {
-        //     message: "로그인 후 다시 시도하세요.",
-        // };
     }
 
     const validatedFields = CreateQnAComment.safeParse({
@@ -319,7 +316,8 @@ export async function updateComment(
         await sql` 
         UPDATE comments 
         SET COMMENT = ${content}
-        WHERE comment_id= ${currentCommentId} `;
+        WHERE comment_id= ${currentCommentId} 
+        AND comment_user_id=${userId}`;
     } catch (error) {
         console.error(error);
         return {

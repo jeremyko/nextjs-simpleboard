@@ -48,7 +48,7 @@ export default function EditCommentForm({
                         id="content"
                         name="content"
                         rows={1}
-                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
                         aria-describedby="qna-comments-error"
                         value={contentState}
                         onChange={(e) => setContentState(e.target.value)}
@@ -56,10 +56,7 @@ export default function EditCommentForm({
                     ></TextareaAutosize>
                 </div>
                 <div className="flex flex-row justify-between mt-4">
-                    <Button
-                        className=" px-4 py-2 hover:bg-blue-700 rounded-sm"
-                        onClick={onCancel} 
-                    >
+                    <Button className=" px-4 py-2 hover:bg-blue-700 rounded-sm" onClick={onCancel}>
                         취소
                     </Button>
                     <Button type="submit"> 저장 </Button>

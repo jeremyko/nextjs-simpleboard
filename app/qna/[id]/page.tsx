@@ -116,7 +116,7 @@ export default async function Page(props: {
                                 {comments.map((comment) => (
                                     <li
                                         key={comment.comment_id.toString()}
-                                        className="mt-2  pt-4 "
+                                        // className="pt-2 "
                                     >
                                         <OneCommentData
                                             userId={currUserId}

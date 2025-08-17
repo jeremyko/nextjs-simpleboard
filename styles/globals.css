@@ -67,9 +67,9 @@ textarea {
     resize: none;
 }
 
-textarea:focus {
+/* textarea:focus {
     outline: none;
-}
+} */
 
 :root {
     --radius: 0.625rem;

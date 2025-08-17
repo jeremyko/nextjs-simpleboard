@@ -46,7 +46,7 @@ export default function NewCommentForm({
                         id="content"
                         name="content"
                         rows={1}
-                        className="peer block w-full rounded-md py-2 pl-4 text-sm outline-1 placeholder:text-gray-500"
+                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
                         // className="block w-full resize-none rounded-md border border-gray-500  text-base shadow-sm  "
                         aria-describedby="qna-comments-error"
                         placeholder={!userId ? "댓글을 쓰려면 로그인이 필요합니다" : ""}
