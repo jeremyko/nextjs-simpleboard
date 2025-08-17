@@ -76,7 +76,7 @@ export default function OneCommentData({
             className={
                 comment.depth == 1
                     ? "border-t-2  border-zinc-300 mt-6"
-                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300" 
+                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300 pb-6" 
             }
         >
             <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm pt-4 ">
@@ -168,7 +168,7 @@ export default function OneCommentData({
             {/* 수정하는 경우 구분해서 .. */}
             {/* {!isEditing && <p className=""> {"@"+comment.reply_to+ " " + comment.comment} </p>} */}
             {!isEditing && (
-                <p className="">
+                <p className="pb-4">
                     <span className="text-blue-700 font-bold">{"@" + comment.reply_to + " "}</span>
                     {comment.comment}
                 </p>
@@ -206,7 +206,7 @@ export default function OneCommentData({
                 </div>
             )}
             {currUserId && !isReplying && (
-                <div className="flex flex-row justify-start items-center gap-2 mt-6 mb-1 pb-2">
+                <div className="flex flex-row justify-start items-center gap-2 pt-6 ">
                     <a
                         href="#"
                         className="block p-1 hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
