@@ -24,6 +24,7 @@ import ReplyCommentForm from "../Forms/ReplyCommentForm";
 
 // Comment 이건 이미 nextjs 가 사용중인 이름이라서 에러발생됨
 export default function OneCommentData({
+    // index,
     currUserId,
     comment,
     isMine,
@@ -31,6 +32,7 @@ export default function OneCommentData({
     currentPage,
     searchQuery,
 }: {
+    // index:number;
     currUserId?: string | null;
     comment: OneComment;
     isMine: boolean;
@@ -62,7 +64,9 @@ export default function OneCommentData({
     //         setIsLoggedIn(true);
     //     }
     // }, [status]);
-    const depthPixel = (10 * comment.depth).toString();
+
+    // const depthPixel = (10 * comment.depth).toString();
+    // console.log("index=>", index);
     // console.log("depthPixel=>", depthPixel);
     // console.log(`ml-[${depthPixel}px] ==>`, comment.comment);
 
@@ -72,10 +76,10 @@ export default function OneCommentData({
             className={
                 comment.depth == 1
                     ? "border-t-2  border-zinc-300 mt-6"
-                    : `ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300`
+                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300" 
             }
         >
-            <div className="flex flex-row justify-between items-center gap-2 mt-4 mb-4 font-sm">
+            <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm pt-4 ">
                 <div className="flex flex-row items-center gap-2 mb-4">
                     <Avatar className="h-10 w-10">
                         <AvatarImage src={comment.comment_user_image ?? undefined} alt="" />
@@ -169,7 +173,8 @@ export default function OneCommentData({
                     {comment.comment}
                 </p>
             )}
-            <p> depth : {comment.depth} </p> {/* TEST */}
+            {/* <p> depth : {comment.depth} </p>  */}
+
             {/* 수정하는 경우에만 보여준다 */}
             {/* 별도 component로 분리 : 입력할때마다 렌더링 발생 방지  */}
             {isEditing && (
@@ -201,13 +206,13 @@ export default function OneCommentData({
                 </div>
             )}
             {currUserId && !isReplying && (
-                <div className="flex flex-row justify-end items-center gap-2 mt-2 mb-1">
+                <div className="flex flex-row justify-start items-center gap-2 mt-6 mb-1 pb-2">
                     <a
                         href="#"
-                        className="block px-4 py-2 hover:text-cyan-600 rounded-sm"
+                        className="block p-1 hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
                         onClick={() => setIsReplying(true)}
                     >
-                        댓글달기
+                        댓글 쓰기
                     </a>
                 </div>
             )}

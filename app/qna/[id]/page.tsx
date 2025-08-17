@@ -116,12 +116,13 @@ export default async function Page(props: {
                             {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
                             {/* <ul className="divide divide-y divide-gray-400 "> */}
                             <ul >
-                                {comments.map((comment) => (
+                                {comments.map((comment,index) => (
                                     <li
                                         key={comment.comment_id.toString()}
                                         // className="pt-2 "
                                     >
                                         <OneCommentData
+                                            // index={index}
                                             currUserId={currUserId}
                                             comment={comment}
                                             isMine={currUserId === comment.comment_user_id}
