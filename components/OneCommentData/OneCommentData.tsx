@@ -29,7 +29,8 @@ export default function OneCommentData({
     // index,
     currUserId,
     comment,
-    isMine,
+    isPostMine,
+    isCommentMine,
     currentPostId,
     currentPage,
     searchQuery,
@@ -37,12 +38,16 @@ export default function OneCommentData({
     // index:number;
     currUserId?: string | null;
     comment: OneComment;
-    isMine: boolean;
+    isPostMine: boolean;
+    isCommentMine: boolean;
     currentPostId: number;
     currentPage: number;
     searchQuery: string;
 }) {
-    // console.log("OneCommentData : currUserId=>", currUserId); 
+    // console.log("OneCommentData : currUserId=>", currUserId);
+    // console.log("OneCommentData : comment.comment_user_id=>", comment.comment_user_id);
+    // console.log("OneCommentData : isPostMine=>", isPostMine);
+    // console.log("OneCommentData : isCommentMine=>", isCommentMine);
     const [isOpen, setIsOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false); //TODO 리렌더링 발생됨
     const [isReplying, setIsReplying] = useState(false); // 대댓글 작성 중 여부 TODO 리렌더링 문제
@@ -102,8 +107,7 @@ export default function OneCommentData({
                     </Avatar>
                     <span className="text-base font-semibold">{comment.comment_user_name}</span>
 
-                    {/* reply 인 경우에만 작성자 표시 */}
-                    {isMine && comment.depth != 1 && (
+                    {isPostMine && (
                         <>
                             -
                             <span className="bg-gray-500 text-white  p-1 rounded-sm font-extralight ">
@@ -114,7 +118,7 @@ export default function OneCommentData({
                     )}
                 </div>
                 {/* 내가 작성한것일때만 수정,삭제 기능 활성화 */}
-                {isMine && (
+                {isCommentMine && (
                     <div>
                         <div className="flex flex-row justify-end items-center gap-2 mb-4">
                             {/* <Link href="/" className="text-xl font-bold hover:underline mr-4"> */}

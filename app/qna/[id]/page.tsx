@@ -115,8 +115,8 @@ export default async function Page(props: {
                         <section className="mt-2">
                             {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
                             {/* <ul className="divide divide-y divide-gray-400 "> */}
-                            <ul >
-                                {comments.map((comment,index) => (
+                            <ul>
+                                {comments.map((comment, index) => (
                                     <li
                                         key={comment.comment_id.toString()}
                                         // className="pt-2 "
@@ -124,8 +124,10 @@ export default async function Page(props: {
                                         <OneCommentData
                                             // index={index}
                                             currUserId={currUserId}
+                                            // currPostUserId={oneQnA.user_id}
                                             comment={comment}
-                                            isMine={currUserId === comment.comment_user_id}
+                                            isPostMine={oneQnA.user_id === comment.comment_user_id}
+                                            isCommentMine={currUserId === comment.comment_user_id}
                                             currentPostId={id}
                                             currentPage={page}
                                             searchQuery={searchQuery}
