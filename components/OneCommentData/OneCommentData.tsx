@@ -1,5 +1,6 @@
 "use client";
 
+// comment, reply 같이 사용중임.
 // comment 하나 당 메뉴버튼을 동작하기 위해 별도 component 로 만듬
 import { OneComment } from "@/app/libs/serverDb";
 import { Avatar, AvatarImage } from "../ui/avatar";
@@ -76,7 +77,7 @@ export default function OneCommentData({
             className={
                 comment.depth == 1
                     ? "border-t-2  border-zinc-300 mt-6"
-                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300 pb-4" 
+                    : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300 pb-4"
             }
         >
             <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm pt-4 ">
@@ -85,6 +86,17 @@ export default function OneCommentData({
                         <AvatarImage src={comment.comment_user_image ?? undefined} alt="" />
                     </Avatar>
                     <span className="text-base font-semibold">{comment.comment_user_name}</span>
+
+                    {/* reply 인 경우에만 작성자 표시 */}
+                    {isMine && comment.depth != 1 && (
+                        <>
+                            -
+                            <span className="bg-gray-500 text-white  p-1 rounded-sm font-extralight ">
+                                {" "}
+                                작성자
+                            </span>
+                        </>
+                    )}
                 </div>
                 {/* 내가 작성한것일때만 수정,삭제 기능 활성화 */}
                 {isMine && (
@@ -174,7 +186,6 @@ export default function OneCommentData({
                 </p>
             )}
             {/* <p> depth : {comment.depth} </p>  */}
-
             {/* 수정하는 경우에만 보여준다 */}
             {/* 별도 component로 분리 : 입력할때마다 렌더링 발생 방지  */}
             {isEditing && (
@@ -187,8 +198,8 @@ export default function OneCommentData({
                     setIsEditing={setIsEditing}
                 ></EditCommentForm>
             )}
-
             {/* 대댓글 작성 ------------------------------------------------ */}
+            {/* depth 2 제한 (댓글 + 대댓글까지만) */}
             {isReplying && currUserId && (
                 <div className="w-full mt-6 mb-4 ">
                     <div className="ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300">
