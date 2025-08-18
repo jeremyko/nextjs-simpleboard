@@ -1,10 +1,10 @@
 "use client";
 
 import { createReply, CommentState } from "@/actions/actionQna";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export default function ReplyCommentForm({
     currUserId, //현재 로그인한 사용자
@@ -25,15 +25,15 @@ export default function ReplyCommentForm({
     searchQuery: string;
     setIsReplying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    console.log(
-        "[ReplyCommentForm] currentPostId:",
-        currentPostId,
-        " / currUserId:",
-        currUserId,
-        " / commentId: ",
-        commentId,
-    );
-    const initialState: CommentState = { message: null, errors: {} };
+    // console.log(
+    //     "[ReplyCommentForm] currentPostId:",
+    //     currentPostId,
+    //     " / currUserId:",
+    //     currUserId,
+    //     " / commentId: ",
+    //     commentId,
+    // );
+    const initialState: CommentState = { message: null, errors: {}, redirectTo:"" };
     const createReplyWithParams = createReply.bind(
         null,
         currUserId ?? "",
@@ -44,7 +44,7 @@ export default function ReplyCommentForm({
         searchQuery,
         currentPostId,
     );
-    const [state, formAction] = useActionState(createReplyWithParams, initialState);
+    const [replyState, formAction] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
     // const [isWriting, setIsWriting] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -61,6 +61,15 @@ export default function ReplyCommentForm({
         setIsReplying(false);
         e.preventDefault();
     }
+
+    const router = useRouter();
+    useEffect(() => {
+        if (replyState?.redirectTo) {
+            router.push(replyState.redirectTo);
+            setContentState("");
+            setIsReplying(false);
+        }
+    }, [replyState, router]);
 
     return (
         // <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">

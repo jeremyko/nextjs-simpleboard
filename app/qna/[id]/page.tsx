@@ -53,7 +53,7 @@ export default async function Page(props: {
     const isLogged = await checkIsAuthenticated();
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
     const comments = await getComments(oneQnA.article_id);
-    console.log("comments:", comments);
+    // console.log("comments:", comments);
 
     return (
         <div className="max-w-3xl mx-auto min-h-screen ">

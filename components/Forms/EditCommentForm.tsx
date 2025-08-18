@@ -4,9 +4,10 @@
 
 import { CommentState, updateComment } from "@/actions/actionQna";
 import { OneComment } from "@/app/libs/serverDb";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 export default function EditCommentForm({
     currUserId,
@@ -34,12 +35,20 @@ export default function EditCommentForm({
         currentPostId,
         comment.comment_id,
     );
-    const [state, formAction] = useActionState(updateCommentWithParams, initialState);
+    const [commentState, formAction] = useActionState(updateCommentWithParams, initialState);
+    const router = useRouter();
 
     function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
         setIsEditing(false);
         e.preventDefault(); // Form submission canceled because the form is not connected 경고 방지
     }
+
+    useEffect(() => {
+        if (commentState?.redirectTo) {
+            router.push(commentState.redirectTo);
+            setIsEditing(false);
+        }
+    }, [commentState, router]);
 
     return (
         <form action={formAction}>

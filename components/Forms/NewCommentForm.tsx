@@ -1,10 +1,11 @@
 "use client";
 
 import { createComment, CommentState } from "@/actions/actionQna";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function NewCommentForm({
     currUserId,
@@ -20,7 +21,7 @@ export default function NewCommentForm({
     searchQuery: string;
 }) {
     // console.log("[NewCommentForm] currentPostId:", currentPostId, " / currUserId:", currUserId);
-    const initialState: CommentState = { message: null, errors: {} };
+    const initialState: CommentState = { message: null, errors: {} , redirectTo:""};
     const createCommentWithParams = createComment.bind(
         null,
         currUserId ?? "",
@@ -29,11 +30,12 @@ export default function NewCommentForm({
         searchQuery,
         currentPostId,
     );
-    const [state, formAction] = useActionState(createCommentWithParams, initialState);
+    const [commentState, formAction] = useActionState(createCommentWithParams, initialState);
     const [contentState, setContentState] = useState("");
     const [isWriting, setIsWriting] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement | null>(null);
     // const [textAreaRows, setTextAreaRows] = useState(10);
+    const router = useRouter();
 
     function onClickTextArea() {
         if (!currUserId) {
@@ -51,11 +53,29 @@ export default function NewCommentForm({
         // setContentState("\n\n\n");
     }
 
+
     function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsWriting(false);
         e.preventDefault();
     }
+
+    // redirect 되어 화면 갱신되는 현상을 막기 위해 
+    // async function handleSubmit(formData: FormData) {
+    //     const result = await formAction(formData);
+    //     if (result?.redirectTo) {
+    //         router.push(result.redirectTo); // soft navigation → 깜박임 없음
+    //     }
+    // }
+
+    useEffect(() => {
+        if (commentState?.redirectTo) {
+            router.push(commentState.redirectTo);
+            setContentState("");
+            setIsWriting(false);
+        }
+    }, [commentState, router]);
+
 
     return (
         // <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">
@@ -69,7 +89,7 @@ export default function NewCommentForm({
                         ref={inputRef}
                         id="content"
                         name="content"
-                        // rows={textAreaRows}
+                        rows={1}
                         className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
                         aria-describedby="qna-comments-error"
                         placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : "댓글을 입력하세요"}
@@ -90,7 +110,7 @@ export default function NewCommentForm({
                         </Button>
                     </div>
                     <div className="mt-2 pt-2 pb-2 ">
-                        <Button type="submit"> 저장 </Button>
+                        <Button type="submit" > 저장 </Button>
                     </div>
                 </div>
             )}

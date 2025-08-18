@@ -26,6 +26,7 @@ export type CommentState = {
         content?: string[];
     };
     message?: string | null;
+    redirectTo?:string| null;
 };
 //XXX 위 State 와 아래 Schema 의 필드들은 일치해야 함
 //    왜냐하면, createQuestion 함수에서 State를 검증할 때,
@@ -181,9 +182,10 @@ export async function updateQuestion(
     const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
-        return {
-            message: "로그인 후 다시 시도하세요. 본인의 게시물만 수정할 수 있습니다",
-        };
+        redirect("/api/auth/signin");
+        // return {
+        //     message: "로그인 후 다시 시도하세요. 본인의 게시물만 수정할 수 있습니다",
+        // };
     }
 
     try {
@@ -223,6 +225,9 @@ export async function deleteQuestion(articleId: number, currentPage: number, pos
     await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
     revalidatePath(`/qna?page=${currentPage}`);
     redirect(`/qna?page=${currentPage}`);
+    // return {
+    //     redirectTo: `/qna?page=${currentPage}`
+    // };
 }
 
 //////////////////////////////////////////////////////////////////////////////// comment
@@ -235,7 +240,7 @@ export async function createComment(
     currentPage: number,
     searchQuery: string,
     currentPostId: number,
-    prevState: State,
+    prevState: CommentState,
     formData: FormData,
 ) {
     console.log("==> createComment called with formData:", formData);
@@ -273,10 +278,10 @@ export async function createComment(
             message: "Database Error: Failed to create QnA comment.",
         };
     }
-    revalidatePath(
-        `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-    );
-    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+
+    return {
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -289,7 +294,7 @@ export async function updateComment(
     searchQuery: string,
     currentPostId: number,
     currentCommentId: number,
-    prevState: State,
+    prevState: CommentState,
     formData: FormData,
 ) {
     // console.log("==> updateComment called with formData:", formData);
@@ -329,10 +334,9 @@ export async function updateComment(
             message: "Database Error: Failed to update QnA comment.",
         };
     }
-    revalidatePath(
-        `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-    );
-    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    return {
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`
+    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -349,20 +353,20 @@ export async function deleteComment(
     const isLoggedInAndMine = await isAuthenticatedAndMine(commentUserId);
     if (!isLoggedInAndMine) {
         console.error("본인 댓글 아님");
-        revalidatePath(
-            `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-        );
-        redirect(
-            `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-        );
+        redirect("/api/auth/signin");
+        // revalidatePath(
+        //     `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+        // );
+        // redirect(
+        //     `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
+        // );
         //XXX 위에서처럼 error 객체 리턴하면 안됨 .에러발생됨.
     }
 
     await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
-    revalidatePath(
-        `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-    );
-    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    return {
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`
+    };
 }
 
 //////////////////////////////////////////////////////////////////////////////// comment
@@ -377,7 +381,7 @@ export async function createReply(
     currentPage: number,
     searchQuery: string,
     currentPostId: number,
-    prevState: State,
+    prevState: CommentState,
     formData: FormData,
 ) {
     // console.log("==> createReply called with formData:", formData);
@@ -416,6 +420,7 @@ export async function createReply(
             message: "Database Error: Failed to create QnA reply.",
         };
     }
-    revalidatePath(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
-    redirect(`/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
+    return {
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`
+    };
 }

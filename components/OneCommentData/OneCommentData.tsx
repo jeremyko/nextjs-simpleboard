@@ -22,6 +22,7 @@ import {
     AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import ReplyCommentForm from "../Forms/ReplyCommentForm";
+import { useRouter } from "next/navigation";
 
 // Comment 이건 이미 nextjs 가 사용중인 이름이라서 에러발생됨
 export default function OneCommentData({
@@ -45,14 +46,28 @@ export default function OneCommentData({
     const [isOpen, setIsOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false); //TODO 리렌더링 발생됨
     const [isReplying, setIsReplying] = useState(false); // 대댓글 작성 중 여부 TODO 리렌더링 문제
-    const deleteCommentWithParams = deleteComment.bind(
-        null,
-        comment.comment_user_id,
-        currentPage,
-        searchQuery,
-        currentPostId,
-        comment.comment_id,
-    );
+    // const deleteCommentWithParams = deleteComment.bind(
+    //     null,
+    //     comment.comment_user_id,
+    //     currentPage,
+    //     searchQuery,
+    //     currentPostId,
+    //     comment.comment_id,
+    // );
+
+    const router = useRouter();
+    async function deleteCommentWithParams() {
+        const result = await deleteComment(
+            comment.comment_user_id,
+            currentPage,
+            searchQuery,
+            currentPostId,
+            comment.comment_id,
+        );
+        if (result?.redirectTo) {
+            router.push(result.redirectTo); // soft navigation → 깜박임 없음
+        }
+    }
 
     // const { status } = useSession();
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
