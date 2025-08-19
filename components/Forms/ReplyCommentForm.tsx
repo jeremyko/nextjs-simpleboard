@@ -25,6 +25,7 @@ export default function ReplyCommentForm({
     searchQuery: string;
     setIsReplying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+    console.log("Reply reder");
     // console.log(
     //     "[ReplyCommentForm] currentPostId:",
     //     currentPostId,
@@ -47,7 +48,8 @@ export default function ReplyCommentForm({
     const [replyState, formAction] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
     // const [isWriting, setIsWriting] = useState(false);
-    const inputRef = useRef<HTMLTextAreaElement | null>(null);
+    const scrollRef = useRef<HTMLTextAreaElement | null>(null);
+
     // const [textAreaRows, setTextAreaRows] = useState(10);
 
     function onClickTextArea() {
@@ -64,6 +66,7 @@ export default function ReplyCommentForm({
 
     const router = useRouter();
     useEffect(() => {
+        console.log("useEffect1");
         if (replyState?.redirectTo) {
             router.push(replyState.redirectTo);
             setContentState("");
@@ -71,45 +74,72 @@ export default function ReplyCommentForm({
         }
     }, [replyState, router]);
 
+    useEffect(() => {
+        console.log("useEffect2");
+        //XXX setTimeout 이 필요했다. 없으면 안됨..?
+        // setTimeout(() => {
+            if (scrollRef.current) {
+                scrollRef.current.focus();
+                scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); // TODO why not working ??
+            }
+        // }, 100);
+
+        if (scrollRef.current) {
+            // const rect = scrollRef.current.getBoundingClientRect();
+            // console.log("상대 좌표:", rect);
+            // console.log("window.scrollY : ", window.scrollY);
+            // console.log("window.pageYOffset : ", window.pageYOffset);
+            // console.log("절대 y 좌표:", rect.top + window.pageYOffset);
+            // window.scrollTo(0, rect.top + window.pageYOffset);
+            // scrollRef.current.focus();
+            // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); // TODO why not working ??
+        }
+    },[] );
+
     return (
-        // <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">
-        <form action={formAction}>
-            <label htmlFor="content" className="sr-only">
-                댓글
-            </label>
-            <div className="relative mt-2 rounded-md">
-                <div className="relative">
-                    <TextareaAutosize
-                        ref={inputRef}
-                        id="content"
-                        name="content"
-                        // rows={textAreaRows}
-                        className={`peer block w-full rounded-md py-2 pl-4 text-sm border 
+        <div className="w-full mt-6 mb-4 ">
+            <div className="ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300">
+                <form action={formAction}>
+                    <label htmlFor="content" className="sr-only">
+                        댓글
+                    </label>
+                    {/* <div className="relative mt-2 rounded-md"> */}
+                    <div className="mt-2 rounded-md">
+                        {/* <div className="relative"> */}
+                        <div className="">
+                            <TextareaAutosize
+                                ref={scrollRef}
+                                id="replyContent"
+                                name="content"
+                                // rows={textAreaRows}
+                                className={`peer block w-full rounded-md py-2 pl-4 text-sm border 
                             border-zinc-400 outline-0 placeholder:text-gray-500 
                             focus:ring-1 focus:ring-blue-400`}
-                        aria-describedby="qna-comments-error"
-                        placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : ""}
-                        readOnly={currUserId ? false : true}
-                        onClick={onClickTextArea}
-                        value={contentState}
-                        onChange={(e) => setContentState(e.target.value)}
-                        required
-                    ></TextareaAutosize>
-                </div>
-            </div>
+                                aria-describedby="qna-comments-error"
+                                placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : ""}
+                                readOnly={currUserId ? false : true}
+                                onClick={onClickTextArea}
+                                value={contentState}
+                                onChange={(e) => setContentState(e.target.value)}
+                                required
+                            ></TextareaAutosize>
+                        </div>
+                    </div>
 
-            {currUserId && (
-                <div className="flex justify-end items-center gap-4 ">
-                    <div className="mt-2 pt-2 pb-2 ">
-                        <Button variant="destructive" onClick={cancelReply}>
-                            작성취소
-                        </Button>
-                    </div>
-                    <div className="mt-2 pt-2 pb-2 ">
-                        <Button type="submit"> 의견 남기기 </Button>
-                    </div>
-                </div>
-            )}
-        </form>
+                    {currUserId && (
+                        <div className="flex justify-end items-center gap-4 ">
+                            <div className="mt-2 pt-2 pb-2 ">
+                                <Button variant="destructive" onClick={cancelReply}>
+                                    작성취소
+                                </Button>
+                            </div>
+                            <div className="mt-2 pt-2 pb-2 ">
+                                <Button type="submit">의견 남기기</Button>
+                            </div>
+                        </div>
+                    )}
+                </form>
+            </div>
+        </div>
     );
 }

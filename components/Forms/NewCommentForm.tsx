@@ -87,7 +87,7 @@ export default function NewCommentForm({
                 <div className="relative">
                     <TextareaAutosize
                         ref={inputRef}
-                        id="content"
+                        id="commentContent"
                         name="content"
                         rows={1}
                         className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"

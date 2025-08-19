@@ -25,7 +25,7 @@ import ReplyCommentForm from "../Forms/ReplyCommentForm";
 import { useRouter } from "next/navigation";
 
 // Comment 이건 이미 nextjs 가 사용중인 이름이라서 에러발생됨
-export default function OneCommentData({
+export default function OneCommentReply({
     // index,
     currUserId,
     comment,
@@ -44,21 +44,14 @@ export default function OneCommentData({
     currentPage: number;
     searchQuery: string;
 }) {
-    // console.log("OneCommentData : currUserId=>", currUserId);
+    console.log("OneCommentReply reder");
+    // console.log("OneCommentReply : currUserId=>", currUserId);
     // console.log("OneCommentData : comment.comment_user_id=>", comment.comment_user_id);
     // console.log("OneCommentData : isPostMine=>", isPostMine);
     // console.log("OneCommentData : isCommentMine=>", isCommentMine);
-    const [isOpen, setIsOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false); //TODO 리렌더링 발생됨
-    const [isReplying, setIsReplying] = useState(false); // 대댓글 작성 중 여부 TODO 리렌더링 문제
-    // const deleteCommentWithParams = deleteComment.bind(
-    //     null,
-    //     comment.comment_user_id,
-    //     currentPage,
-    //     searchQuery,
-    //     currentPostId,
-    //     comment.comment_id,
-    // );
+    const [isOpen, setIsOpen] = useState(false); //comment 수정,삭제를 보여주기 위함
+    const [isEditing, setIsEditing] = useState(false); 
+    const [isReplying, setIsReplying] = useState(false); 
 
     const router = useRouter();
     async function deleteCommentWithParams() {
@@ -96,22 +89,21 @@ export default function OneCommentData({
         <div
             className={
                 comment.depth == 1
-                    ? "border-t-2  border-zinc-300 mt-6"
+                    ? "border-t-2  border-zinc-300 mt-4"
                     : "ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-b-1 border-b-zinc-300 pb-4"
             }
         >
-            <div className="flex flex-row justify-between items-center gap-2 mb-4 font-sm pt-4 ">
-                <div className="flex flex-row items-center gap-2 mb-4">
-                    <Avatar className="h-10 w-10">
+            <div className="flex flex-row justify-between items-center gap-2 font-sm pt-2 ">
+                <div className="flex flex-row items-center gap-2 ">
+                    <Avatar className="h-8 w-8">
                         <AvatarImage src={comment.comment_user_image ?? undefined} alt="" />
                     </Avatar>
-                    <span className="text-base font-semibold">{comment.comment_user_name}</span>
+                    <span className=" text-sm font-semibold">{comment.comment_user_name}</span>
 
                     {isPostMine && (
                         <>
                             -
-                            <span className="bg-gray-500 text-white  p-1 rounded-sm font-extralight ">
-                                {" "}
+                            <span className="rounded-sm bg-sky-500/20 px-1 text-[10px] font-thin sm:rounded-md sm:px-1.5">
                                 작성자
                             </span>
                         </>
@@ -120,7 +112,7 @@ export default function OneCommentData({
                 {/* 내가 작성한것일때만 수정,삭제 기능 활성화 */}
                 {isCommentMine && (
                     <div>
-                        <div className="flex flex-row justify-end items-center gap-2 mb-4">
+                        <div className="flex flex-row justify-end items-center gap-2 ">
                             {/* <Link href="/" className="text-xl font-bold hover:underline mr-4"> */}
                             <FontAwesomeIcon
                                 size="xl" // "2xs" | "xs" | "sm" | "lg" | "xl" | "2xl"
@@ -131,20 +123,19 @@ export default function OneCommentData({
                                 // onMouseEnter={() => setIsOpen(true)}
                                 // onMouseLeave={() => setIsOpen(false)}
                             />
-                            {/* </Link> */}
+
                             <div
-                                // onMouseEnter={() => setIsOpen(true)}
                                 onMouseLeave={() => setIsOpen(false)}
                                 className={`
-            flex flex-col justify-end items-center gap-1 -4
-            absolute mt-2 w-24 bg-blue border border-zinc-200 rounded-sm shadow-gray-600 shadow-lg z-10
-            transition-all duration-200 ease-out
-            transform origin-bottom
-            ${isOpen ? "bg-zinc-200/100  scale-100" : "opacity-0 scale-80 pointer-events-none"}
-            `}
+                                flex flex-col justify-end items-center gap-1 -4
+                                absolute mt-2 w-18 bg-blue border border-zinc-200 rounded-sm shadow-gray-600 shadow-lg z-10
+                                transition-all duration-200 ease-out
+                                transform origin-bottom
+                                ${isOpen ? "bg-zinc-200/100  scale-100" : "opacity-0 scale-80 pointer-events-none"}
+                                `}
                             >
                                 <Button
-                                    className=" w-full px-4 py-2 hover:bg-blue-700 rounded-sm"
+                                    className=" w-full px-4 py-2 hover:bg-blue-700 rounded-sm text-[10px] font-thin"
                                     onClick={() => setIsEditing(true)}
                                 >
                                     수정
@@ -154,7 +145,7 @@ export default function OneCommentData({
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild className="w-full">
                                             {/* 바깥에서 보이는 삭제 버튼 */}
-                                            <Button className="px-4 py-2 hover:bg-blue-700 rounded-sm">
+                                            <Button className="px-4 py-2 hover:bg-blue-700 rounded-sm text-[10px] font-thin">
                                                 삭제
                                             </Button>
                                             {/* <Button variant="destructive"> 삭제 </Button> */}
@@ -199,9 +190,9 @@ export default function OneCommentData({
             {/* 수정하는 경우 구분해서 .. */}
             {/* {!isEditing && <p className=""> {"@"+comment.reply_to+ " " + comment.comment} </p>} */}
             {!isEditing && (
-                <p className="pb-4">
-                    <span className="text-blue-700 font-bold">{"@" + comment.reply_to + " "}</span>
-                    {comment.comment}
+                <p className="pt-2 pb-2">
+                    <span className="text-blue-700 text-sm font-bold">{"@" + comment.reply_to + " "}</span>
+                    <span className="text-sm font-light "> {comment.comment}</span>
                 </p>
             )}
             {/* <p> depth : {comment.depth} </p>  */}
@@ -217,26 +208,8 @@ export default function OneCommentData({
                     setIsEditing={setIsEditing}
                 ></EditCommentForm>
             )}
-            {/* 대댓글 작성 ------------------------------------------------ */}
-            {/* depth 2 제한 (댓글 + 대댓글까지만) */}
-            {isReplying && currUserId && (
-                <div className="w-full mt-6 mb-4 ">
-                    <div className="ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300">
-                        <ReplyCommentForm
-                            currUserId={currUserId}
-                            // commentUserId={comment.comment_user_id}
-                            currentPostId={currentPostId}
-                            commentId={comment.comment_id}
-                            commentUserName={comment.comment_user_name}
-                            currentPage={currentPage}
-                            searchQuery={searchQuery}
-                            setIsReplying={setIsReplying}
-                        />
-                    </div>
-                </div>
-            )}
             {currUserId && !isReplying && (
-                <div className="flex flex-row justify-start items-center gap-2 pt-6 ">
+                <div className="flex flex-row justify-start items-center gap-2 text-[10px] font-thin  ">
                     <a
                         href="#"
                         className="block p-1 hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
@@ -245,6 +218,19 @@ export default function OneCommentData({
                         댓글 쓰기
                     </a>
                 </div>
+            )}
+            {/* 대댓글 작성 ------------------------------------------------ */}
+            {isReplying && currUserId && (
+                <ReplyCommentForm
+                    currUserId={currUserId}
+                    // commentUserId={comment.comment_user_id}
+                    currentPostId={currentPostId}
+                    commentId={comment.comment_id}
+                    commentUserName={comment.comment_user_name}
+                    currentPage={currentPage}
+                    searchQuery={searchQuery}
+                    setIsReplying={setIsReplying}
+                />
             )}
         </div>
     );

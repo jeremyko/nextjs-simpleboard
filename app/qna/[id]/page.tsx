@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { checkIsAuthenticated, getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import NewCommentForm from "@/components/Forms/NewCommentForm";
-import OneCommentData from "@/components/OneCommentData/OneCommentData";
+import OneCommentReply from "@/components/OneCommentReply/OneCommentReply";
 
 // XXX 개별 게시물 보기
 
@@ -111,7 +111,7 @@ export default async function Page(props: {
                             searchQuery={searchQuery}
                         />
 
-                        {/* comments 목록 표시  */}
+                        {/* comment, reply 표시  */}
                         <section className="mt-2">
                             {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
                             {/* <ul className="divide divide-y divide-gray-400 "> */}
@@ -121,10 +121,8 @@ export default async function Page(props: {
                                         key={comment.comment_id.toString()}
                                         // className="pt-2 "
                                     >
-                                        <OneCommentData
-                                            // index={index}
+                                        <OneCommentReply
                                             currUserId={currUserId}
-                                            // currPostUserId={oneQnA.user_id}
                                             comment={comment}
                                             isPostMine={oneQnA.user_id === comment.comment_user_id}
                                             isCommentMine={currUserId === comment.comment_user_id}
