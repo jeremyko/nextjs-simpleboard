@@ -77,15 +77,14 @@ export default function ReplyCommentForm({
     useEffect(() => {
         console.log("useEffect2");
         //XXX setTimeout 이 필요했다. 없으면 안됨..?
-        // setTimeout(() => {
+        setTimeout(() => {
             if (scrollRef.current) {
                 scrollRef.current.focus();
-                scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); // TODO why not working ??
+                // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); // TODO why not working ??
             }
-        // }, 100);
+        }, 100);
 
         if (scrollRef.current) {
-            // const rect = scrollRef.current.getBoundingClientRect();
             // console.log("상대 좌표:", rect);
             // console.log("window.scrollY : ", window.scrollY);
             // console.log("window.pageYOffset : ", window.pageYOffset);
