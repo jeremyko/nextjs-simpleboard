@@ -54,7 +54,8 @@ export default function NewCommentForm({
     }
 
 
-    function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
+    // function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
+    function cancelComment(e: React.MouseEvent<HTMLDivElement>) {
         setContentState("");
         setIsWriting(false);
         e.preventDefault();
@@ -90,7 +91,7 @@ export default function NewCommentForm({
                         id="commentContent"
                         name="content"
                         rows={1}
-                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500  focus:border-cyan-600"
+                        className="peer block w-full rounded-md py-1 pl-2 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500  focus:border-cyan-600"
                         aria-describedby="qna-comments-error"
                         placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : "댓글을 입력하세요"}
                         readOnly={currUserId ? false : true}
@@ -103,15 +104,18 @@ export default function NewCommentForm({
             </div>
 
             {currUserId && isWriting && (
-                <div className="flex justify-end items-center gap-4">
-                    <div className="mt-2 pt-2 pb-2 ">
-                        <Button variant="destructive" onClick={cancelComment}>
-                            작성취소
-                        </Button>
+                <div className="flex justify-end items-center gap-4 mt-2">
+                    <div
+                        className="block cursor-pointer pl-2 pr-2  p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
+                        onClick={cancelComment}
+                    >
+                        작성취소
                     </div>
-                    <div className="mt-2 pt-2 pb-2 ">
-                        <Button type="submit"> 저장 </Button>
-                    </div>
+                    <input
+                        type="submit"
+                        value="저장"
+                        className="block w-20 cursor-pointer p-1 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
+                    />
                 </div>
             )}
         </form>

@@ -58,7 +58,7 @@ export default function ReplyCommentForm({
         }
     }
 
-    function cancelReply(e: React.MouseEvent<HTMLButtonElement>) {
+    function cancelReply(e: React.MouseEvent<HTMLDivElement>) {
         setContentState("");
         setIsReplying(false);
         e.preventDefault();
@@ -102,7 +102,7 @@ export default function ReplyCommentForm({
                                 id="replyContent"
                                 name="content"
                                 // rows={textAreaRows}
-                                className={`peer block w-full rounded-md py-2 pl-4 text-sm border 
+                                className={`peer block w-full rounded-md py-1 pl-2 text-sm border 
                             border-zinc-400 outline-none placeholder:text-gray-500 
                              focus:border-cyan-600`}
                                 aria-describedby="qna-comments-error"
@@ -117,15 +117,18 @@ export default function ReplyCommentForm({
                     </div>
 
                     {currUserId && (
-                        <div className="flex justify-end items-center gap-4 ">
-                            <div className="mt-2 pt-2 pb-2 ">
-                                <Button variant="destructive" onClick={cancelReply}>
-                                    작성취소
-                                </Button>
+                        <div className="flex justify-end items-center gap-4 mt-2">
+                            <div
+                                className="block cursor-pointer pl-2 pr-2 p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
+                                onClick={cancelReply}
+                            >
+                                작성취소
                             </div>
-                            <div className="mt-2 pt-2 pb-2 ">
-                                <Button type="submit">의견 남기기</Button>
-                            </div>
+                            <input
+                                type="submit"
+                                value="의견 남기기"
+                                className="block w-20 cursor-pointer p-1 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
+                            />
                         </div>
                     )}
                 </form>
