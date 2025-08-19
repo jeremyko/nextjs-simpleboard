@@ -24,19 +24,19 @@ export default function OneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) {
             <div className="flex flex-row justify-between items-center  ">
                 <p
                     id="categoryName"
-                    className="font-light bg-gray-500 text-white  mb-2 pr-2 pl-2 rounded-sm "
+                    className="text-xs font-light bg-gray-500 text-white  mb-2 p-1  rounded-sm "
                 >
                     {oneQnA.category_name}
                 </p>
             </div>
-            <div className="flex flex-row items-center gap-2 mb-4">
-                <Avatar className="h-10 w-10">
+            <div className="flex flex-row items-center gap-1 mb-4 pt-2 ">
+                <Avatar className="h-8 w-8">
                     <AvatarImage src={oneQnA.user_image ?? undefined} alt="" />
                 </Avatar>
-                <span className="text-base font-semibold">{oneQnA.user_name}</span>
+                <span className="text-sm font-semibold">{oneQnA.user_name}</span>
             </div>
             <div className="pb-5">
-                <h1 id="title" className="mt-2 mb-2 block text-3xl font-bold">
+                <h1 id="title" className="mt-2 mb-2 block text-base font-semibold">
                     {oneQnA.title}
                 </h1>
             </div>

@@ -54,7 +54,7 @@ export default async function BoardDataTable({
                             key={post.article_id}
                             className={
                                 currentPostId === post.article_id
-                                    ? "bg-sky-200 border-b border-gray-500  "
+                                    ? "bg-slate-200 border-b border-gray-500  "
                                     : "border-b border-gray-500 "
                             }
                         >
