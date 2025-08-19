@@ -2,6 +2,7 @@ import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/serverDb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { Avatar, AvatarImage } from "../ui/avatar";
+import Link from "next/link";
 
 export default async function BoardDataTable({
     searchQuery,
@@ -73,12 +74,12 @@ export default async function BoardDataTable({
                                         {post.comment_count}
                                     </span>
                                 )}
-                                <a
+                                <Link
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
                                     className="text-gray-800 hover:underline"
                                 >
                                     {post.title.substring(0, 40) + "..."}
-                                </a>
+                                </Link>
                             </td>
                             <td className="p-2 flex items-center gap-1 min-w-[100px]">
                                 <Avatar className="h-4 w-4">
