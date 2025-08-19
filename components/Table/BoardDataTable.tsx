@@ -35,7 +35,8 @@ export default async function BoardDataTable({
                 <h1> Q&A </h1>
             </div>
             {/* <Search placeholder="검색어를 입력하세요" /> */}
-            <table className=" w-full table-auto border-collapse  text-sm">
+            {/* <table className=" w-full table-auto border-collapse  text-sm"> */}
+            <table className=" w-full border-collapse text-sm font-light">
                 {/* <thead>
                     <tr className="text-center border-b border-gray-700 bg-indigo-700 text-zinc-300 ">
                         <th className="p-2 font-medium">번호</th>
@@ -46,17 +47,18 @@ export default async function BoardDataTable({
                         <th className="p-2 font-medium">조회수</th>
                     </tr>
                 </thead> */}
+
                 <tbody>
                     {posts.map((post) => (
                         <tr
                             key={post.article_id}
                             className={
                                 currentPostId === post.article_id
-                                    ? "bg-sky-200 border-b border-gray-700 "
-                                    : "border-b border-gray-700"
+                                    ? "bg-sky-200 border-b border-gray-500  "
+                                    : "border-b border-gray-500 "
                             }
                         >
-                            <td className="p-2 text-center font-light">
+                            <td className="p-2 text-xs font-light">
                                 {currentPostId === post.article_id && (
                                     <FontAwesomeIcon
                                         size="sm"
@@ -67,34 +69,38 @@ export default async function BoardDataTable({
                                 )}
                                 {post.rownum}
                             </td>
-                            <td className="p-2 text-center">{post.category_name}</td>
-                            <td className="p-2 text-left">
+                            <td className="p-2 text-xs ">
+                                <div className="min-w-[30px]">{post.category_name}</div>
+                            </td>
+                            <td className="p-2 text-left ">
                                 {post.comment_count > 0 && (
-                                    <span className="bg-gray-500 text-white pr-2 pl-2 rounded-sm font-light mr-2">
+                                    <span className="bg-gray-500 text-white pr-2 pl-2 rounded-sm  text-xs font-light mr-2">
                                         {post.comment_count}
                                     </span>
                                 )}
                                 <Link
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
-                                    className="text-gray-800 hover:underline"
+                                    className="text-gray-800 hover:underline text-sm "
                                 >
-                                    {post.title.substring(0, 40) + "..."}
+                                    {/* {post.title.substring(0, 40) + "..."} */}
+                                    {post.title}
                                 </Link>
                             </td>
-                            <td className="p-2 flex items-center gap-1 min-w-[100px]">
-                                <Avatar className="h-4 w-4">
-                                    <AvatarImage src={post.user_image ?? undefined} 
-                                    alt=""/>
-                                </Avatar>
-                                <span>{post.user_name}</span>
+                            <td className="p-2  min-w-[100px] ">
+                                <div className="flex flex-row align-middle ">
+                                    <Avatar className="h-4 w-4 ">
+                                        <AvatarImage src={post.user_image ?? undefined} alt="" />
+                                    </Avatar>
+                                    <span className="text-xs text-center font-light pl-1">{post.user_name}</span>
+                                </div>
                             </td>
-                            <td className="p-2 text-center min-w-[90]">{post.created}</td>
-                            <td className="p-2 text-center">{post.views}</td>
+                            <td className="p-2 text-center min-w-[90] text-xs font-light">{post.created}</td>
+                            <td className="p-2 text-center text-xs font-light">{post.views}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div className="text-right  mt-4 mb-4">전체 {totalPostCount}개의 게시글 </div>
+            <div className="text-right text-sm  mt-4 mb-4">전체 {totalPostCount}개의 게시글 </div>
         </div>
     );
 }

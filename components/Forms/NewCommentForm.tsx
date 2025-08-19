@@ -91,7 +91,7 @@ export default function NewCommentForm({
                         id="commentContent"
                         name="content"
                         rows={1}
-                        className="peer block w-full rounded-md py-1 pl-2 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500  focus:border-cyan-600"
+                        className="peer block w-full rounded-md py-1 pl-2 text-sm border border-zinc-400 outline-none placeholder:text-gray-500  focus:border-cyan-600"
                         aria-describedby="qna-comments-error"
                         placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : "댓글을 입력하세요"}
                         readOnly={currUserId ? false : true}

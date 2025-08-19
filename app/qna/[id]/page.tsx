@@ -55,6 +55,17 @@ export default async function Page(props: {
     const comments = await getComments(oneQnA.article_id);
     // console.log("comments:", comments);
 
+                    // <div
+                    //     className="block cursor-pointer pl-2 pr-2  p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
+                    //     onClick={cancelComment}
+                    // >
+                    //     작성취소
+                    // </div>
+                    // <input
+                    //     type="submit"
+                    //     value="저장"
+                    //     className="block w-20 cursor-pointer p-1 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
+                    // />
     return (
         <div className="max-w-3xl mx-auto min-h-screen ">
             <div className="flex flex-col text-sm  mb-4 text-left ">
@@ -63,11 +74,20 @@ export default async function Page(props: {
                     <OneBoardItem oneQnA={oneQnA} />
 
                     {isLoggedInAndMine && (
-                        <div className="mt-6 mb-6 flex justify-end items-center gap-8">
+                        <div className="mt-2 mb-2 flex justify-end items-center gap-4">
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     {/* 바깥에서 보이는 삭제 버튼 */}
-                                    <Button variant="destructive"> 삭제 </Button>
+                                    <div className="block cursor-pointer p-2 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700 ">
+                                        {" "}
+                                        삭제{" "}
+                                    </div>
+                                    {/* <Button
+                                        variant="destructive"
+                                        className="pl-2 pr-2 w-15 p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
+                                    >
+                                        삭제
+                                    </Button> */}
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
@@ -94,7 +114,10 @@ export default async function Page(props: {
                             </AlertDialog>
 
                             <Link href={`/qna/edit/${id}?page=${page}&query=${searchQuery}`}>
-                                <Button>수정</Button>
+                                {/* <Button>수정</Button> */}
+                                <div className="block cursor-pointer p-2 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600">
+                                    수정
+                                </div>
                             </Link>
                         </div>
                     )}
