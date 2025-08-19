@@ -66,7 +66,6 @@ export default function ReplyCommentForm({
 
     const router = useRouter();
     useEffect(() => {
-        console.log("useEffect1");
         if (replyState?.redirectTo) {
             router.push(replyState.redirectTo);
             setContentState("");
@@ -75,23 +74,15 @@ export default function ReplyCommentForm({
     }, [replyState, router]);
 
     useEffect(() => {
-        console.log("useEffect2");
-        //XXX setTimeout 이 필요했다. 없으면 안됨..?
-        setTimeout(() => {
-            if (scrollRef.current) {
-                scrollRef.current.focus();
-                // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); // TODO why not working ??
-            }
-        }, 100);
-
         if (scrollRef.current) {
+            // const rect = scrollRef.current.getBoundingClientRect();
             // console.log("상대 좌표:", rect);
             // console.log("window.scrollY : ", window.scrollY);
             // console.log("window.pageYOffset : ", window.pageYOffset);
             // console.log("절대 y 좌표:", rect.top + window.pageYOffset);
             // window.scrollTo(0, rect.top + window.pageYOffset);
-            // scrollRef.current.focus();
-            // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); // TODO why not working ??
+            scrollRef.current.focus();
+            // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); 
         }
     },[] );
 
@@ -112,8 +103,8 @@ export default function ReplyCommentForm({
                                 name="content"
                                 // rows={textAreaRows}
                                 className={`peer block w-full rounded-md py-2 pl-4 text-sm border 
-                            border-zinc-400 outline-0 placeholder:text-gray-500 
-                            focus:ring-1 focus:ring-blue-400`}
+                            border-zinc-400 outline-none placeholder:text-gray-500 
+                             focus:border-cyan-600`}
                                 aria-describedby="qna-comments-error"
                                 placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : ""}
                                 readOnly={currUserId ? false : true}

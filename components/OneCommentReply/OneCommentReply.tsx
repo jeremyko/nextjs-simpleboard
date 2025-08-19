@@ -192,7 +192,7 @@ export default function OneCommentReply({
             {!isEditing && (
                 <p className="pt-2 pb-2">
                     <span className="text-blue-700 text-sm font-bold">{"@" + comment.reply_to + " "}</span>
-                    <span className="text-sm font-light "> {comment.comment}</span>
+                    <span className="text-sm font-normal "> {comment.comment}</span>
                 </p>
             )}
             {/* <p> depth : {comment.depth} </p>  */}
@@ -209,14 +209,19 @@ export default function OneCommentReply({
                 ></EditCommentForm>
             )}
             {currUserId && !isReplying && (
-                <div className="flex flex-row justify-start items-center gap-2 text-[10px] font-thin  ">
-                    <a
+                <div className="flex flex-row justify-start items-center gap-2">
+                    {/* <a
                         href="#"
                         className="block p-1 hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
                         onClick={() => setIsReplying(true)}
+                    > */}
+                    <div
+                        className="block cursor-pointer p-1 text-[10px] font-thin hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
+                        onClick={() => setIsReplying(true)}
                     >
                         댓글 쓰기
-                    </a>
+                    </div>
+                    {/* </a> */}
                 </div>
             )}
             {/* 대댓글 작성 ------------------------------------------------ */}
