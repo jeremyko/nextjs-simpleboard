@@ -219,6 +219,7 @@ export async function deleteQuestion(articleId: number, currentPage: number, pos
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
         redirect("/api/auth/signin");
+        // return new Response("Forbidden", { status: 403 });
     }
 
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함

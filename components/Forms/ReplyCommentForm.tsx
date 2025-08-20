@@ -25,7 +25,6 @@ export default function ReplyCommentForm({
     searchQuery: string;
     setIsReplying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    console.log("Reply reder");
     // console.log(
     //     "[ReplyCommentForm] currentPostId:",
     //     currentPostId,

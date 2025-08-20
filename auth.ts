@@ -111,6 +111,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // 데이터베이스에서 세션을 유지하는 경우 호출되지 않습니다
         // 사용자, 계정, 프로필, isNewUser 등의 내용은 제공업체와 데이터베이스 사용 여부에 따라 달라집니다
         jwt({ token, trigger, session, account, user, profile }) {
+            // token 안에 실제 JWT payload가 들어있음
+            // 서버 로그에서만 보임 (브라우저 콘솔 아님)
             //XXX JWT가 생성되거나 업데이트될 때 호출되며, 반환하는 값은 암호화되어 쿠키에 저장됩니다.
             if (trigger !== undefined) {
                 console.log("\n====>> [jwt_callback] : trigger :", trigger);
@@ -138,8 +140,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
         // =====================================================================
         async session({ session, token }) {
+            // token은 JWT의 payload. 서명된 문자열(full JWT) 자체는 아님
+            // JWT payload를 세션 객체에 포함시켜서 클라이언트에서도 볼 수 있게 할 수 있음.
             //XXX jwt 콜백이 반환하는 token을 받아, 세션이 확인될 때마다 호출
             // 브라우져 콘솔에 내용이 표시되므로 주의 !!!
+
+
             // console.log("\n====>> [session_callback] : session :", session);
             // console.log("       [session_callback] : token   :", token);
             // if (!session) {
@@ -161,12 +167,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // jti: JWT 토큰 식별자(JWT ID), 중복 방지를 위해 사용하며, 일회용 토큰(Access Token) 등에 사용
 
             // XXX 위 jwt 에서 넘겨준 userId,providerAccountId 를 세션에 추가한다.
+            // 브라우져 콘솔에서 볼수 있으니 주의 해야 함.
             if (token?.userId) {
                 session.userId = token.userId;
             }
-            if (token?.providerAccountId) {
-                session.providerAccountId = token.providerAccountId;
-            }
+            // 민감 정보 제외
+            // if (token?.providerAccountId) {
+            //     session.providerAccountId = token.providerAccountId;
+            // }
 
             return session;
         },
@@ -241,7 +249,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 declare module "next-auth" {
     interface Session {
         userId?: string;
-        providerAccountId?: string;
+        // providerAccountId?: string;
 
         nickName?: string; 
         imageUrl?: string; 
@@ -257,6 +265,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
     interface JWT {
         userId?: string;
-        providerAccountId?: string;
+        // providerAccountId?: string;
     }
 }

@@ -38,7 +38,7 @@ export default async function Page(props: {
     const page = Number(searchParams?.page) || 1;
     const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
 
-    console.log("[view] 개별 게시물 보기");
+    // console.log("[view] 개별 게시물 보기");
     // console.log("[view] search query", searchQuery);
     // console.log("[view] current page", page);
     // console.log("[view] QnA ID:", id);

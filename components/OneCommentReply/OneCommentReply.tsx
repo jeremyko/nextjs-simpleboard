@@ -44,7 +44,6 @@ export default function OneCommentReply({
     currentPage: number;
     searchQuery: string;
 }) {
-    console.log("OneCommentReply reder");
     // console.log("OneCommentReply : currUserId=>", currUserId);
     // console.log("OneCommentData : comment.comment_user_id=>", comment.comment_user_id);
     // console.log("OneCommentData : isPostMine=>", isPostMine);
