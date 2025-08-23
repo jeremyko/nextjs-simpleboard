@@ -12,8 +12,8 @@ export default function SessionWatcher() {
     useEffect(() => {
         console.log("status  ==> ", status);
         if (status === "unauthenticated") {
-            console.log("세션 만료 또는 로그아웃됨 (클라이언트) ");
-            router.push("/api/auth/signin"); // 로그인 페이지로 이동
+            console.log("SessionWatcher :세션 만료 또는 로그아웃됨 (클라이언트) ");
+            // router.push("/api/auth/signin"); // 로그인 페이지로 이동
         }
     }, [status, router]);
 
