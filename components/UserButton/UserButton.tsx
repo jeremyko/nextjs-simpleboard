@@ -31,7 +31,7 @@ export default function UserButton() {
     const { data: session, status  } = useSession();  // jwt callback 이 실행된다 !!!
 
     // console.log("UserButton render, status:",status);
-    console.log("UserButton render, session:", session);
+    // console.log("UserButton render, session:", session);
 
     // getSession 을 주기적으로 호출해서, jwt 콜백을 실행시켜, token refresh 하게 .
     // XXX 이것 때문에 use client 가 필요했다. XXX
