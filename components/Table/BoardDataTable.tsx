@@ -91,7 +91,9 @@ export default async function BoardDataTable({
                                     <Avatar className="h-4 w-4 ">
                                         <AvatarImage src={post.user_image ?? undefined} alt="" />
                                     </Avatar>
-                                    <span className="text-xs text-center font-light pl-1">{post.user_name}</span>
+                                    <span className="text-xs text-center font-light pl-1">
+                                        {post.user_name}
+                                    </span>
                                 </div>
                             </td>
                             <td className="p-2 text-center min-w-[90] text-xs font-light">{post.created}</td>

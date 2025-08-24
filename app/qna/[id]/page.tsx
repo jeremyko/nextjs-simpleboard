@@ -1,4 +1,4 @@
-import { fetchOneQnaById, getComments, getTotalPagesCount } from "@/app/libs/serverDb";
+import { fetchOneQnaById, getComments, getTotalPagesCount, insertPostViews } from "@/app/libs/serverDb";
 import BoardDataTable from "@/components/Table/BoardDataTable";
 import Pagination from "@/components/Pagination/Pagination";
 import { getPostsPerPage } from "@/global_const/global_const";
@@ -18,9 +18,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { checkIsAuthenticated, getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
+import { getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import NewCommentForm from "@/components/Forms/NewCommentForm";
 import OneCommentReply from "@/components/OneCommentReply/OneCommentReply";
+import { cookies } from "next/headers";
 
 // XXX 개별 게시물 보기
 
@@ -50,22 +51,23 @@ export default async function Page(props: {
         notFound();
     }
     const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id);
-    const isLogged = await checkIsAuthenticated();
+    // const isLogged = await checkIsAuthenticated();
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
     const comments = await getComments(oneQnA.article_id);
     // console.log("comments:", comments);
 
-                    // <div
-                    //     className="block cursor-pointer pl-2 pr-2  p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
-                    //     onClick={cancelComment}
-                    // >
-                    //     작성취소
-                    // </div>
-                    // <input
-                    //     type="submit"
-                    //     value="저장"
-                    //     className="block w-20 cursor-pointer p-1 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
-                    // />
+    // ----------------------------------------------- 조회수 관리 
+    const cookieStore = await cookies();
+    const viewerIdForCnt = cookieStore.get("viewerIdForCnt")?.value;
+    // console.log("[viewpage] viewerIdForCnt : ", viewerIdForCnt);
+
+    if (viewerIdForCnt) {
+        // db 처리
+        // - 로그인 안한 경우 session_id 가 동일하면 조회수가 증가 안함
+        // - 로그인 된 경우, 동일 pc 라도 계정을 다르게 로그인을 하면 조회수가 증가된다.
+        await insertPostViews(oneQnA.article_id, currUserId ?? "", viewerIdForCnt ?? "");
+    }
+    // ----------------------------------------------- 조회수 관리 
     return (
         <div className="max-w-3xl mx-auto min-h-screen ">
             <div className="flex flex-col text-sm  mb-4 text-left ">
@@ -82,12 +84,6 @@ export default async function Page(props: {
                                         {" "}
                                         삭제{" "}
                                     </div>
-                                    {/* <Button
-                                        variant="destructive"
-                                        className="pl-2 pr-2 w-15 p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
-                                    >
-                                        삭제
-                                    </Button> */}
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>

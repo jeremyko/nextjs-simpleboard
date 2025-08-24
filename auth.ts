@@ -88,40 +88,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     callbacks: {
         // =====================================================================
-        // XXX  인증 및 세션 관리 중 호출되는 각 핸들러
-        authorized({ request, auth }) {
-            // console.log("\n====>> [authorized_callback] : request :", request);
-            // console.log("------- [authorized_callback] : auth :", auth);
-            const { pathname } = request.nextUrl;
-            // console.log("[auth] pathname:", pathname); // "/", "/qna", "/qna/edit/35"
+        // XXX  인증 및 세션 관리 중 호출되는 각 핸들러--> middleware 에서 처리하게 변경. 사용안함
+        // authorized({ request, auth }) {
+        //     // console.log("\n====>> [authorized_callback] : request :", request);
+        //     // console.log("------- [authorized_callback] : auth :", auth);
+        //     const { pathname } = request.nextUrl;
+        //     // console.log("[auth] pathname:", pathname); // "/", "/qna", "/qna/edit/35"
+        //     const isLoggedIn = !!auth?.user;
+        //     let isProtected = false;
+        //     // 홈페이지는 인증 필요 없고, 신규 게시물 작성과 게시물 수정은 인증 필요
+        //     // const protectedPath = ["/qna/new", "/qna/:id/edit"]; //XXX :id 동적 경로는 지원하지 않음
+        //     // 수정 화면에서 버튼 보여주는것을 로그인 했을때만 보여주고 있어서
+        //     // 여기서는 신규 작성만 막으면 됨.
+        //     // const protectedPathPrefix = ["/qna/new", "/qna/edit/"];
+        //     const protectedPathPrefix = ["/qna/new"];
+        //     if (pathname === "/") {
+        //         isProtected = false;
+        //     } else {
+        //         isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix));
+        //     }
+        //     console.log("isProtected:", isProtected);
+        //     if (isProtected) {
+        //         if (isLoggedIn) {
+        //             return true;
+        //         }
+        //         // 로그인 페이지로 리디렉션됩니다.
+        //         console.log("not logged in : redirect to login");
+        //         return false;
+        //     }
+        //     // console.log("return true");
+        //     return true;
+        // },
 
-            const isLoggedIn = !!auth?.user;
-            let isProtected = false;
-            // 홈페이지는 인증 필요 없고, 신규 게시물 작성과 게시물 수정은 인증 필요
-            // const protectedPath = ["/qna/new", "/qna/:id/edit"]; //XXX :id 동적 경로는 지원하지 않음
-
-            // 수정 화면에서 버튼 보여주는것을 로그인 했을때만 보여주고 있어서
-            // 여기서는 신규 작성만 막으면 됨.
-            // const protectedPathPrefix = ["/qna/new", "/qna/edit/"];
-            const protectedPathPrefix = ["/qna/new"];
-            if (pathname === "/") {
-                isProtected = false;
-            } else {
-                isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix));
-            }
-            // console.log("isProtected:", isProtected);
-
-            if (isProtected) {
-                if (isLoggedIn) {
-                    return true;
-                }
-                // 로그인 페이지로 리디렉션됩니다.
-                console.log("not logged in : redirect to login");
-                return false;
-            }
-            // console.log("return true");
-            return true;
-        },
         // =====================================================================
         // jwt 콜백에서 토큰을 반환하면 session 콜백의 파라미터 token으로 받을 수 있다.
         // jwt 콜백은 사용자가 요청을 할 때마다 실행된다.

@@ -63,7 +63,7 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
 export const getSessionUserId = async () => {
     const session = await auth();
     if (!session) {
-        console.log("[getSessionUserId] 로그인 안된 상태로 접근함");
+        // console.log("[getSessionUserId] 로그인 안된 상태로 접근함");
         return null;
     }
     const userId = session.userId;

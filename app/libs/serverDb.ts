@@ -5,8 +5,8 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 export type BoardItems = {
     rownum: number;
     article_id: number;
-    user_id: string; 
-    user_name: string; 
+    user_id: string;
+    user_name: string;
     title: string;
     created: string;
     category_id: number;
@@ -17,8 +17,8 @@ export type BoardItems = {
 };
 export type BoardItemById = {
     article_id: number;
-    user_id: string; 
-    user_name: string; 
+    user_id: string;
+    user_name: string;
     title: string;
     contents: string;
     created: string;
@@ -43,9 +43,9 @@ export type OneComment = {
     comment_user_id: string;
     comment_user_name: string;
     comment_user_image: string;
-    reply_to:string;
+    reply_to: string;
     depth: number;
-    path:string;
+    path: string;
     // created:
 };
 
@@ -114,7 +114,7 @@ export async function fetchPagedBoardItems(
         throw new Error("Failed to fetch board items.");
     }
 }
-//TODO : userId 인자로 받아서 해당 게시물의 작성자 여부 정보도 추가 
+//TODO : userId 인자로 받아서 해당 게시물의 작성자 여부 정보도 추가
 export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
     try {
         const data = await sql<BoardItemById[]>`
@@ -206,3 +206,22 @@ export async function fetchCategoryData(): Promise<CategoryItem[]> {
     }
 }
 
+export async function insertPostViews(articleId: number, currUserId: string, viewerIdForCnt: string) {
+    // console.log("insertPostViews : ",  viewerIdForCnt);
+    try {
+        await sql`
+        WITH ins AS (
+            INSERT INTO post_views (article_id, user_id, session_id) 
+            VALUES ( ${articleId}, ${currUserId}, ${viewerIdForCnt} )
+            ON CONFLICT DO NOTHING
+            RETURNING 1
+        )
+        UPDATE articles
+        SET views = views + 1
+        WHERE article_id = ${articleId} AND EXISTS (SELECT 1 FROM ins)`;
+    } catch (error) {
+        console.error(error);
+    }
+}
+        // INSERT INTO post_views (article_id, user_id, session_id) 
+        // VALUES ( ${oneQnA.article_id}, ${oneQnA.user_id}, ${viewerIdForCnt} )`;

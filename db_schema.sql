@@ -6,48 +6,62 @@ drop table public.comments CASCADE ;
 drop table public.users CASCADE ;
 drop table public.categories CASCADE ;
 
-CREATE TABLE public.articles (
-	article_id int4 DEFAULT nextval('article_id_seq'::regclass) NOT NULL,
-	title varchar(100) NOT NULL,
-	contents text NOT NULL,
-	created timestamptz DEFAULT now() NOT NULL,
-	category_id int4 NOT NULL,
-	"views" int4 DEFAULT 0 NOT NULL,
-	user_id uuid NULL,
-	CONSTRAINT articles_pkey PRIMARY KEY (article_id),
-	CONSTRAINT articles_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(category_id)
+create table public.articles (
+  article_id serial not null,
+  title character varying(100) not null,
+  contents text not null,  
+  created timestamp not null default now(),
+  category_id integer not null,
+  views integer not null default 0,
+  user_id uuid null,
+  constraint articles_pkey primary key (article_id),
+  constraint articles_category_id_fkey foreign KEY (category_id) references categories (category_id)
+) ;
+
+create table public.categories (
+  category_id serial not null,
+  name character varying(100) not null,
+  constraint categories_pkey primary key (category_id)
+) TABLESPACE pg_default;
+
+create table public.comments (
+  comment_id serial not null,
+  article_id integer not null,
+  comment text not null,
+  comment_user_id uuid not null,
+  created timestamp with time zone null default now(),
+  p_comment_id integer null,
+  reply_to text null,
+  constraint comments_pkey primary key (comment_id),
+  constraint comments_article_id_fkey foreign KEY (article_id) references articles (article_id)
+);
+create index IF not exists comments_p_comment_id_idx on public.comments using btree (p_comment_id) TABLESPACE pg_default;
+create index IF not exists comments_article_id_idx on public.comments using btree (article_id) TABLESPACE pg_default;
+
+-- 조회수 관리 
+-- 로그인 안한 경우 session_id 가 동일하면 조회수가 증가 안함 
+-- 로그인 된 경우, 동일 pc 라도 계정을 다르게 로그인을 하면 조회수가 증가된다.
+CREATE TABLE post_views (
+    id serial PRIMARY KEY,
+    article_id integer NOT NULL REFERENCES articles(article_id) ON DELETE CASCADE,
+    user_id text ,
+    session_id uuid,
+    viewed_at TIMESTAMP DEFAULT now(),    
+    UNIQUE (article_id, user_id, session_id)     
 );
 
-CREATE TABLE public.categories (
-	category_id int4 DEFAULT nextval('caterory_id_seq'::regclass) NOT NULL,
-	"name" varchar(100) NOT NULL,
-	CONSTRAINT categories_pkey PRIMARY KEY (category_id)
+
+
+-- not in use
+create table public.users (
+  user_id uuid not null,
+  provider text not null,
+  provider_id text not null,
+  email character varying(255) null,
+  nickname character varying(50) null,
+  profile_image text null,
+  created_at timestamp with time zone null default CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone null default CURRENT_TIMESTAMP,
+  constraint users_pkey primary key (user_id),
+  constraint uq_provider_providerid unique (provider, provider_id)
 );
-
-
-CREATE TABLE public."comments" (
-	comment_id int4 DEFAULT nextval('comment_id_seq'::regclass) NOT NULL,
-	article_id int8 NOT NULL,
-	"comment" text NOT NULL,
-	comment_user_id uuid NOT NULL,
-	created timestamptz DEFAULT now() NULL,
-	p_comment_id int4 NULL,
-	CONSTRAINT comments_pkey PRIMARY KEY (comment_id),
-	CONSTRAINT comments_article_id_fkey FOREIGN KEY (article_id) REFERENCES public.articles(article_id)
-);
-CREATE INDEX comments_article_id_idx ON public.comments USING btree (article_id);
-CREATE INDEX comments_p_comment_id_idx ON public.comments USING btree (p_comment_id);
-
-CREATE TABLE public.users (
-	user_id uuid NOT NULL,
-	provider text NOT NULL,
-	provider_id text NOT NULL,
-	email varchar(255) NULL,
-	nickname varchar(50) NULL,
-	profile_image text NULL,
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NULL,
-	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP NULL,
-	CONSTRAINT uq_provider_providerid UNIQUE (provider, provider_id),
-	CONSTRAINT users_pkey PRIMARY KEY (user_id)
-);
-
