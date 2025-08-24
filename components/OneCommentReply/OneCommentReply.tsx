@@ -44,10 +44,10 @@ export default function OneCommentReply({
     currentPage: number;
     searchQuery: string;
 }) {
-    // console.log("OneCommentReply : currUserId=>", currUserId);
-    // console.log("OneCommentData : comment.comment_user_id=>", comment.comment_user_id);
-    // console.log("OneCommentData : isPostMine=>", isPostMine);
-    // console.log("OneCommentData : isCommentMine=>", isCommentMine);
+    // console.debug("OneCommentReply : currUserId=>", currUserId);
+    // console.debug("OneCommentData : comment.comment_user_id=>", comment.comment_user_id);
+    // console.debug("OneCommentData : isPostMine=>", isPostMine);
+    // console.debug("OneCommentData : isCommentMine=>", isCommentMine);
     const [isOpen, setIsOpen] = useState(false); //comment 수정,삭제를 보여주기 위함
     const [isEditing, setIsEditing] = useState(false); 
     const [isReplying, setIsReplying] = useState(false); 
@@ -70,18 +70,18 @@ export default function OneCommentReply({
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
     // useEffect(() => {
     //     if (status === "unauthenticated") {
-    //         console.log("[Comments] 세션 만료 또는 로그아웃됨 (클라이언트) ");
+    //         console.debug("[Comments] 세션 만료 또는 로그아웃됨 (클라이언트) ");
     //         setIsLoggedIn(false);
     //     } else if (status === "authenticated") {
-    //         console.log("[Comments] 세션 존재 (클라이언트) ");
+    //         console.debug("[Comments] 세션 존재 (클라이언트) ");
     //         setIsLoggedIn(true);
     //     }
     // }, [status]);
 
     // const depthPixel = (10 * comment.depth).toString();
-    // console.log("index=>", index);
-    // console.log("depthPixel=>", depthPixel);
-    // console.log(`ml-[${depthPixel}px] ==>`, comment.comment);
+    // console.debug("index=>", index);
+    // console.debug("depthPixel=>", depthPixel);
+    // console.debug(`ml-[${depthPixel}px] ==>`, comment.comment);
 
     return (
         //TODO : 시간정보 표시. 10분전...

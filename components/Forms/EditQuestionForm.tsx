@@ -20,7 +20,7 @@ export default function EditQuestionForm({
     currentPage: number;
     searchQuery: string;
 }) {
-    console.log("[EditQuestionForm] searchQuery:", searchQuery);
+    console.debug("[EditQuestionForm] searchQuery:", searchQuery);
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery);
     const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
@@ -28,7 +28,7 @@ export default function EditQuestionForm({
     // 글입력시 자동 높이 조정 -----------------
     // const textbox = useRef<HTMLTextAreaElement>(null);
     // function adjustHeight() {
-    //     console.log("adjustHeight called");
+    //     console.debug("adjustHeight called");
     //     if (textbox.current) {
     //         textbox.current.style.height = "inherit";
     //         textbox.current.style.height = `${textbox.current.scrollHeight}px`;

@@ -39,11 +39,11 @@ export default async function Page(props: {
     const page = Number(searchParams?.page) || 1;
     const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
 
-    // console.log("[view] 개별 게시물 보기");
-    // console.log("[view] search query", searchQuery);
-    // console.log("[view] current page", page);
-    // console.log("[view] QnA ID:", id);
-    // console.log("[view] action:", action);
+    // console.debug("[view] 개별 게시물 보기");
+    // console.debug("[view] search query", searchQuery);
+    // console.debug("[view] current page", page);
+    // console.debug("[view] QnA ID:", id);
+    // console.debug("[view] action:", action);
 
     const currUserId = await getSessionUserId();
     const oneQnA = await fetchOneQnaById(id);
@@ -54,12 +54,12 @@ export default async function Page(props: {
     // const isLogged = await checkIsAuthenticated();
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
     const comments = await getComments(oneQnA.article_id);
-    // console.log("comments:", comments);
+    // console.debug("comments:", comments);
 
     // ----------------------------------------------- 조회수 관리 
     const cookieStore = await cookies();
     const viewerIdForCnt = cookieStore.get("viewerIdForCnt")?.value;
-    // console.log("[viewpage] viewerIdForCnt : ", viewerIdForCnt);
+    // console.debug("[viewpage] viewerIdForCnt : ", viewerIdForCnt);
 
     if (viewerIdForCnt) {
         // db 처리

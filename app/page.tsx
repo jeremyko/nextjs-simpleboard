@@ -19,13 +19,13 @@ export default async function Home() {
 
     // XXX test only XXX -------------------------------------------------------
     // const { data: session, status } = useSession();
-    // console.log("session.expires_at  ==> ", session?.expires_at);
+    // console.debug("session.expires_at  ==> ", session?.expires_at);
     // const session = await auth();
     // useEffect(() => {
-    //     console.log("session  ==> ", session);
-    //     console.log("status  ==> ", status);
+    //     console.debug("session  ==> ", session);
+    //     console.debug("status  ==> ", status);
     //     // if (status === "unauthenticated") {
-    //     //     console.log("세션 만료 또는 로그아웃됨 (클라이언트) ");
+    //     //     console.debug("세션 만료 또는 로그아웃됨 (클라이언트) ");
     //     //     router.push("/api/auth/signin"); // 로그인 페이지로 이동
     //     // }
     // }, [status]);
@@ -37,7 +37,7 @@ export default async function Home() {
     //         if (session.expires_at) {
     //             const now = Date.now();
     //             const timeLeftSecs = session.expires_at - now / 1000;
-    //             // console.log("[home] session.expires_at =>", session.expires_at,"now =", now, "/ time left:", timeLeftSecs);
+    //             // console.debug("[home] session.expires_at =>", session.expires_at,"now =", now, "/ time left:", timeLeftSecs);
 
     //             // 5분 미만 남았고, 아직 경고 안 했을 때
     //             // if (timeLeft <= 5 * 60 * 1000 && !warnedRef.current) {
@@ -51,7 +51,6 @@ export default async function Home() {
     //             // 세션이 완전히 만료되면 로그인 페이지로 이동
     //             if (timeLeftSecs <= 0) {
     //                 setSessionAliveWarn("세션 만료됨");
-    //                 // router.push("/login");
     //             }
     //         }
     //     };

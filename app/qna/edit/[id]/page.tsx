@@ -14,7 +14,7 @@ export default async function Page(props: {
     //middleware 에서 이미 필터링되므로 코드는 실행안됨.
     // const isAuthenticated = await checkIsAuthenticated();
     // if (!isAuthenticated) {
-    //     console.log("[edit qna] 로그인 안된 상태로 접근함");
+    //     console.debug("[edit qna] 로그인 안된 상태로 접근함");
     //     redirect("/api/auth/signin");
     // }
     const params = await props.params;
@@ -23,9 +23,9 @@ export default async function Page(props: {
     const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
 
-    // console.log("[edit] search query", searchQuery);
-    // console.log("[edit] current page", page);
-    // console.log("[edit] QnA ID:", id);
+    // console.debug("[edit] search query", searchQuery);
+    // console.debug("[edit] current page", page);
+    // console.debug("[edit] QnA ID:", id);
 
     //XXX 다시 한번 가져오게 일단 처리하자.. TODO : 어떤 좋은 방법이 있을까
     const oneQnA = await fetchOneQnaById(id);
@@ -37,7 +37,7 @@ export default async function Page(props: {
         notFound();
     }
 
-    // console.log("qna data:", oneQnA);
+    // console.debug("qna data:", oneQnA);
     return (
         <EditQuestionForm oneQnA={oneQnA} categoryList={categoryList} currentPage={page} searchQuery={searchQuery} />
     );

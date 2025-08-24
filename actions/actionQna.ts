@@ -65,7 +65,7 @@ const CreateQnAComment = CreateCommentFormSchema.omit({});
  */
 export async function createQuestion(prevState: State, formData: FormData) {
     //XXX 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
-    console.log("==> createQuestion called with formData:", formData);
+    console.debug("==> createQuestion called with formData:", formData);
 
     const validatedFields = CreateQnA.safeParse({
         categoryId: formData.get("categoryId"),
@@ -92,22 +92,22 @@ export async function createQuestion(prevState: State, formData: FormData) {
     }
     const { categoryId, title, content } = validatedFields.data;
     //const date = new Date().toISOString().split("T")[0];
-    console.log("==> createQuestion :", categoryId, title, content);
+    console.debug("==> createQuestion :", categoryId, title, content);
 
     //userId
     const session = await auth();
     if (!session) {
-        console.log("[createQuestion] 로그인 안된 상태로 접근함");
+        console.debug("[createQuestion] 로그인 안된 상태로 접근함");
         return {
             message: "로그인 후 다시 시도하세요.",
             errors: { categoryId: ["로그인 후 다시 시도하세요."] },
         };
     }
-    console.log("==> createQuestion session:", session);
+    console.debug("==> createQuestion session:", session);
     const userId = session.userId;
-    console.log("==> createQuestion userId:", userId);
+    console.debug("==> createQuestion userId:", userId);
     if (!userId) {
-        console.log("재 로그인 필요");
+        console.debug("재 로그인 필요");
         return {
             message: "유저 정보가 올바르지 않습니다. 다시 로그인 해주세요.",
             errors: { categoryId: ["유저 정보가 없습니다."] },
@@ -151,10 +151,10 @@ export async function updateQuestion(
     // const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
 
     // 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
-    console.log("edit action ==> updateQuestion formData:", formData);
-    console.log("            ==> post userId :", postUserId);
-    console.log("            ==> article_id :", articleId, " currentPage:", currentPage);
-    console.log("            ==> searchQuery :", searchQuery);
+    console.debug("edit action ==> updateQuestion formData:", formData);
+    console.debug("            ==> post userId :", postUserId);
+    console.debug("            ==> article_id :", articleId, " currentPage:", currentPage);
+    console.debug("            ==> searchQuery :", searchQuery);
 
     const validatedFields = UpdateQnA.safeParse({
         categoryId: formData.get("categoryId"),
@@ -244,7 +244,7 @@ export async function createComment(
     prevState: CommentState,
     formData: FormData,
 ) {
-    console.log("==> createComment called with formData:", formData);
+    console.debug("==> createComment called with formData:", formData);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         // console.error("로그인 안된 상태 ");
@@ -298,8 +298,8 @@ export async function updateComment(
     prevState: CommentState,
     formData: FormData,
 ) {
-    // console.log("==> updateComment called with formData:", formData);
-    // console.log("==> updateComment -> currentCommentId:", currentCommentId);
+    // console.debug("==> updateComment called with formData:", formData);
+    // console.debug("==> updateComment -> currentCommentId:", currentCommentId);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         redirect("/api/auth/signin");
@@ -385,7 +385,7 @@ export async function createReply(
     prevState: CommentState,
     formData: FormData,
 ) {
-    // console.log("==> createReply called with formData:", formData);
+    // console.debug("==> createReply called with formData:", formData);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         // console.error("로그인 안된 상태 ");
@@ -410,7 +410,7 @@ export async function createReply(
     }
     const { content } = validatedFields.data;
 
-    console.log("p_comment_id :", commentId);
+    console.debug("p_comment_id :", commentId);
     try {
         await sql` 
         INSERT INTO comments (article_id, p_comment_id, comment, comment_user_id,reply_to) 

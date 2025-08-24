@@ -25,7 +25,7 @@ export default function ReplyCommentForm({
     searchQuery: string;
     setIsReplying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    // console.log(
+    // console.debug(
     //     "[ReplyCommentForm] currentPostId:",
     //     currentPostId,
     //     " / currUserId:",
@@ -75,10 +75,10 @@ export default function ReplyCommentForm({
     useEffect(() => {
         if (scrollRef.current) {
             // const rect = scrollRef.current.getBoundingClientRect();
-            // console.log("상대 좌표:", rect);
-            // console.log("window.scrollY : ", window.scrollY);
-            // console.log("window.pageYOffset : ", window.pageYOffset);
-            // console.log("절대 y 좌표:", rect.top + window.pageYOffset);
+            // console.debug("상대 좌표:", rect);
+            // console.debug("window.scrollY : ", window.scrollY);
+            // console.debug("window.pageYOffset : ", window.pageYOffset);
+            // console.debug("절대 y 좌표:", rect.top + window.pageYOffset);
             // window.scrollTo(0, rect.top + window.pageYOffset);
             scrollRef.current.focus();
             // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); 

@@ -15,19 +15,19 @@ export default async function BoardDataTable({
     postsPerPage: number;
     currentPostId: number;
 }) {
-    // console.log("currentPage(table)", currentPage);
-    // console.log("searchQuery(table)", searchQuery);
+    // console.debug("currentPage(table)", currentPage);
+    // console.debug("searchQuery(table)", searchQuery);
     // 한번에 두 개의 쿼리를 실행
     const data = await Promise.all([
         getAllPostsCount(searchQuery),
         fetchPagedBoardItems(currentPage, postsPerPage, searchQuery),
     ]);
     const totalPostCount = Number(data[0] ?? "0");
-    // console.log("totalPostCount", totalPostCount);
+    // console.debug("totalPostCount", totalPostCount);
     // const totalPages = Math.ceil(totalPostCount / postsPerPage);
-    // console.log("totalPages", totalPages);
+    // console.debug("totalPages", totalPages);
     const posts = data[1];
-    // console.log("posts:", posts);
+    // console.debug("posts:", posts);
 
     return (
         <div>

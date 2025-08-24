@@ -9,7 +9,7 @@ export default async function Page() {
     if (!categoryList) {
         notFound();
     }
-    // console.log("categoryList", categoryList);
+    // console.debug("categoryList", categoryList);
     return (
         <NewQuestionForm categoryList={categoryList}/>
     );

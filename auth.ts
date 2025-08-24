@@ -90,10 +90,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // =====================================================================
         // XXX  인증 및 세션 관리 중 호출되는 각 핸들러--> middleware 에서 처리하게 변경. 사용안함
         // authorized({ request, auth }) {
-        //     // console.log("\n====>> [authorized_callback] : request :", request);
-        //     // console.log("------- [authorized_callback] : auth :", auth);
+        //     // console.debug("\n====>> [authorized_callback] : request :", request);
+        //     // console.debug("------- [authorized_callback] : auth :", auth);
         //     const { pathname } = request.nextUrl;
-        //     // console.log("[auth] pathname:", pathname); // "/", "/qna", "/qna/edit/35"
+        //     // console.debug("[auth] pathname:", pathname); // "/", "/qna", "/qna/edit/35"
         //     const isLoggedIn = !!auth?.user;
         //     let isProtected = false;
         //     // 홈페이지는 인증 필요 없고, 신규 게시물 작성과 게시물 수정은 인증 필요
@@ -107,16 +107,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         //     } else {
         //         isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix));
         //     }
-        //     console.log("isProtected:", isProtected);
+        //     console.debug("isProtected:", isProtected);
         //     if (isProtected) {
         //         if (isLoggedIn) {
         //             return true;
         //         }
         //         // 로그인 페이지로 리디렉션됩니다.
-        //         console.log("not logged in : redirect to login");
+        //         console.debug("not logged in : redirect to login");
         //         return false;
         //     }
-        //     // console.log("return true");
+        //     // console.debug("return true");
         //     return true;
         // },
 
@@ -139,13 +139,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // token 안에 실제 JWT payload가 들어있음
             // 서버 로그에서만 보임 (브라우저 콘솔 아님)
             if (trigger !== undefined) {
-                console.log("\n====>> [jwt_callback] : trigger :", trigger);
+                console.debug("\n====>> [jwt_callback] : trigger :", trigger);
             }
-            console.log(" ------- [jwt_callback] : token :", token);
-            console.log(" ------- [jwt_callback] : account :", account);
-            console.log(" ------- [jwt_callback] : session :", session);
-            console.log(" ------- [jwt_callback] : profile :", profile);
-            console.log(" ------- [jwt_callback] : user :", user); //!!! XXX 추가한것.
+            console.debug(" ------- [jwt_callback] : token :", token);
+            if (account !== undefined) {
+                console.debug(" ------- [jwt_callback] : account :", account);
+            }
+            if (session !== undefined) {
+                console.debug(" ------- [jwt_callback] : session :", session);
+            }
+            if (profile !== undefined) {
+                console.debug(" ------- [jwt_callback] : profile :", profile);
+            }
+            if (user !== undefined) {
+                console.debug(" ------- [jwt_callback] : user :", user); //!!! XXX 추가한것.
+            }
 
             const now = Date.now();
             //------------------------------------------------------------------
@@ -170,7 +178,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             } else if (token.expires_at) {
                 if (now < token.expires_at * 1000) {
                     const timeLeftSecs = token.expires_at - now / 1000;
-                    console.log("*** access_token is still valid : ", timeLeftSecs);
+                    console.debug("*** access_token is still valid : ", timeLeftSecs);
                     return token;
                 } else {
                     // 사용자의 활동/브라우져 재시작 등으로 jwt 콜백이 호출됬을때,
@@ -183,8 +191,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     // - 다시 jwt 콜백이 중첩해서 호출되고 있고, 때문에 2번째 refresh 가 발생됨.
                     // - 2번째것의 처리가 종료되면, 중첩된 순서 때문에 최초 시작했던 
                     //   refresh 처리가 재개되어, 최종 access_token 값으로 설정됨.
-                    console.log("\n\n******************************************* REFRESH\n\n ");
-                    // console.log("now : ", now, " / expires_at  :", token.expires_at * 1000);
+                    console.debug("\n\n******************************************* REFRESH\n\n ");
+                    // console.debug("now : ", now, " / expires_at  :", token.expires_at * 1000);
                     return refreshAccessToken(token);
                 }
             }
@@ -207,8 +215,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // !!! 반환 값은 클라이언트에 노출되므로 여기서 반환하는 내용에 주의
             // JWT 콜백을 통해 토큰에 추가한 내용을 !!! 클라이언트!!! 에서 사용할 수 있도록 하려면
             // 여기서도 명시적으로 반환해야 함.
-            // console.log("\n====>> [session_callback] : session :", session);
-            // console.log("------- [session_callback] : token   :", token);
+            // console.debug("\n====>> [session_callback] : session :", session);
+            // console.debug("------- [session_callback] : token   :", token);
 
             // XXX 위 jwt 에서 넘겨준 userId, expires_at 를 세션에 추가한다.
             // ==> client 에서도 사용할 정보를 설정하는 것임.
@@ -227,9 +235,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // =====================================================================
         // 사용자가 로그인할 때 호출되며, 반환하는 값이 true이면 로그인 성공, false이면 로그인 실패
         // async signIn({ user, account, profile }) {
-        //     console.log("\n====>> [signIn_callback] : user :", user);
-        //     console.log("       [signIn_callback] : account :", account);
-        //     console.log("       [signIn_callback] : profile :", profile);
+        //     console.debug("\n====>> [signIn_callback] : user :", user);
+        //     console.debug("       [signIn_callback] : account :", account);
+        //     console.debug("       [signIn_callback] : profile :", profile);
         //     return true;
         // },
     },
@@ -238,28 +246,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // 각 이벤트에 대한 핸들러를 지정할 수 있습니다(예: 디버깅 또는 감사 로그 생성).
     // events: {
     //     createUser: async ({ user }) => {
-    //         console.log("====>> [event callback] createUser", user);
+    //         console.debug("====>> [event callback] createUser", user);
     //     },
     //     updateUser: async ({ user }) => {
-    //         console.log("====>> [event callback] updateUser =>", user);
+    //         console.debug("====>> [event callback] updateUser =>", user);
     //     },
     //     linkAccount: async ({ user, account, profile }) => {
-    //         console.log("====>> [event callback] linkAccount =>", user, account, profile);
+    //         console.debug("====>> [event callback] linkAccount =>", user, account, profile);
     //     },
     //     signIn: async ({ user, account, profile, isNewUser }) => {
-    //         console.log("====>> [event_callback] singIn(user) =>", user);
-    //         console.log("       [event_callback] singIn(account) =>", account);
-    //         console.log("       [event_callback] singIn(profile) =>", profile);
-    //         console.log("       [event_callback] singIn(isNewUser) =>", isNewUser);
+    //         console.debug("====>> [event_callback] singIn(user) =>", user);
+    //         console.debug("       [event_callback] singIn(account) =>", account);
+    //         console.debug("       [event_callback] singIn(profile) =>", profile);
+    //         console.debug("       [event_callback] singIn(isNewUser) =>", isNewUser);
     //     },
     //     signOut: async (payload) => {
     //         // payload can be { session } or { token }
     //         if ("session" in payload) {
-    //             console.log("====>> [event_callback] signOut (session)=>", payload.session);
+    //             console.debug("====>> [event_callback] signOut (session)=>", payload.session);
     //         } else if ("token" in payload) {
-    //             console.log("====>> [event_callback] signOut (token)=>", payload.token);
+    //             console.debug("====>> [event_callback] signOut (token)=>", payload.token);
     //         } else {
-    //             console.log("====>> [event_callback] signOut=>", payload);
+    //             console.debug("====>> [event_callback] signOut=>", payload);
     //         }
     //     },
     // },
@@ -296,7 +304,7 @@ async function refreshAccessToken(token: any) {
         throw new TypeError("Missing refresh_token");
     }
     const provider : string = token.provider;
-    console.log("refreshAccessToken : provider=", provider);
+    console.debug("refreshAccessToken : provider=", provider);
 
     try {
         let url = "";
@@ -350,9 +358,9 @@ async function refreshAccessToken(token: any) {
         //     expires_in: number;
         //     refresh_token?: string;
         // };
-        console.log("tokenOrError : ", tokensOrError);
-        console.log("refresh new token:", newTokens);
-        console.log("expires_at :", Math.floor(Date.now() / 1000 + (newTokens.expires_in ?? 3600)));
+        console.debug("tokenOrError : ", tokensOrError);
+        console.debug("refresh new token:", newTokens);
+        console.debug("expires_at :", Math.floor(Date.now() / 1000 + (newTokens.expires_in ?? 3600)));
 
         return {
             ...token,

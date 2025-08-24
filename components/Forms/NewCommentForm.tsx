@@ -20,7 +20,7 @@ export default function NewCommentForm({
     currentPage: number;
     searchQuery: string;
 }) {
-    // console.log("[NewCommentForm] currentPostId:", currentPostId, " / currUserId:", currUserId);
+    // console.debug("[NewCommentForm] currentPostId:", currentPostId, " / currUserId:", currUserId);
     const initialState: CommentState = { message: null, errors: {} , redirectTo:""};
     const createCommentWithParams = createComment.bind(
         null,
@@ -47,7 +47,7 @@ export default function NewCommentForm({
 
         // textarea row를 3정도 변경처리,
         // if (inputRef.current) {
-        //     console.log("inputRef.current.value.length=>", inputRef.current.value.length);
+        //     console.debug("inputRef.current.value.length=>", inputRef.current.value.length);
         //     inputRef.current.setSelectionRange(0, 0);
         // }
         // setContentState("\n\n\n");

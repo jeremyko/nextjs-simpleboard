@@ -24,7 +24,7 @@ export default function EditCommentForm({
     searchQuery: string;
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    // console.log("EditCommentForm");
+    // console.debug("EditCommentForm");
     const [contentState, setContentState] = useState(comment.comment);
     const initialState: CommentState = { message: null, errors: {} };
     const updateCommentWithParams = updateComment.bind(

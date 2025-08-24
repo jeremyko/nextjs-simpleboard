@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export const checkIsAuthenticated = async () => {
     const session = await auth();
-    // console.log("*** checkIsAuthenticated: session", session);
+    // console.debug("*** checkIsAuthenticated: session", session);
     if (session) {
         return true;
     }
@@ -23,14 +23,14 @@ export const checkIsThisMine = async (postUserId: string) => {
         redirect("/api/auth/signin");
         // return false;
     }
-    // console.log("*** checkIsThisMine: session", session);
-    // console.log("*** userId (session) :", session.userId);
-    // console.log("           (post   ) :", postUserId);
+    // console.debug("*** checkIsThisMine: session", session);
+    // console.debug("*** userId (session) :", session.userId);
+    // console.debug("           (post   ) :", postUserId);
     if (session.userId === postUserId) {
-        // console.log("checkIsThisMine: true");
+        // console.debug("checkIsThisMine: true");
         return true;
     }
-    // console.log("checkIsThisMine: false");
+    // console.debug("checkIsThisMine: false");
     return false;
 };
 
@@ -49,12 +49,12 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
     if (!postUserId) {
         return false;
     }
-    // console.log("*** userId (session) :", session.userId);
-    // console.log("           (post   ) :", postUserId);
+    // console.debug("*** userId (session) :", session.userId);
+    // console.debug("           (post   ) :", postUserId);
     if (session.userId === postUserId) {
         return true;
     }
-    // console.log("본인의 게시물이 아님");
+    // console.debug("본인의 게시물이 아님");
     return false;
 };
 
@@ -63,14 +63,14 @@ export const isAuthenticatedAndMine = async (postUserId: string, needRedirectToL
 export const getSessionUserId = async () => {
     const session = await auth();
     if (!session) {
-        // console.log("[getSessionUserId] 로그인 안된 상태로 접근함");
+        // console.debug("[getSessionUserId] 로그인 안된 상태로 접근함");
         return null;
     }
     const userId = session.userId;
     if (!userId) {
-        console.log("재 로그인 필요");
+        console.debug("재 로그인 필요");
         return null;
     }
-    // console.log("==> getUserId userId:", userId);
+    // console.debug("==> getUserId userId:", userId);
     return userId;
 };

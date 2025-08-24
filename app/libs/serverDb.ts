@@ -207,7 +207,7 @@ export async function fetchCategoryData(): Promise<CategoryItem[]> {
 }
 
 export async function insertPostViews(articleId: number, currUserId: string, viewerIdForCnt: string) {
-    // console.log("insertPostViews : ",  viewerIdForCnt);
+    // console.debug("insertPostViews : ",  viewerIdForCnt);
     try {
         await sql`
         WITH ins AS (

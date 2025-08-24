@@ -15,7 +15,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
     // 글입력시 자동 높이 조정 -----------------
     // const textbox = useRef<HTMLTextAreaElement>(null);
     // function adjustHeight() {
-    //     console.log("adjustHeight called");
+    //     console.debug("adjustHeight called");
     //     if (textbox.current) {
     //         textbox.current.style.height = "inherit";
     //         textbox.current.style.height = `${textbox.current.scrollHeight}px`;

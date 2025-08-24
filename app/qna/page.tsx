@@ -35,11 +35,11 @@ export default async function Page(props: {
     const searchParams = await props.searchParams;
     const searchQuery = decodeURIComponent(searchParams?.query || "");
     const page = Number(searchParams?.page) || 1;
-    // console.log("[list] search query:", searchQuery);
-    // console.log("[list] current page:", page);
+    // console.debug("[list] search query:", searchQuery);
+    // console.debug("[list] current page:", page);
 
     const totalPagesCnt = await getTotalPagesCount(searchQuery,getPostsPerPage());
-    // console.log("[list] totalPages", totalPagesCnt);
+    // console.debug("[list] totalPages", totalPagesCnt);
 
     return (
         <div className="min-h-screen max-w-3xl mx-auto font-sans">

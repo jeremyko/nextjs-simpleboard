@@ -22,7 +22,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-    console.log("middleware invoked");
+    // console.log("middleware invoked");
     //---------------------------------------- 조회수 관리위한 cookie 설정 
     const response = NextResponse.next();
     const viewerId = request.cookies.get("viewerIdForCnt")?.value;
@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
         // Middleware는 원래부터 정적 빌드에 포함되지 않고,
         // 요청 시 실행되는 특수 레이어라서 connection()을 써도 의미 없음
         const newViewerId = crypto.randomUUID();
-        console.log("[middleware] viewerIdForCnt cookie 발행 : ", newViewerId);
+        // console.log("[middleware] viewerIdForCnt cookie 발행 : ", newViewerId);
         response.cookies.set("viewerIdForCnt", newViewerId, {
             httpOnly: true,
             secure: true,
@@ -44,8 +44,8 @@ export async function middleware(request: NextRequest) {
             // maxAge: 60 * 1, // 1 분
             // maxAge: 3, //test
         });
-    }else{
-        console.log("[middleware] viewerIdForCnt cookie 존재");
+    // }else{
+        // console.log("[middleware] viewerIdForCnt cookie 존재");
     }
 
     //---------------------------------------- 로그인 안한 경우 글작성 막기 
@@ -59,15 +59,16 @@ export async function middleware(request: NextRequest) {
     const protectedPathPrefix = ["/qna/new"];
     const pathname = url.pathname;
     if (pathname === "/") {
-        console.log("home....pass");
+        // console.log("home....pass");
         return response; // 홈 경로는 무조건 접근 가능.
     } else {
         isProtected = protectedPathPrefix.some((prefix) => pathname.startsWith(prefix));
     }
     const session = await auth(); // auth.js helper → 현재 사용자 세션
-    const isLoggedIn = session?.user;
-    console.log("isProtected:", isProtected ," / isLoggedIn:", isLoggedIn);
-    if (isProtected && !isLoggedIn) {
+    // console.log("middleware session:", session );
+    const user = session?.user;
+    // console.log("isProtected:", isProtected );
+    if (isProtected && !user) {
         console.log("not logged in : redirect to login");
         return NextResponse.redirect(new URL("/api/auth/signin", request.url));
     }

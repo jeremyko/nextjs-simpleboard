@@ -12,7 +12,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
-            // console.log(`Searching [${event.currentTarget.value}]`);
+            // console.debug(`Searching [${event.currentTarget.value}]`);
             const params = new URLSearchParams(searchParams);
             // params.set("page", "1"); // 여기
             params.delete("page");
