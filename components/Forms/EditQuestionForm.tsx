@@ -136,6 +136,9 @@ export default function EditQuestionForm({
                             </div>
                         </div>
 
+                        {/* 에러 발생시 표시한다  */}
+                        {/* <p aria-live="polite" className="bold font-lg text-red-600">{JSON.stringify(state?.errors?.categoryId)}</p> */}
+
                         {/* --------------------- */}
                         <div className="mt-6 pt-2 pb-2 flex justify-end items-center gap-8">
                             <Link href={`/qna/${oneQnA.article_id}?page=${currentPage}&query=${searchQuery}`}>

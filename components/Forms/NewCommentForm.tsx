@@ -102,6 +102,10 @@ export default function NewCommentForm({
                     ></TextareaAutosize>
                 </div>
             </div>
+            {/* 에러 발생시 표시한다  */}
+            {/* <p aria-live="polite" className="bold font-lg text-red-600">
+                {commentState?.errors?.content}
+            </p> */}
 
             {currUserId && isWriting && (
                 <div className="flex justify-end items-center gap-4 mt-2">

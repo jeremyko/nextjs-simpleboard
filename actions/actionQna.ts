@@ -2,7 +2,7 @@
 
 //XXX client component 에서 server action 을 사용하려면 use server 를 선언해야 한다.
 import { z } from "zod";
-import postgres from "postgres";
+import postgres, { PostgresError } from "postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { checkIsAuthenticated, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
@@ -26,8 +26,13 @@ export type CommentState = {
         content?: string[];
     };
     message?: string | null;
-    redirectTo?:string| null;
+    redirectTo?: string | null;
 };
+
+export type DelQnAState = {
+    error?: string | null;
+};
+
 //XXX 위 State 와 아래 Schema 의 필드들은 일치해야 함
 //    왜냐하면, createQuestion 함수에서 State를 검증할 때,
 //    CreateQnA.safeParse() 를 사용하기 때문
@@ -200,9 +205,7 @@ export async function updateQuestion(
             message: "Database Error: Failed to Update QnA.",
         };
     }
-    revalidatePath(
-        `/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-    );
+    revalidatePath(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
     redirect(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
 
@@ -213,22 +216,43 @@ export async function updateQuestion(
  * @param currentPage - 현재 페이지 번호
  * @returns 삭제 후 해당 페이지로 리다이렉트
  */
-export async function deleteQuestion(articleId: number, currentPage: number, postUserId: string) {
+export async function deleteQuestion(
+    articleId: number,
+    currentPage: number,
+    postUserId: string,
+    // prevState: State,
+    // formData: FormData,
+) {
     // 로그인된 상태에서만 처리되어야 함
     const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
+        // return {
+        //     error: "로그인 안된 상태 혹은 본인 게시물 아님",
+        // };
         redirect("/api/auth/signin");
         // return new Response("Forbidden", { status: 403 });
     }
 
     //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
-    await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
+    try {
+        await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
+    } catch (error) {
+        const sqlError = error as PostgresError;
+        // console.error("error:",error);
+        console.error("sqlError:",sqlError);
+        // console.error("code =>",sqlError.code );
+        if (sqlError.code === "23503") {
+            return {
+                error: "대댓글이 있는 경우 삭제할수 없습니다", 
+            };
+        }
+        return {
+            error: `Database Error: ${sqlError.code} / ${sqlError.detail} `, 
+        };
+    }
     revalidatePath(`/qna?page=${currentPage}`);
     redirect(`/qna?page=${currentPage}`);
-    // return {
-    //     redirectTo: `/qna?page=${currentPage}`
-    // };
 }
 
 //////////////////////////////////////////////////////////////////////////////// comment
@@ -237,7 +261,7 @@ export async function deleteQuestion(articleId: number, currentPage: number, pos
  */
 export async function createComment(
     userId: string, // 댓글 작성자 ID
-    currentPostUserName:string,
+    currentPostUserName: string,
     currentPage: number,
     searchQuery: string,
     currentPostId: number,
@@ -336,7 +360,7 @@ export async function updateComment(
         };
     }
     return {
-        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
     };
 }
 
@@ -364,9 +388,16 @@ export async function deleteComment(
         //XXX 위에서처럼 error 객체 리턴하면 안됨 .에러발생됨.
     }
 
-    await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
+    try {
+        await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "Database Error: Failed to delete QnA comment.",
+        };
+    }
     return {
-        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
     };
 }
 
@@ -378,7 +409,7 @@ export async function createReply(
     currUserId: string, // 댓글 작성자 ID
     // commentUserId: string, // 응답할 댓글의 작성자
     commentId: number, //응답할 comment id
-    commentUserName:string,
+    commentUserName: string,
     currentPage: number,
     searchQuery: string,
     currentPostId: number,
@@ -422,6 +453,6 @@ export async function createReply(
         };
     }
     return {
-        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`
+        redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
     };
 }

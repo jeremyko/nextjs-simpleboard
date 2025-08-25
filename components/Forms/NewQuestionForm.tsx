@@ -131,6 +131,11 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             </div>
                         </div>
 
+                        {/* 에러 발생시 표시한다  */}
+                        {/* <p aria-live="polite" className="bold font-lg text-red-600">
+                            {state?.message}
+                        </p> */}
+
                         {/* --------------------- */}
                         <div className="mt-6 pt-2 pb-2 flex justify-between items-center gap-4">
                             <Link href="/qna">

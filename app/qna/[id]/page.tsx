@@ -6,22 +6,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import OneBoardItem from "@/components/OneBoardItem/OneBoardItem"; //TODO : 경로가 이게 맞는건지 ..
 import { Button } from "@/components/ui/button";
-import { deleteQuestion } from "@/actions/actionQna";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { deleteQuestion, } from "@/actions/actionQna";
 import { getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import NewCommentForm from "@/components/Forms/NewCommentForm";
 import OneCommentReply from "@/components/OneCommentReply/OneCommentReply";
 import { cookies } from "next/headers";
+import DeleteQnaForm from "@/components/Forms/DeleteQnaForm";
 
 // XXX 개별 게시물 보기
 
@@ -53,13 +43,14 @@ export default async function Page(props: {
     const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id);
     // const isLogged = await checkIsAuthenticated();
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
+    // const initialState: DelQnAState = { message: null };
+    // const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
     const comments = await getComments(oneQnA.article_id);
     // console.debug("comments:", comments);
 
-    // ----------------------------------------------- 조회수 관리 
+    // ----------------------------------------------- 조회수 관리
     const cookieStore = await cookies();
     const viewerIdForCnt = cookieStore.get("viewerIdForCnt")?.value;
-    // console.debug("[viewpage] viewerIdForCnt : ", viewerIdForCnt);
 
     if (viewerIdForCnt) {
         // db 처리
@@ -67,7 +58,7 @@ export default async function Page(props: {
         // - 로그인 된 경우, 동일 pc 라도 계정을 다르게 로그인을 하면 조회수가 증가된다.
         await insertPostViews(oneQnA.article_id, currUserId ?? "", viewerIdForCnt ?? "");
     }
-    // ----------------------------------------------- 조회수 관리 
+    // ----------------------------------------------- 조회수 관리
     return (
         <div className="max-w-3xl mx-auto min-h-screen ">
             <div className="flex flex-col text-sm  mb-4 text-left ">
@@ -76,46 +67,13 @@ export default async function Page(props: {
                     <OneBoardItem oneQnA={oneQnA} />
 
                     {isLoggedInAndMine && (
-                        <div className="mt-2 mb-2 flex justify-end items-center gap-4">
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    {/* 바깥에서 보이는 삭제 버튼 */}
-                                    <div className="block cursor-pointer p-2 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700 ">
-                                        {" "}
-                                        삭제{" "}
-                                    </div>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete your
-                                            article.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter className="flex justify-end items-center gap-8">
-                                        <AlertDialogCancel className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                            취소
-                                        </AlertDialogCancel>
-                                        <form action={deleteQuestionWithId} id="deleteForm" name="deleteForm">
-                                            <AlertDialogAction
-                                                type="submit"
-                                                className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            >
-                                                삭제
-                                            </AlertDialogAction>
-                                        </form>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-
-                            <Link href={`/qna/edit/${id}?page=${page}&query=${searchQuery}`}>
-                                {/* <Button>수정</Button> */}
-                                <div className="block cursor-pointer p-2 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600">
-                                    수정
-                                </div>
-                            </Link>
-                        </div>
+                        // 에러를 화면에 표시하기 위해 client component 로 분리함 
+                        <DeleteQnaForm
+                            id={id}
+                            page={page}
+                            userId={oneQnA.user_id}
+                            searchQuery={searchQuery}
+                        />
                     )}
 
                     <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">
