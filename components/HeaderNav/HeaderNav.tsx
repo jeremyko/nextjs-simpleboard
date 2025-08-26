@@ -3,7 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Search from "../Search/Search";
+
 import { Suspense } from "react";
+// useSearchParams() should be wrapped in a suspense boundary at page "/404". 
+// Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+
 import UserButton from "../UserButton/UserButton";
 import { useState } from "react"
 
@@ -33,7 +37,9 @@ export default function HeaderNav() {
                 <Link href="/qna" className="text-base hover:underline pt-4 mr-12 p-2">
                     Q&A
                 </Link>
+                <Suspense>
                 <Search placeholder="검색어를 입력하세요" />
+                </Suspense>
                 <div className=" p-2">
                     <UserButton />
                 </div>
