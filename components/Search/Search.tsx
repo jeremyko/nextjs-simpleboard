@@ -3,12 +3,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams, useRouter } from "next/navigation";
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, useState } from 'react';
 
 export default function Search({ placeholder }: { placeholder: string }) {
     const searchParams = useSearchParams();
     // const pathname = usePathname();
     const { replace } = useRouter();
+    const [showSearch, setShowSearch] = useState(false); // mobile 인 경우에 검색창
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
@@ -27,23 +28,52 @@ export default function Search({ placeholder }: { placeholder: string }) {
         }
     };
 
+    //TODO : 모바일인 경우에는 돋보기 그림을 버튼으로 사용하게, pc 는 input + 그림
     return (
-        <div className="mt-2 mb-2 relative flex items-center flex-shrink-0 ">
-            <label id="search" htmlFor="searchInput" className="sr-only">
-                Search
-            </label>
-            <input
-                className="peer block w-full rounded-md border-1 border-gray-200 py-[6px] pl-10 text-sm outline-1 placeholder:text-gray-500"
-                placeholder={placeholder}
-                onKeyDown={handleKeyDown}
-                id = "searchInput"
-                defaultValue={decodeURIComponent(searchParams.get("query") || "")}
-            />
-            <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                aria-label="glass"
-                className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-400 peer-focus:text-zinc-200"
-            />
+        <div>
+            {/* PC */}
+            <div className="hidden sm:flex relative items-center flex-shrink-0 ">
+                <label id="search" htmlFor="searchInput" className="sr-only">
+                    Search
+                </label>
+                <input
+                    className=" w-full rounded-md border-1 border-gray-200 py-[6px] pl-10 text-sm outline-1 placeholder:text-gray-500 hidden sm:flex"
+                    placeholder={placeholder}
+                    onKeyDown={handleKeyDown}
+                    id="searchInput"
+                    defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                />
+                <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
+                    aria-label="glass"
+                    className="absolute left-3 text-gray-400 peer-focus:text-zinc-200"
+                />
+            </div>
+
+            {/* mobile */}
+            <div className="sm:hidden flex  items-center relative ">
+                <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
+                    aria-label="glass"
+                    size="xl"
+                    className="absolute left-3 text-gray-400 peer-focus:text-zinc-200 "
+                    onClick={() => {
+                        setShowSearch(!showSearch);
+                    }}
+                />
+            </div>
+            {showSearch && (
+                <div className="absolute left-0  top-full  w-full bg-gray-700 sm:hidden">
+                    {/* TODO : auto focus */}
+                    <input
+                        className=" w-full rounded-md border-1 border-gray-200 py-[6px] p-2 text-sm outline-1 placeholder:text-gray-400 "
+                        placeholder={placeholder}
+                        onKeyDown={handleKeyDown}
+                        id="searchInput"
+                        defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                    />
+                </div>
+            )}
         </div>
     );
 }

@@ -30,7 +30,8 @@ export default async function BoardDataTable({
     // console.debug("posts:", posts);
 
     return (
-        <div>
+        // <div className="max-w-3xl mx-auto min-h-screen ">
+        <div className="max-w-3xl ">
             <div className="text-2xl font-bold pt-4 mb-4 text-left">
                 <h1> Q&A </h1>
             </div>
@@ -49,12 +50,12 @@ export default async function BoardDataTable({
                 </thead> */}
 
                 <tbody>
-                    {posts.map((post) => (
+                    {posts?.map((post) => (
                         <tr
                             key={post.article_id}
                             className={
                                 currentPostId === post.article_id
-                                    ? "bg-slate-200 border-b border-gray-500  "
+                                    ? "bg-slate-200 border-b border-gray-500"
                                     : "border-b border-gray-500 "
                             }
                         >
@@ -67,37 +68,39 @@ export default async function BoardDataTable({
                                         className="text-red-500 pr-1"
                                     />
                                 )}
-                                {post.rownum}
+                                <span className="hidden sm:block ">{post.rownum}</span>
                             </td>
-                            <td className="p-2 text-xs ">
-                                <div className="min-w-[30px]">{post.category_name}</div>
+                            <td className="p-2 text-xs hidden sm:block">
+                                <div className="min-w-[30px] ">{post.category_name}</div>
                             </td>
                             <td className="p-2 text-left ">
                                 {post.comment_count > 0 && (
                                     <span className="bg-gray-500 text-white pr-2 pl-2 rounded-sm  text-xs font-light mr-2">
                                         {post.comment_count}
                                     </span>
-                                )}
+                                )}{" "}
                                 <Link
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
                                     className="text-gray-800 hover:underline text-sm "
                                 >
                                     {/* {post.title.substring(0, 40) + "..."} */}
-                                    {post.title}
+                                    <span>{post.title}</span>
                                 </Link>
                             </td>
-                            <td className="p-2  min-w-[100px] ">
+                            <td className="p-2  min-w-[100px] hidden sm:block ">
                                 <div className="flex flex-row align-middle ">
                                     <Avatar className="h-4 w-4 ">
                                         <AvatarImage src={post.user_image ?? undefined} alt="" />
                                     </Avatar>
-                                    <span className="text-xs text-center font-light pl-1">
+                                    <span className="text-xs font-light pl-1">
                                         {post.user_name}
                                     </span>
                                 </div>
                             </td>
-                            <td className="p-2 text-center min-w-[90] text-xs font-light">{post.created}</td>
-                            <td className="p-2 text-center text-xs font-light">{post.views}</td>
+                            <td className="p-2 text-center min-w-[90px] text-xs font-light ">
+                                {post.created}
+                            </td>
+                            <td className="p-2 text-center text-xs font-light hidden sm:block">{post.views}</td>
                         </tr>
                     ))}
                 </tbody>

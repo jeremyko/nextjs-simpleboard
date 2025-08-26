@@ -37,15 +37,18 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between `}
+                // className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col  `}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  h-screen overflow-hidden `}
             >
                 {/* <SessionProvider refetchOnWindowFocus={true}> */}
-                <SessionProvider >
+                <SessionProvider>
                     {/* <SessionWatcher /> */}
-                    <HeaderNav /> 
+                    <HeaderNav />
                     {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
-                    <main className="pt-14"> {children} </main>
-                    <Footer /> 
+                    <main className="overflow-y-scroll flex-1 ">
+                        <div className="max-w-3xl mx-auto ">{children}</div>
+                        <Footer />
+                    </main>
                 </SessionProvider>
             </body>
         </html>

@@ -53,7 +53,7 @@ export default function UserButton() {
 
     return (
         <div className="flex items-center gap-2">
-            <span className="hidden text-sm sm:inline-flex">{session.user.email}</span>
+            {/* <span className="hidden text-sm sm:inline-flex">{session.user.email}</span> */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
