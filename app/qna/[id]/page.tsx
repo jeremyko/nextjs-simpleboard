@@ -12,6 +12,7 @@ import NewCommentForm from "@/components/Forms/NewCommentForm";
 import OneCommentReply from "@/components/OneCommentReply/OneCommentReply";
 import { cookies } from "next/headers";
 import DeleteQnaForm from "@/components/Forms/DeleteQnaForm";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 // XXX 개별 게시물 보기
 
@@ -127,6 +128,7 @@ export default async function Page(props: {
                         </Link>
                     </div>
 
+                    <ScrollToTopButton />
                     <Pagination totalPagesCnt={totalPagesCnt} isFromViewPage={true} />
                 </div>
             </div>
