@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 
 export default function ScrollToTopButton() {
@@ -35,7 +35,7 @@ export default function ScrollToTopButton() {
                     onClick={scrollToTop}
                     className="fixed bottom-12 right-3 p-3 rounded-full bg-gray-700 text-white shadow-lg hover:bg-gray-800 transition-all"
                 >
-                    <FontAwesomeIcon icon={faCircleUp} size="lg" />
+                    <FontAwesomeIcon icon={faArrowUp} size="lg" />
                 </button>
             )}
         </>
