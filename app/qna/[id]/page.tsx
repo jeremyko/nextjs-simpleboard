@@ -60,7 +60,7 @@ export default async function Page(props: {
     }
     // ----------------------------------------------- 조회수 관리
     return (
-        <div className="max-w-3xl mx-auto min-h-screen ">
+        <div className="max-w-3xl mx-auto ">
             <div className="flex flex-col text-sm  mb-4 text-left ">
                 <div className="rounded-md p-2 md:p-3">
                     {/* XXX ViewOneBoardItem 는 client 컴포넌트로 분리되어 사용. */}

@@ -38,11 +38,12 @@ export default async function Page(props: {
     // console.debug("[list] search query:", searchQuery);
     // console.debug("[list] current page:", page);
 
-    const totalPagesCnt = await getTotalPagesCount(searchQuery,getPostsPerPage());
+    const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
     // console.debug("[list] totalPages", totalPagesCnt);
 
+    //  min-h-screen : 화면을 넘어가게 내용이 존재.
     return (
-        <div className="mx-auto min-h-screen  max-w-3xl w-full  p-2 md:p-3">
+        <div className="mx-auto  max-w-3xl w-full  p-2 md:p-3">
             <BoardDataTable
                 searchQuery={searchQuery}
                 currentPage={page}

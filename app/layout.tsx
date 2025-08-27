@@ -38,7 +38,7 @@ export default function RootLayout({
         <html lang="en">
             <body
                 // className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col  `}
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  h-screen  `}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen  `}
             >
                 {/* <SessionProvider refetchOnWindowFocus={true}> */}
                 <SessionProvider>
@@ -47,8 +47,8 @@ export default function RootLayout({
                     {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
                     <main className="overflow-y-scroll flex-1 ">
                         <div className="max-w-3xl mx-auto ">{children}</div>
-                        <Footer />
                     </main>
+                    <Footer />
                 </SessionProvider>
             </body>
         </html>

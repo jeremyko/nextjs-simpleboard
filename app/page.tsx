@@ -59,18 +59,25 @@ export default async function Home() {
     // }, [session?.expires_at]);
     // XXX test only XXX -------------------------------------------------------
 
+    //  h-screen : 화면 넘지 않을만큼만 내용이 존재.
     return (
         <div
             // className={`w-full p-6 pl-10 h-screen bg-cover bg-center flex flex-col items-left justify-start  ${styles.body}`}
-            className={`w-full p-2 pl-4 sm:p-4 sm:pl-8  h-screen flex flex-col items-left justify-start`}
+            className={`w-full p-2 pl-4  sm:p-4 sm:pl-8   flex flex-col items-left justify-start`}
         >
             {/* XXX test only XXX */}
             {/* <p className="text-red-700 text-bold text-xl" > {sessionAliveWarn}</p> */}
 
-            <h1 className="text-bold text-lg">{appName}</h1>
-            <p className="text-bold">버전: {appVersion}</p>
+            <p className="text-lg mt-4"> 
+                <span className="border  p-1 rounded">Next.js</span>
+                +
+                <span className="border  p-1 rounded">Auth.js</span>
+                로 만든 게시판 예제</p>
 
-            <p className="text-bold text-lg pt-2">dependencies: </p>
+            {/* <h1 className="text-bold text-lg">{appName}</h1> */}
+            <p className="text-bold mt-4 ">버전: {appVersion}</p>
+
+            <p className="text-lg pt-2">dependencies: </p>
             <div className="text-xs text-light">
                 {Object.entries(dependencies).map(([key, value]) => (
                     <li className="pl-4" key={key}>
@@ -79,7 +86,7 @@ export default async function Home() {
                 ))}
             </div>
 
-            <p className="text-bold text-lg pt-2">devDependencies</p>
+            <p className="text-lg pt-2">devDependencies</p>
             <div className="text-xs text-light ">
                 {Object.entries(devDependencies).map(([key, value]) => (
                     <li className="pl-4" key={key}>
