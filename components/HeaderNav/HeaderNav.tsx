@@ -27,20 +27,20 @@ export default function HeaderNav() {
                     </button>
                     <Link href="/" className="ml-2 " aria-label="home">
                         <FontAwesomeIcon
-                            size="2xl"
+                            size="xl"
                             icon={faHouse}
                             aria-label="home"
                             className="text-zinc-200"
                         />
                     </Link>
                 </div>
-                <Link href="/qna" className="text-base hover:underline pt-4 mr-12 p-2">
+                <Link href="/qna" className="text-base hover:underline mr-12 p-2">
                     Q&A
                 </Link>
                 <Suspense>
                 <Search placeholder="검색어를 입력하세요" />
                 </Suspense>
-                <div className=" p-2">
+                <div className=" ">
                     <UserButton />
                 </div>
 

@@ -34,7 +34,7 @@ export default function Pagination({
     };
 
     return (
-        <div className="flex justify-center items-center mt-2 mb-4 space-x-2">
+        <div className="flex justify-center items-center  space-x-2 mt-2 mb-9">
             <Link href={createPageURL(currentPage - 1)}>
                 <button
                     disabled={currentPage === 1}

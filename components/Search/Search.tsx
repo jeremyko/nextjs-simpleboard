@@ -30,14 +30,14 @@ export default function Search({ placeholder }: { placeholder: string }) {
 
     //TODO : 모바일인 경우에는 돋보기 그림을 버튼으로 사용하게, pc 는 input + 그림
     return (
-        <div>
+        <div className="mr-6">
             {/* PC */}
             <div className="hidden sm:flex relative items-center flex-shrink-0 ">
                 <label id="search" htmlFor="searchInput" className="sr-only">
                     Search
                 </label>
                 <input
-                    className=" w-full rounded-md border-1 border-gray-200 py-[6px] pl-10 text-sm outline-1 placeholder:text-gray-500 hidden sm:flex"
+                    className=" w-full rounded-md border-1 border-gray-200 py-[2px] pl-10 text-sm outline-1 placeholder:text-gray-500 hidden sm:flex"
                     placeholder={placeholder}
                     onKeyDown={handleKeyDown}
                     id="searchInput"

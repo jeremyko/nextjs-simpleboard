@@ -3,7 +3,7 @@ import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 export default function Footer() {
     return (
-        <footer className="w-full  mx-auto flex justify-center items-center  text-center  bg-gray-800 text-zinc-300">
+        <footer className=" w-full mx-auto flex justify-center items-center  text-center  bg-gray-800 text-zinc-300">
             <p>© 2025 Simple Board. All rights reserved.</p>
             <a
                 href="https://x.com/_nickjohnston"

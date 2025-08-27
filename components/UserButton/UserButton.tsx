@@ -48,7 +48,7 @@ export default function UserButton() {
     //XXX 이게 useEffect 앞에 있으면 에러 :
     // React has detected a change in the order of Hooks called by
     if (!session?.user) {
-        return <SignIn />;
+        return <SignIn className="h-9 w-16 p-2 border rounded" />;
     }
 
     return (
@@ -56,8 +56,8 @@ export default function UserButton() {
             {/* <span className="hidden text-sm sm:inline-flex">{session.user.email}</span> */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Avatar className="h-8 w-8">
+                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                        <Avatar className="h-9 w-9">
                             <AvatarImage
                                 src={
                                     session.user.image ??

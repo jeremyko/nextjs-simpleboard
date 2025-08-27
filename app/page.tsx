@@ -62,7 +62,7 @@ export default async function Home() {
     return (
         <div
             // className={`w-full p-6 pl-10 h-screen bg-cover bg-center flex flex-col items-left justify-start  ${styles.body}`}
-            className={`w-full  p-6 pl-10 h-screen flex flex-col items-left justify-start`}
+            className={`w-full p-2 pl-4 sm:p-4 sm:pl-8  h-screen flex flex-col items-left justify-start`}
         >
             {/* XXX test only XXX */}
             {/* <p className="text-red-700 text-bold text-xl" > {sessionAliveWarn}</p> */}

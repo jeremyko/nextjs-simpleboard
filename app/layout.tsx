@@ -38,7 +38,7 @@ export default function RootLayout({
         <html lang="en">
             <body
                 // className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col  `}
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  h-screen overflow-hidden `}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  h-screen  `}
             >
                 {/* <SessionProvider refetchOnWindowFocus={true}> */}
                 <SessionProvider>
