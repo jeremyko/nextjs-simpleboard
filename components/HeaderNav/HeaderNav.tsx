@@ -1,6 +1,7 @@
 'use client'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Search from "../Search/Search";
 
@@ -23,7 +24,8 @@ export default function HeaderNav() {
                         onClick={() => setMenuOpen(!menuOpen)}
                         className="sm:hidden mr-2 p-2 border rounded"
                     >
-                        ☰
+                        <FontAwesomeIcon icon={faBars} />
+                        {/* ☰ */}
                     </button>
                     <Link href="/" className="ml-2 " aria-label="home">
                         <FontAwesomeIcon
@@ -38,21 +40,11 @@ export default function HeaderNav() {
                     Q&A
                 </Link>
                 <Suspense>
-                <Search placeholder="검색어를 입력하세요" />
+                    <Search placeholder="검색어를 입력하세요" />
                 </Suspense>
                 <div className=" ">
                     <UserButton />
                 </div>
-
-                {/* PC 인 경우 640px 이상*/}
-                <nav className="hidden sm:flex gap-4"></nav>
-
-                {/* 모바일인 경우 */}
-                {/* <nav className="sm:flex gap-6">
-                <div className="flex justify-end items-center">
-                    <Search placeholder="검색어를 입력하세요" />
-                </div>
-            </nav> */}
 
                 {/* 모바일 드롭다운 메뉴 */}
                 {menuOpen && (
@@ -65,27 +57,5 @@ export default function HeaderNav() {
                 )}
             </div>
         </header>
-
-        // <nav className=" bg-gray-800  text-zinc-300   w-full z-10 sticky top-0  ">
-        //     <div className=" max-w-3xl mx-auto text-sm flex justify-between items-center  p-2">
-        //         <Link href="/" className="text-xl font-bold mr-4" aria-label="home">
-        //             <FontAwesomeIcon size="xl" icon={faHouse} aria-label="home" className="text-zinc-200" />
-        //         </Link>
-
-        //         <div className="flex justify-end items-center gap-4">
-        //             <Link href="/qna" className="text-sm hover:underline ">
-        //                 Q&A
-        //             </Link>
-        //         </div>
-        //         <div className="flex justify-end items-center">
-        //             <Search placeholder="검색어를 입력하세요" />
-        //             <div className="flex justify-end items-center pl-4">
-        //                 <UserButton />
-        //             </div>
-        //         </div>
-        //         {/* 모바일 메뉴 버튼 */}
-        //         <button className="sm:hidden p-2 border rounded">☰</button>
-        //     </div>
-        // </nav>
     );
 }
