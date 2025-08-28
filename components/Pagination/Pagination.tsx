@@ -44,7 +44,7 @@ export default function Pagination({
 
     const maxVisibleStartingSerialPages= 3;
 
-    function handleGotoPage(e: any) {
+    function handleGotoPage() {
         //TODO 
     }
         
@@ -111,7 +111,7 @@ export default function Pagination({
                                     className={
                                         "cursor-pointer px-3 py-1 border rounded font-bold bg-blue-500 text-white hover:bg-blue-600 "
                                     }
-                                    onClick={handleGotoPage}
+                                    // onClick={handleGotoPage}
                                 >
                                     이동
                                 </Button>
