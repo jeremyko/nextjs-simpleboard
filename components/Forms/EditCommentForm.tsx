@@ -65,7 +65,7 @@ export default function EditCommentForm({
                         required
                     ></TextareaAutosize>
                 </div>
-                <div className="flex flex-row justify-end mt-4 gap-8">
+                <div className="flex flex-row justify-end mt-2  gap-4">
                     <Button
                         variant="destructive"
                         className=" px-4 py-2 hover:bg-blue-700 rounded-sm"

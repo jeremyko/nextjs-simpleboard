@@ -108,9 +108,9 @@ export default function NewCommentForm({
             </p> */}
 
             {currUserId && isWriting && (
-                <div className="flex justify-end items-center gap-4 mt-2">
+                <div className="flex justify-end items-center gap-4 mt-1">
                     <div
-                        className="block cursor-pointer pl-2 pr-2  p-1 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
+                        className="block cursor-pointer p-2 text-sm font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
                         onClick={cancelComment}
                     >
                         작성취소
@@ -118,7 +118,7 @@ export default function NewCommentForm({
                     <input
                         type="submit"
                         value="저장"
-                        className="block w-20 cursor-pointer p-1 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
+                        className="block w-20 cursor-pointer p-2 text-sm font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
                     />
                 </div>
             )}

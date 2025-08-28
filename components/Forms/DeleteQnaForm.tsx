@@ -44,7 +44,7 @@ export default function DeleteQnaForm({
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         {/* 바깥에서 보이는 삭제 버튼 */}
-                        <div className="block cursor-pointer p-2 text-[10px] font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700 ">
+                        <div className="block cursor-pointer p-2 text-sm font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700 ">
                             {" "}
                             삭제{" "}
                         </div>
@@ -53,10 +53,9 @@ export default function DeleteQnaForm({
                         <AlertDialogHeader>
                             <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete your article.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter className="flex justify-end items-center gap-8">
+                        <AlertDialogFooter className="flex justify-end items-center gap-4">
                             <AlertDialogCancel className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 취소
                             </AlertDialogCancel>
@@ -74,7 +73,7 @@ export default function DeleteQnaForm({
 
                 <Link href={`/qna/edit/${id}?page=${page}&query=${searchQuery}`}>
                     {/* <Button>수정</Button> */}
-                    <div className="block cursor-pointer p-2 text-[10px] font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600">
+                    <div className="block cursor-pointer p-2 text-sm font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600">
                         수정
                     </div>
                 </Link>

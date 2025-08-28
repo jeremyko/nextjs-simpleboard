@@ -140,7 +140,7 @@ export default function EditQuestionForm({
                         {/* <p aria-live="polite" className="bold font-lg text-red-600">{JSON.stringify(state?.errors?.categoryId)}</p> */}
 
                         {/* --------------------- */}
-                        <div className="mt-6 pt-2 pb-2 flex justify-end items-center gap-8">
+                        <div className="mt-6 pt-2 pb-2 flex justify-end items-center gap-2">
                             <Link href={`/qna/${oneQnA.article_id}?page=${currentPage}&query=${searchQuery}`}>
                                 <Button variant="destructive"> 취소</Button>
                             </Link>

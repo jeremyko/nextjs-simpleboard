@@ -4,12 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams, useRouter } from "next/navigation";
 import { KeyboardEvent, useState } from 'react';
+import { Input } from "@/components/ui/input";
 
 export default function Search({ placeholder }: { placeholder: string }) {
     const searchParams = useSearchParams();
     // const pathname = usePathname();
     const { replace } = useRouter();
-    const [showSearch, setShowSearch] = useState(false); // mobile 인 경우에 검색창
+    const [showMobileSearch, setShowMobileSearch] = useState(false); // mobile 인 경우에 검색창
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
@@ -24,6 +25,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
             }
             // 글을 보다가 검색을 하면, 검색된 목록만 나와야 함.
             // replace(`${pathname}?${params.toString()}`);
+            setShowMobileSearch(false);
             replace(`/qna/?${params.toString()}`);
         }
     };
@@ -36,7 +38,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
                 <label id="search" htmlFor="searchInput" className="sr-only">
                     Search
                 </label>
-                <input
+                <Input
+                    type="search"
                     className=" w-full rounded-md border-1 border-gray-200 py-[2px] pl-10 text-sm outline-1 placeholder:text-gray-500 hidden sm:flex"
                     placeholder={placeholder}
                     onKeyDown={handleKeyDown}
@@ -58,14 +61,16 @@ export default function Search({ placeholder }: { placeholder: string }) {
                     size="xl"
                     className="absolute left-3 text-gray-400 peer-focus:text-zinc-200 "
                     onClick={() => {
-                        setShowSearch(!showSearch);
+                        setShowMobileSearch(!showMobileSearch);
                     }}
                 />
             </div>
-            {showSearch && (
+            {showMobileSearch && (
                 <div className="absolute left-0  top-full  w-full bg-gray-700 sm:hidden">
                     {/* TODO : auto focus */}
-                    <input
+                    <Input
+                        type="search"
+                        // inputMode="search"
                         className=" w-full rounded-md border-1 border-gray-200 py-[6px] p-2 text-sm outline-1 placeholder:text-gray-400 "
                         placeholder={placeholder}
                         onKeyDown={handleKeyDown}

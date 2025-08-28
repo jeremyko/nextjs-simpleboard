@@ -68,14 +68,14 @@ export default function UserButton() {
                         </Avatar>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-48 mt-2" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                             <p className="text-sm font-medium leading-none">{session.user.name}</p>
                             <p className="text-muted-foreground text-xs leading-none">{session.user.email}</p>
                         </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="border border-blue-500">
                         <SignOut />
                     </DropdownMenuItem>
                 </DropdownMenuContent>

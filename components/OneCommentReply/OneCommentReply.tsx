@@ -23,6 +23,13 @@ import {
 } from "../ui/alert-dialog";
 import ReplyCommentForm from "../Forms/ReplyCommentForm";
 import { useRouter } from "next/navigation";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Comment 이건 이미 nextjs 가 사용중인 이름이라서 에러발생됨
 export default function OneCommentReply({
@@ -83,6 +90,8 @@ export default function OneCommentReply({
     // console.debug("depthPixel=>", depthPixel);
     // console.debug(`ml-[${depthPixel}px] ==>`, comment.comment);
 
+    const [dlgOpen, setDlgOpen] = useState(false);
+
     return (
         //TODO : 시간정보 표시. 10분전...
         <div
@@ -112,75 +121,63 @@ export default function OneCommentReply({
                 {isCommentMine && (
                     <div>
                         <div className="flex flex-row justify-end items-center gap-2 ">
-                            {/* <Link href="/" className="text-xl font-bold hover:underline mr-4"> */}
-                            <FontAwesomeIcon
-                                size="xl" // "2xs" | "xs" | "sm" | "lg" | "xl" | "2xl"
-                                icon={faEllipsis}
-                                aria-label="commentMenu"
-                                className="p-2 text-cyan-700 hover:bg-gray-300 hover:text-cyan-600 rounded-sm"
-                                onClick={() => setIsOpen(true)}
-                                // onMouseEnter={() => setIsOpen(true)}
-                                // onMouseLeave={() => setIsOpen(false)}
-                            />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="relative h-9 w-12 rounded">
+                                        <FontAwesomeIcon
+                                            size="xl" // "2xs" | "xs" | "sm" | "lg" | "xl" | "2xl"
+                                            icon={faEllipsis}
+                                            aria-label="commentMenu"
+                                            className="p-2 text-cyan-700 hover:bg-gray-300 hover:text-cyan-600 rounded-sm"
+                                        />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-10" align="end" forceMount>
+                                    <DropdownMenuItem
+                                        className=" w-full px-2 py-2 hover:bg-blue-700 rounded-sm text-sm font-thin"
+                                        onClick={() => setIsEditing(true)}
+                                    >
+                                        수정
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className=" w-full px-2 py-2 hover:bg-blue-700 rounded-sm text-sm font-thin"
+                                        onClick={() => setDlgOpen(true)}
+                                    >
+                                        삭제
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
 
-                            <div
-                                onMouseLeave={() => setIsOpen(false)}
-                                className={`
-                                flex flex-col justify-end items-center gap-1 -4
-                                absolute mt-2 w-18 bg-blue border border-zinc-200 rounded-sm shadow-gray-600 shadow-lg z-10
-                                transition-all duration-200 ease-out
-                                transform origin-bottom
-                                ${isOpen ? "bg-zinc-200/100  scale-100" : "opacity-0 scale-80 pointer-events-none"}
-                                `}
-                            >
-                                <Button
-                                    className=" w-full px-4 py-2 hover:bg-blue-700 rounded-sm text-[10px] font-thin"
-                                    onClick={() => setIsEditing(true)}
-                                >
-                                    수정
-                                </Button>
+                            {/* AlertDialog 는 DropdownMenu 외부에 위치시켜야 함 */}
 
-                                <div className="w-full ">
-                                    <AlertDialog>
-                                        <AlertDialogTrigger asChild className="w-full">
-                                            {/* 바깥에서 보이는 삭제 버튼 */}
-                                            <Button className="px-4 py-2 hover:bg-blue-700 rounded-sm text-[10px] font-thin">
+                            <AlertDialog open={dlgOpen} onOpenChange={setDlgOpen}>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
+                                        <AlertDialogDescription></AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter >
+                                        <AlertDialogCancel
+                                            onClick={() => setDlgOpen(false)}
+                                            className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        >
+                                            취소
+                                        </AlertDialogCancel>
+                                        <form
+                                            action={deleteCommentWithParams}
+                                            id="deleteCommentForm"
+                                            name="deleteCommentForm"
+                                        >
+                                            <AlertDialogAction
+                                                type="submit"
+                                                className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            >
                                                 삭제
-                                            </Button>
-                                            {/* <Button variant="destructive"> 삭제 </Button> */}
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                                <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete
-                                                    your article.
-                                                </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter className="flex justify-end items-center gap-8">
-                                                <AlertDialogCancel
-                                                    onClick={() => setIsOpen(false)}
-                                                    className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                >
-                                                    취소
-                                                </AlertDialogCancel>
-                                                <form
-                                                    action={deleteCommentWithParams}
-                                                    id="deleteCommentForm"
-                                                    name="deleteCommentForm"
-                                                >
-                                                    <AlertDialogAction
-                                                        type="submit"
-                                                        className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                    >
-                                                        삭제
-                                                    </AlertDialogAction>
-                                                </form>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                    </AlertDialog>
-                                </div>
-                            </div>
+                                            </AlertDialogAction>
+                                        </form>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                 )}
