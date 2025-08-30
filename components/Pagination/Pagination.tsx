@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { KeyboardEvent, useState } from "react";
 
 export default function Pagination({
     isFromViewPage = false,
@@ -22,13 +23,13 @@ export default function Pagination({
     const searchParams = useSearchParams();
     const searchQuery = decodeURIComponent(searchParams.get("query") || "");
     const currentPage = Number(searchParams.get("page")) || 1;
-    if(isFromViewPage) {
+    if (isFromViewPage) {
         //XXX 개별 게시글 페이지에서 페이지네이션을 사용하는 경우에는 /qna 로 이동하게
         // 왜냐하면, /qna/19?page=2 이런식으로 만들어지기 때문.
         // 즉, 게시물 내용을 보여주면서 페이지 이동 안되게 처리함.
-        pathname = "/qna" ;
+        pathname = "/qna";
     }
-    console.log("totalPagesCnt :", totalPagesCnt);
+    // console.log("totalPagesCnt :", totalPagesCnt);
     // console.debug("[Pagination] searchQuery:", searchQuery);
     // console.debug("currentPage:", currentPage);
     // console.debug("isFromViewPage:", isFromViewPage);
@@ -42,15 +43,85 @@ export default function Pagination({
         return `${pathname}?${params.toString()}`;
     };
 
-    const maxVisibleStartingSerialPages= 3;
+    const maxVisibleSerialPages = 5;
+    const [gotoPage, setGotoPage] = useState(currentPage)
+    const [isOpen, setIsOpen] = useState(false);
+    const { replace } = useRouter();
 
-    function handleGotoPage() {
-        //TODO 
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            console.log("key down");
+            const gotoPageUrl = createPageURL(gotoPage);
+            replace(gotoPageUrl);
+        }
+    };
+   
+    // gemini 가 refactoring 함
+    const PageLink = ({ page, children }: { page: number; children?: React.ReactNode }) => (
+        <Link href={createPageURL(page)}>
+            <button
+                className={`cursor-pointer px-3 py-1 border rounded ${
+                    currentPage === page
+                        ? "bg-blue-700 text-white border-blue-700"
+                        : "border-gray-300 hover:bg-gray-100"
+                }`}
+            >
+                {children || page}
+            </button>
+        </Link>
+    );
+
+    let pageContent: React.ReactNode[] = [];
+    const createRangeArray = (start: number, end: number) => {
+        const length = end - start + 1;
+        return Array.from({ length }, (_, index) => start + index);
+    };
+
+    if (totalPagesCnt < maxVisibleSerialPages) {
+        pageContent = Array.from({ length: totalPagesCnt }, (_, index) => (
+            <PageLink key={index + 1} page={index + 1} />
+        ));
+    } else {
+        if (currentPage < maxVisibleSerialPages) {
+            // 현재 페이지가 1 ~ 시작범위 내 있으면 1~보여줄page 출력
+            // 1 2 3 4 5 ... 7354
+            pageContent = Array.from({ length: maxVisibleSerialPages }, (_, index) => (
+                <PageLink key={index + 1} page={index + 1} />
+            ));
+            // 뒷쪽 ... 표시
+            pageContent.push(<p key="ellipsis-end">...</p>);
+            // last page 표시
+            pageContent.push(<PageLink key={totalPagesCnt} page={totalPagesCnt} />);
+        } else if (currentPage + 3 >= totalPagesCnt) {
+            // 현재 page 가 전체 페이지 중 마지막 부근에 위치
+            pageContent.push(<PageLink key={1} page={1} />);
+            // 앞쪽 ... 표시
+            pageContent.push(<p key="ellipsis-start">...</p>);
+            //마지막 page 들 전부 표시
+            const rangeIndexs = createRangeArray(totalPagesCnt - 4, totalPagesCnt);
+            pageContent.push(...rangeIndexs.map((index) => <PageLink key={index} page={index} />));
+        } else {
+            // 처음, 마지막 그리고 ... 을 보여주고, 현재 page 앞뒤 2page 를 출력
+            // ex) 현재 5 page :  1 ... 3 4 5 6 7... 7354
+            pageContent.push(<PageLink key={1} page={1} />);
+            // 앞쪽 ... 표시
+            pageContent.push(<p key="ellipsis-start">...</p>);
+
+            const rangeIndexs = createRangeArray(
+                currentPage - 2,
+                currentPage + 2 >= totalPagesCnt ? totalPagesCnt : currentPage + 2,
+            );
+            pageContent.push(...rangeIndexs.map((index) => <PageLink key={index} page={index} />));
+            // 뒷쪽 ... 표시
+            pageContent.push(<p key="ellipsis-end">...</p>);
+            // last page 표시
+            pageContent.push(<PageLink key={totalPagesCnt} page={totalPagesCnt} />);
+        }
     }
-        
 
     return (
-        <div className="flex justify-center items-center  space-x-2 mt-2 mb-9 ">
+        <div className="flex flex-wrap justify-center items-center  gap-2 mt-6 mb-9 ">
+        {/* <div className="flex flex-wrap gap-1  space-x-2 mt-2 mb-9 "> */}
             <Link href={createPageURL(currentPage - 1)}>
                 <button
                     disabled={currentPage === 1}
@@ -60,7 +131,18 @@ export default function Pagination({
                 </button>
             </Link>
 
-            {totalPagesCnt <= maxVisibleStartingSerialPages &&
+            {pageContent}
+
+            <Link href={createPageURL(currentPage + 1)}>
+                <button
+                    disabled={totalPagesCnt == 0 || currentPage === totalPagesCnt}
+                    className="cursor-pointer px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
+                >
+                    다음
+                </button>
+            </Link>
+
+            {/* {totalPagesCnt <= maxVisibleSerialPages &&
                 Array.from({ length: totalPagesCnt }, (_, index) => (
                     <Link key={index} href={createPageURL(index + 1)}>
                         <button
@@ -75,9 +157,9 @@ export default function Pagination({
                     </Link>
                 ))}
 
-            {/* page 많은 경우, ... 표시 */}
-            {totalPagesCnt > maxVisibleStartingSerialPages &&
-                Array.from({ length: maxVisibleStartingSerialPages }, (_, index) => (
+            {totalPagesCnt > maxVisibleSerialPages &&
+                Array.from({ length: maxVisibleSerialPages }, (_, index) => (
+                // page 많은 경우, ... 표시 
                     <Link key={index} href={createPageURL(index + 1)}>
                         <button
                             className={`cursor-pointer px-3 py-1 border rounded ${
@@ -90,38 +172,59 @@ export default function Pagination({
                         </button>
                     </Link>
                 ))}
-            {totalPagesCnt > maxVisibleStartingSerialPages && (
-                <Link key={-1} href={createPageURL(1)}>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button className={"cursor-pointer px-3 py-1 border rounded"}>...</button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-60 bg-blue-700 " align="center">
-                            <DropdownMenuItem className="w-full flex flex-row justify-between items-center gap-2">
-                                <Input
-                                    type="number"
-                                    min={1}
-                                    autoFocus
-                                    inputMode="search"
-                                    className="rounded  bg-blue-100 text-bold "
-                                    id="gotoPagehInput"
-                                />
-                                <p className="w-full text-bold text-zinc-200 "> / {totalPagesCnt} </p>
-                                <Button
-                                    className={
-                                        "cursor-pointer px-3 py-1 border rounded font-bold bg-blue-500 text-white hover:bg-blue-600 "
-                                    }
-                                    // onClick={handleGotoPage}
-                                >
-                                    이동
-                                </Button>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </Link>
+
+            {totalPagesCnt > maxVisibleSerialPages && (
+                // TODO : 이거 별도 component 로 .. Input 입력시 매번 rerendering 발생
+                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <button className={"cursor-pointer px-3 py-1 border rounded"}>...</button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                        className="w-60 bg-gray-600 "
+                        align="center"
+                        // onCloseAutoFocus={(e) => e.preventDefault()}
+                    >
+                        <form
+                            className="flex flex-row justify-between items-center gap-2"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                setGotoPage(gotoPage);
+                                setIsOpen(false);
+                                const gotoPageUrl = createPageURL(gotoPage);
+                                console.log("goto  : ", gotoPageUrl);
+                                // window.location.href = gotoPageUrl;
+                                replace(gotoPageUrl);
+                            }}
+                        >
+                            <Input
+                                name="gotoPage"
+                                type="number"
+                                min={1}
+                                autoFocus
+                                inputMode="search"
+                                className="rounded  bg-blue-100 text-bold "
+                                id="gotoPagehInput"
+                                onChange={(e) => {
+                                    setGotoPage(Number(e.target.value));
+                                }}
+                                onKeyDown={handleKeyDown}
+                                value={gotoPage}
+                            />
+                            <p className="w-full text-bold text-zinc-200 "> / {totalPagesCnt} </p>
+                            <Button
+                                type="submit"
+                                className={
+                                    "cursor-pointer px-3 py-1 border rounded font-bold bg-blue-500 text-white hover:bg-blue-600 "
+                                }
+                            >
+                                이동
+                            </Button>
+                        </form>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             )}
-            {/* 마지막 page  */}
-            {totalPagesCnt > maxVisibleStartingSerialPages && (
+            {totalPagesCnt > maxVisibleSerialPages && (
+                // 마지막 page  
                 <Link key={totalPagesCnt} href={createPageURL(totalPagesCnt)}>
                     <button
                         className={`cursor-pointer px-3 py-1 border rounded ${
@@ -141,7 +244,7 @@ export default function Pagination({
                 >
                     다음
                 </button>
-            </Link>
+            </Link> */}
         </div>
     );
 }

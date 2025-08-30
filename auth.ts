@@ -138,22 +138,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async jwt({ token, trigger, session, account, user, profile }) {
             // token 안에 실제 JWT payload가 들어있음
             // 서버 로그에서만 보임 (브라우저 콘솔 아님)
-            if (trigger !== undefined) {
-                console.debug("\n====>> [jwt_callback] : trigger :", trigger);
-            }
-            console.debug(" ------- [jwt_callback] : token :", token);
-            if (account !== undefined) {
-                console.debug(" ------- [jwt_callback] : account :", account);
-            }
-            if (session !== undefined) {
-                console.debug(" ------- [jwt_callback] : session :", session);
-            }
-            if (profile !== undefined) {
-                console.debug(" ------- [jwt_callback] : profile :", profile);
-            }
-            if (user !== undefined) {
-                console.debug(" ------- [jwt_callback] : user :", user); //!!! XXX 추가한것.
-            }
+            // if (trigger !== undefined) {
+            //     console.debug("\n====>> [jwt_callback] : trigger :", trigger);
+            // }
+            // console.debug(" ------- [jwt_callback] : token :", token);
+            // if (account !== undefined) {
+            //     console.debug(" ------- [jwt_callback] : account :", account);
+            // }
+            // if (session !== undefined) {
+            //     console.debug(" ------- [jwt_callback] : session :", session);
+            // }
+            // if (profile !== undefined) {
+            //     console.debug(" ------- [jwt_callback] : profile :", profile);
+            // }
+            // if (user !== undefined) {
+            //     console.debug(" ------- [jwt_callback] : user :", user); //!!! XXX 추가한것.
+            // }
 
             const now = Date.now();
             //------------------------------------------------------------------
@@ -177,8 +177,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 };
             } else if (token.expires_at) {
                 if (now < token.expires_at * 1000) {
-                    const timeLeftSecs = token.expires_at - now / 1000;
-                    console.debug("*** access_token is still valid : ", timeLeftSecs);
+                    // const timeLeftSecs = token.expires_at - now / 1000;
+                    // console.debug("*** access_token is still valid : ", timeLeftSecs);
                     return token;
                 } else {
                     // 사용자의 활동/브라우져 재시작 등으로 jwt 콜백이 호출됬을때,
@@ -191,7 +191,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     // - 다시 jwt 콜백이 중첩해서 호출되고 있고, 때문에 2번째 refresh 가 발생됨.
                     // - 2번째것의 처리가 종료되면, 중첩된 순서 때문에 최초 시작했던 
                     //   refresh 처리가 재개되어, 최종 access_token 값으로 설정됨.
-                    console.debug("\n\n******************************************* REFRESH\n\n ");
                     // console.debug("now : ", now, " / expires_at  :", token.expires_at * 1000);
                     return refreshAccessToken(token);
                 }
@@ -300,11 +299,12 @@ declare module "next-auth/jwt" {
  * Access Token을 새로 발급받는 함수
  */
 async function refreshAccessToken(token: any) {
+    // console.debug("\n\n******************************************* REFRESH\n\n ");
     if (!token.refresh_token) {
         throw new TypeError("Missing refresh_token");
     }
     const provider : string = token.provider;
-    console.debug("refreshAccessToken : provider=", provider);
+    // console.debug("refreshAccessToken : provider=", provider);
 
     try {
         let url = "";
@@ -358,9 +358,10 @@ async function refreshAccessToken(token: any) {
         //     expires_in: number;
         //     refresh_token?: string;
         // };
-        console.debug("tokenOrError : ", tokensOrError);
-        console.debug("refresh new token:", newTokens);
-        console.debug("expires_at :", Math.floor(Date.now() / 1000 + (newTokens.expires_in ?? 3600)));
+
+        // console.debug("tokenOrError : ", tokensOrError);
+        // console.debug("refresh new token:", newTokens);
+        // console.debug("expires_at :", Math.floor(Date.now() / 1000 + (newTokens.expires_in ?? 3600)));
 
         return {
             ...token,

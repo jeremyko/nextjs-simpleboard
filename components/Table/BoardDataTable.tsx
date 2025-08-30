@@ -35,6 +35,12 @@ export default async function BoardDataTable({
             <div className="text-2xl font-bold pt-4 mb-4 text-left">
                 <h1> Q&A </h1>
             </div>
+            {searchQuery && (
+                <div>
+                    <div className="text-xl mt-4 mb-4">Search Results </div>
+                    <div className="text-sm mb-2">Results for {searchQuery} </div>
+                </div>
+            )}
             {/* <Search placeholder="검색어를 입력하세요" /> */}
             {/* <table className=" w-full table-auto border-collapse  text-sm"> */}
             <table className=" w-full border-collapse text-sm font-light">
@@ -92,15 +98,15 @@ export default async function BoardDataTable({
                                     <Avatar className="h-4 w-4 ">
                                         <AvatarImage src={post.user_image ?? undefined} alt="" />
                                     </Avatar>
-                                    <span className="text-xs font-light pl-1">
-                                        {post.user_name}
-                                    </span>
+                                    <span className="text-xs font-light pl-1">{post.user_name}</span>
                                 </div>
                             </td>
                             <td className="p-2 text-center min-w-[90px] text-xs font-light ">
                                 {post.created}
                             </td>
-                            <td className="p-2 text-center text-xs font-light hidden sm:block">{post.views}</td>
+                            <td className="p-2 text-center text-xs font-light hidden sm:block">
+                                {post.views}
+                            </td>
                         </tr>
                     ))}
                 </tbody>

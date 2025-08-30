@@ -74,7 +74,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
                                     type="search"
                                     autoFocus
                                     inputMode="search"
-                                    className="rounded-md border-1 border-gray-200 text-sm outline-none placeholder:text-gray-400 "
+                                    className="rounded-md border-1 border-gray-200 text-sm text-zinc-100 outline-none placeholder:text-zinc-200 "
                                     placeholder={placeholder}
                                     onKeyDown={handleKeyDown}
                                     id="searchInput"
