@@ -16,6 +16,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
     const searchParams = useSearchParams();
     // const pathname = usePathname();
     const { replace } = useRouter();
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
@@ -28,6 +29,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
             } else {
                 params.delete("query");
             }
+            setIsOpen(false);
             // 글을 보다가 검색을 하면, 검색된 목록만 나와야 함.
             // replace(`${pathname}?${params.toString()}`);
             replace(`/qna/?${params.toString()}`);
@@ -58,7 +60,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
 
             {/* mobile --------------------------------------------------*/}
             <div className="sm:hidden flex  items-center relative  ">
-                <DropdownMenu>
+                {/* <DropdownMenu> */}
+                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
                     <DropdownMenuTrigger asChild>
                         <FontAwesomeIcon
                             icon={faMagnifyingGlass}
@@ -68,8 +71,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
                         />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className=" bg-gray-700 " align="center">
-                        <DropdownMenuItem className="w-full mt-2">
-                            <div className="">
+                        {/* <DropdownMenuItem className="w-full mt-2"> */}
+                            <div className="mt-3">
                                 <Input
                                     type="search"
                                     autoFocus
@@ -81,7 +84,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
                                     defaultValue={decodeURIComponent(searchParams.get("query") || "")}
                                 />
                             </div>
-                        </DropdownMenuItem>
+                        {/* </DropdownMenuItem> */}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

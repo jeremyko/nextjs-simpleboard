@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+// import {
+//     DropdownMenu,
+//     DropdownMenuContent,
+//     DropdownMenuItem,
+//     DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import { Button } from "../ui/button";
+// import { Input } from "../ui/input";
 import { KeyboardEvent, useState } from "react";
 
 export default function Pagination({
@@ -121,7 +121,6 @@ export default function Pagination({
 
     return (
         <div className="flex flex-wrap justify-center items-center  gap-2 mt-6 mb-9 ">
-        {/* <div className="flex flex-wrap gap-1  space-x-2 mt-2 mb-9 "> */}
             <Link href={createPageURL(currentPage - 1)}>
                 <button
                     disabled={currentPage === 1}
@@ -141,110 +140,6 @@ export default function Pagination({
                     다음
                 </button>
             </Link>
-
-            {/* {totalPagesCnt <= maxVisibleSerialPages &&
-                Array.from({ length: totalPagesCnt }, (_, index) => (
-                    <Link key={index} href={createPageURL(index + 1)}>
-                        <button
-                            className={`cursor-pointer px-3 py-1 border rounded ${
-                                currentPage === index + 1
-                                    ? "bg-blue-500 text-white border-blue-500"
-                                    : "border-gray-300 hover:bg-gray-100"
-                            }`}
-                        >
-                            {index + 1}
-                        </button>
-                    </Link>
-                ))}
-
-            {totalPagesCnt > maxVisibleSerialPages &&
-                Array.from({ length: maxVisibleSerialPages }, (_, index) => (
-                // page 많은 경우, ... 표시 
-                    <Link key={index} href={createPageURL(index + 1)}>
-                        <button
-                            className={`cursor-pointer px-3 py-1 border rounded ${
-                                currentPage === index + 1
-                                    ? "bg-blue-500 text-white border-blue-500"
-                                    : "border-gray-300 hover:bg-gray-100"
-                            }`}
-                        >
-                            {index + 1}
-                        </button>
-                    </Link>
-                ))}
-
-            {totalPagesCnt > maxVisibleSerialPages && (
-                // TODO : 이거 별도 component 로 .. Input 입력시 매번 rerendering 발생
-                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                    <DropdownMenuTrigger asChild>
-                        <button className={"cursor-pointer px-3 py-1 border rounded"}>...</button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-60 bg-gray-600 "
-                        align="center"
-                        // onCloseAutoFocus={(e) => e.preventDefault()}
-                    >
-                        <form
-                            className="flex flex-row justify-between items-center gap-2"
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                setGotoPage(gotoPage);
-                                setIsOpen(false);
-                                const gotoPageUrl = createPageURL(gotoPage);
-                                console.log("goto  : ", gotoPageUrl);
-                                // window.location.href = gotoPageUrl;
-                                replace(gotoPageUrl);
-                            }}
-                        >
-                            <Input
-                                name="gotoPage"
-                                type="number"
-                                min={1}
-                                autoFocus
-                                inputMode="search"
-                                className="rounded  bg-blue-100 text-bold "
-                                id="gotoPagehInput"
-                                onChange={(e) => {
-                                    setGotoPage(Number(e.target.value));
-                                }}
-                                onKeyDown={handleKeyDown}
-                                value={gotoPage}
-                            />
-                            <p className="w-full text-bold text-zinc-200 "> / {totalPagesCnt} </p>
-                            <Button
-                                type="submit"
-                                className={
-                                    "cursor-pointer px-3 py-1 border rounded font-bold bg-blue-500 text-white hover:bg-blue-600 "
-                                }
-                            >
-                                이동
-                            </Button>
-                        </form>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )}
-            {totalPagesCnt > maxVisibleSerialPages && (
-                // 마지막 page  
-                <Link key={totalPagesCnt} href={createPageURL(totalPagesCnt)}>
-                    <button
-                        className={`cursor-pointer px-3 py-1 border rounded ${
-                            currentPage === totalPagesCnt
-                                ? "bg-blue-500 text-white border-blue-500"
-                                : "border-gray-300 hover:bg-gray-100"
-                        }`}
-                    >
-                        {totalPagesCnt}
-                    </button>
-                </Link>
-            )}
-            <Link href={createPageURL(currentPage + 1)}>
-                <button
-                    disabled={totalPagesCnt == 0 || currentPage === totalPagesCnt}
-                    className="cursor-pointer px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-100"
-                >
-                    다음
-                </button>
-            </Link> */}
         </div>
     );
 }
