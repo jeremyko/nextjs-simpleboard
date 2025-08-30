@@ -36,6 +36,21 @@ export default function Search({ placeholder }: { placeholder: string }) {
         }
     };
 
+    // 추천어 선택 후 키보드 닫히는 시점에 실행됨
+    function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
+        const keyword = e.target.value;
+        console.log("검색어 입력 완료:", keyword);
+        const params = new URLSearchParams(searchParams);
+        // params.set("page", "1"); // 여기
+        params.delete("page");
+        if (e.currentTarget.value) {
+            params.set("query", encodeURIComponent(e.currentTarget.value));
+        } else {
+            params.delete("query");
+        }
+        replace(`/qna/?${params.toString()}`);
+    }
+
     return (
         <div className="mr-6">
             {/* PC --------------------------------------------------*/}
@@ -72,23 +87,23 @@ export default function Search({ placeholder }: { placeholder: string }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className=" bg-gray-700 " align="center">
                         {/* <DropdownMenuItem className="w-full mt-2"> */}
-                            <div className="mt-3">
-                                <Input
-                                    type="search"
-                                    autoFocus
-                                    inputMode="search"
-                                    className="rounded-md border-1 border-gray-200 text-sm text-zinc-100 outline-none placeholder:text-zinc-200 "
-                                    placeholder={placeholder}
-                                    onKeyDown={handleKeyDown}
-                                    id="searchInput"
-                                    defaultValue={decodeURIComponent(searchParams.get("query") || "")}
-                                />
-                            </div>
+                        <div className="mt-3">
+                            <Input
+                                type="search"
+                                autoFocus
+                                inputMode="search"
+                                className="rounded-md border-1 border-gray-200 text-sm text-zinc-100 outline-none placeholder:text-zinc-200 "
+                                placeholder={placeholder}
+                                onKeyDown={handleKeyDown}
+                                onBlur={handleBlur}
+                                id="searchInput"
+                                defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                            />
+                        </div>
                         {/* </DropdownMenuItem> */}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-
         </div>
     );
 }
