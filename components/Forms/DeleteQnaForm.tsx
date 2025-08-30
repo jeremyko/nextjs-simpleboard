@@ -29,7 +29,7 @@ export default function DeleteQnaForm({
     userId: string;
     searchQuery:string;
 }) {
-    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, userId);
+    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, userId, searchQuery);
     const initialState: DelQnAState = { error: null };
     const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
 

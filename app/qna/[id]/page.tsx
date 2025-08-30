@@ -43,7 +43,7 @@ export default async function Page(props: {
     }
     const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id);
     // const isLogged = await checkIsAuthenticated();
-    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id);
+    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id, searchQuery);
     // const initialState: DelQnAState = { message: null };
     // const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
     const comments = await getComments(oneQnA.article_id);

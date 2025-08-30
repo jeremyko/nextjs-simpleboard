@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { checkIsAuthenticated, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import { auth } from "@/auth";
+import { getTotalPagesCount } from "@/app/libs/serverDb";
+import { getPostsPerPage } from "@/global_const/global_const";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -16,7 +18,6 @@ export type State = {
         categoryId?: string[];
         title?: string[];
         content?: string[];
-        // userId?: string[]; //TODO
     };
     message?: string | null;
 };
@@ -43,7 +44,6 @@ const CreateFormSchema = z.object({
     categoryId: z.string().trim().nonempty({ message: "분류를 선택하세요" }),
     title: z.string().trim().nonempty({ message: "제목을 입력하세요" }),
     content: z.string().trim().nonempty({ message: "내용을 입력하세요" }),
-    // date: z.string().trim().nonempty().optional(),
 });
 
 const UpdateFormSchema = z.object({
@@ -63,20 +63,19 @@ const CreateQnAComment = CreateCommentFormSchema.omit({});
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * QnA 게시글을 생성하는 서버 액션 함수입니다.
+ * QnA 게시글 생성 서버 액션 
  * @param prevState - 이전 상태 객체(State)
  * @param formData - 폼 데이터(FormData)
  * @returns 생성 성공 시 리다이렉트, 실패 시 에러 메시지와 필드 에러 반환
  */
 export async function createQuestion(prevState: State, formData: FormData) {
-    //XXX 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
+    //XXX 이 로그는 server 기동시킨 터미널에서만 보임. server 액션
     console.debug("==> createQuestion called with formData:", formData);
 
     const validatedFields = CreateQnA.safeParse({
         categoryId: formData.get("categoryId"),
         title: formData.get("title"),
         content: formData.get("content"),
-        // userId: formData.get("userId"), //TODO
     });
 
     if (!validatedFields.success) {
@@ -108,9 +107,9 @@ export async function createQuestion(prevState: State, formData: FormData) {
             errors: { categoryId: ["로그인 후 다시 시도하세요."] },
         };
     }
-    console.debug("==> createQuestion session:", session);
+    // console.debug("==> createQuestion session:", session);
     const userId = session.userId;
-    console.debug("==> createQuestion userId:", userId);
+    // console.debug("==> createQuestion userId:", userId);
     if (!userId) {
         console.debug("재 로그인 필요");
         return {
@@ -129,14 +128,13 @@ export async function createQuestion(prevState: State, formData: FormData) {
             // errors: error,
         };
     }
-
     revalidatePath("/qna");
     redirect("/qna");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * QnA 게시글을 수정하는 서버 액션 함수입니다.
+ * QnA 게시글 수정 서버 액션 
  * @param articleId - 수정할 게시글의 ID
  * @param currentPage - 현재 페이지 번호
  * @param searchQuery - 현재 검색어
@@ -152,10 +150,6 @@ export async function updateQuestion(
     prevState: State,
     formData: FormData,
 ) {
-    //XXX 인자를 받기 위해서는 호출시 bind 을 사용해야 한다.
-    // const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.article_id, currentPage);
-
-    // 이 로그는 server 기동시킨 터미널에서만 보임. 왜냐하면 server 액션이기 때문
     console.debug("edit action ==> updateQuestion formData:", formData);
     console.debug("            ==> post userId :", postUserId);
     console.debug("            ==> article_id :", articleId, " currentPage:", currentPage);
@@ -188,9 +182,6 @@ export async function updateQuestion(
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
         redirect("/api/auth/signin");
-        // return {
-        //     message: "로그인 후 다시 시도하세요. 본인의 게시물만 수정할 수 있습니다",
-        // };
     }
 
     try {
@@ -211,7 +202,7 @@ export async function updateQuestion(
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * QnA 게시글을 삭제하는 서버 액션 함수입니다.
+ * QnA 게시글 삭제 서버 액션 .
  * @param articleId - 삭제할 게시글의 ID
  * @param currentPage - 현재 페이지 번호
  * @returns 삭제 후 해당 페이지로 리다이렉트
@@ -220,39 +211,45 @@ export async function deleteQuestion(
     articleId: number,
     currentPage: number,
     postUserId: string,
-    // prevState: State,
-    // formData: FormData,
+    searchQuery: string,
 ) {
     // 로그인된 상태에서만 처리되어야 함
     const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
     if (!isLoggedInAndMine) {
         console.error("로그인 안된 상태 혹은 본인 게시물 아님");
-        // return {
-        //     error: "로그인 안된 상태 혹은 본인 게시물 아님",
-        // };
         redirect("/api/auth/signin");
-        // return new Response("Forbidden", { status: 403 });
     }
 
-    //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
     try {
         await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
     } catch (error) {
         const sqlError = error as PostgresError;
-        // console.error("error:",error);
-        console.error("sqlError:",sqlError);
-        // console.error("code =>",sqlError.code );
+        console.error("sqlError:", sqlError);
         if (sqlError.code === "23503") {
             return {
-                error: "대댓글이 있는 경우 삭제할수 없습니다", 
+                error: "대댓글이 있는 경우 삭제할수 없습니다",
             };
         }
         return {
-            error: `Database Error: ${sqlError.code} / ${sqlError.detail} `, 
+            error: `Database Error: ${sqlError.code} / ${sqlError.detail} `,
         };
     }
-    revalidatePath(`/qna?page=${currentPage}`);
-    redirect(`/qna?page=${currentPage}`);
+
+    const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
+    if(totalPagesCnt < currentPage){
+        if (currentPage ===1) {
+            // console.debug("post 가 1 page 에만 있던 경우. 그냥 전체 목록으로 이동");
+            revalidatePath(`/qna?query=${searchQuery}`);
+            redirect(`/qna?query=${searchQuery}`);
+        }else{
+            // console.debug("마지막 게시물을 삭제하는 경우, page 를 -1 처리");
+            revalidatePath(`/qna?query=${searchQuery}&page=${currentPage - 1}`);
+            redirect(`/qna?query=${searchQuery}&page=${currentPage - 1}`);
+        }
+    }else{
+        revalidatePath(`/qna?query=${searchQuery}&page=${currentPage}`);
+        redirect(`/qna?query=${searchQuery}&page=${currentPage}`);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////// comment
@@ -322,8 +319,6 @@ export async function updateComment(
     prevState: CommentState,
     formData: FormData,
 ) {
-    // console.debug("==> updateComment called with formData:", formData);
-    // console.debug("==> updateComment -> currentCommentId:", currentCommentId);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         redirect("/api/auth/signin");
@@ -379,13 +374,6 @@ export async function deleteComment(
     if (!isLoggedInAndMine) {
         console.error("본인 댓글 아님");
         redirect("/api/auth/signin");
-        // revalidatePath(
-        //     `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-        // );
-        // redirect(
-        //     `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
-        // );
-        //XXX 위에서처럼 error 객체 리턴하면 안됨 .에러발생됨.
     }
 
     try {
