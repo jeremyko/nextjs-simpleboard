@@ -2,14 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-// import {
-//     DropdownMenu,
-//     DropdownMenuContent,
-//     DropdownMenuItem,
-//     DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
-// import { Button } from "../ui/button";
-// import { Input } from "../ui/input";
 import { KeyboardEvent, useState } from "react";
 
 export default function Pagination({
@@ -44,17 +36,6 @@ export default function Pagination({
     };
 
     const maxVisibleSerialPages = 5;
-    const [gotoPage, setGotoPage] = useState(currentPage)
-    const [isOpen, setIsOpen] = useState(false);
-    const { replace } = useRouter();
-
-    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
-            console.log("key down");
-            const gotoPageUrl = createPageURL(gotoPage);
-            replace(gotoPageUrl);
-        }
-    };
    
     // gemini 가 refactoring 함
     const PageLink = ({ page, children }: { page: number; children?: React.ReactNode }) => (

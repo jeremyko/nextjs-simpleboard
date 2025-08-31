@@ -34,40 +34,21 @@ export default function NewCommentForm({
     const [contentState, setContentState] = useState("");
     const [isWriting, setIsWriting] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement | null>(null);
-    // const [textAreaRows, setTextAreaRows] = useState(10);
     const router = useRouter();
 
     function onClickTextArea() {
         if (!currUserId) {
             redirect("/api/auth/signin");
         }
-        // 버튼을 표시하고, cancel 을 눌러야만 재초기화되게
-        // stackoverflow 댓글 처럼 구현
         setIsWriting(true);
-
-        // textarea row를 3정도 변경처리,
-        // if (inputRef.current) {
-        //     console.debug("inputRef.current.value.length=>", inputRef.current.value.length);
-        //     inputRef.current.setSelectionRange(0, 0);
-        // }
-        // setContentState("\n\n\n");
     }
 
 
-    // function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
     function cancelComment(e: React.MouseEvent<HTMLDivElement>) {
         setContentState("");
         setIsWriting(false);
         e.preventDefault();
     }
-
-    // redirect 되어 화면 갱신되는 현상을 막기 위해 
-    // async function handleSubmit(formData: FormData) {
-    //     const result = await formAction(formData);
-    //     if (result?.redirectTo) {
-    //         router.push(result.redirectTo); // soft navigation → 깜박임 없음
-    //     }
-    // }
 
     useEffect(() => {
         if (commentState?.redirectTo) {

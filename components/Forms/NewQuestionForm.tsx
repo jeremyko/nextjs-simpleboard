@@ -12,22 +12,6 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
     const initialState: State = { message: null, errors: {} };
     const [state, formAction] = useActionState(createQuestion, initialState);
 
-    // 글입력시 자동 높이 조정 -----------------
-    // const textbox = useRef<HTMLTextAreaElement>(null);
-    // function adjustHeight() {
-    //     console.debug("adjustHeight called");
-    //     if (textbox.current) {
-    //         textbox.current.style.height = "inherit";
-    //         textbox.current.style.height = `${textbox.current.scrollHeight}px`;
-    //     }
-    // }
-    // useLayoutEffect(adjustHeight, []);
-
-    // function handleKeyDown() {
-    //     adjustHeight();
-    // }
-    // 글입력시 자동 높이 조정 -----------------
-
     return (
         <form action={formAction}>
             <div className="min-h-screen max-w-3xl mx-auto ">
@@ -142,17 +126,6 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                 <Button> 취소</Button>
                             </Link>
 
-                            {/* 에러 ? */}
-                            {/* <Link href="/qna" >
-                            <Button type="submit"> 저장</Button>
-                            </Link> */}
-
-                            {/* <button
-                                type="submit"
-                                className="cursor-pointer px-4 py-2 bg-blue-700 text-gray-300 text-sm font-medium  rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            >
-                                저장
-                            </button> */}
                             <Button type="submit">저장</Button>
                         </div>
                     </div>

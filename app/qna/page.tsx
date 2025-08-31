@@ -41,7 +41,6 @@ export default async function Page(props: {
     const totalPagesCnt = await getTotalPagesCount(searchQuery, getPostsPerPage());
     // console.debug("[list] totalPages", totalPagesCnt);
 
-    //  min-h-screen : 화면을 넘어가게 내용이 존재.
     return (
         <div className="mx-auto  max-w-3xl w-full  p-2 md:p-3">
             <BoardDataTable

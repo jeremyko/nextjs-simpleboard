@@ -47,7 +47,6 @@ export default async function Page(props: {
     // const initialState: DelQnAState = { message: null };
     // const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
     const comments = await getComments(oneQnA.article_id);
-    // console.debug("comments:", comments);
 
     // ----------------------------------------------- 조회수 관리
     const cookieStore = await cookies();
@@ -91,8 +90,6 @@ export default async function Page(props: {
 
                         {/* comment, reply 표시  */}
                         <section className="mt-2">
-                            {/* <ul className="divide-dashed divide-y divide-gray-400 " > */}
-                            {/* <ul className="divide divide-y divide-gray-400 "> */}
                             <ul>
                                 {comments.map((comment, index) => (
                                     <li

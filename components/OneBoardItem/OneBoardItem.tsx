@@ -2,8 +2,6 @@
 
 import { BoardItemById } from "@/app/libs/serverDb";
 
-// import { Avatar, AvatarImage } from "../ui/avatar";
-
 // No SSR ==> CSR 처리 명시
 import dynamic from "next/dynamic";
 const Avatar = dynamic(() => import("../ui/avatar").then((mod) => mod.Avatar), { ssr: false });
@@ -17,7 +15,6 @@ const AvatarImage = dynamic(() => import("../ui/avatar").then((mod) => mod.Avata
 export default function OneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) {
     // console.debug("OneBoardItem render");
     // console.debug("[ViewOneBoardItem] oneQnA:", oneQnA);
-    //TODO : 마지막 게시물을 삭제하는 경우, page parameter 를 -1 한것으로 해줘야 함
 
     return (
         <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">

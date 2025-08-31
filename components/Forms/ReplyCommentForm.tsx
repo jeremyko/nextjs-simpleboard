@@ -8,7 +8,6 @@ import { redirect, useRouter } from "next/navigation";
 
 export default function ReplyCommentForm({
     currUserId, //현재 로그인한 사용자
-    // commentUserId, // 응답할 댓글의 작성자
     currentPostId,
     commentId, // 응답을 할 댓글의 id
     commentUserName,
@@ -17,7 +16,6 @@ export default function ReplyCommentForm({
     setIsReplying,
 }: {
     currUserId: string | null;
-    // commentUserId: string;
     currentPostId: number;
     commentId: number;
     commentUserName:string;
@@ -38,7 +36,6 @@ export default function ReplyCommentForm({
         null,
         currUserId ?? "",
         commentId,
-        // commentUserId, // 응답할 댓글의 작성자
         commentUserName,
         currentPage,
         searchQuery,
@@ -46,10 +43,7 @@ export default function ReplyCommentForm({
     );
     const [replyState, formAction] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
-    // const [isWriting, setIsWriting] = useState(false);
     const scrollRef = useRef<HTMLTextAreaElement | null>(null);
-
-    // const [textAreaRows, setTextAreaRows] = useState(10);
 
     function onClickTextArea() {
         if (!currUserId) {

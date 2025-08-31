@@ -114,7 +114,7 @@ export async function fetchPagedBoardItems(
         throw new Error("Failed to fetch board items.");
     }
 }
-//TODO : userId 인자로 받아서 해당 게시물의 작성자 여부 정보도 추가
+
 export async function fetchOneQnaById(id: number): Promise<BoardItemById> {
     try {
         const data = await sql<BoardItemById[]>`
@@ -223,5 +223,3 @@ export async function insertPostViews(articleId: number, currUserId: string, vie
         console.error(error);
     }
 }
-        // INSERT INTO post_views (article_id, user_id, session_id) 
-        // VALUES ( ${oneQnA.article_id}, ${oneQnA.user_id}, ${viewerIdForCnt} )`;

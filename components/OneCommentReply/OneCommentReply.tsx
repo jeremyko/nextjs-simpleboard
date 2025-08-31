@@ -73,27 +73,9 @@ export default function OneCommentReply({
         }
     }
 
-    // const { status } = useSession();
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // useEffect(() => {
-    //     if (status === "unauthenticated") {
-    //         console.debug("[Comments] 세션 만료 또는 로그아웃됨 (클라이언트) ");
-    //         setIsLoggedIn(false);
-    //     } else if (status === "authenticated") {
-    //         console.debug("[Comments] 세션 존재 (클라이언트) ");
-    //         setIsLoggedIn(true);
-    //     }
-    // }, [status]);
-
-    // const depthPixel = (10 * comment.depth).toString();
-    // console.debug("index=>", index);
-    // console.debug("depthPixel=>", depthPixel);
-    // console.debug(`ml-[${depthPixel}px] ==>`, comment.comment);
-
     const [dlgOpen, setDlgOpen] = useState(false);
 
     return (
-        //TODO : 시간정보 표시. 10분전...
         <div
             className={
                 comment.depth == 1
@@ -184,7 +166,6 @@ export default function OneCommentReply({
             </div>
             {/* 댓글 본문 -------------------------------------------------- */}
             {/* 수정하는 경우 구분해서 .. */}
-            {/* {!isEditing && <p className=""> {"@"+comment.reply_to+ " " + comment.comment} </p>} */}
             {!isEditing && (
                 <p className="pt-2 pb-2">
                     <span className="text-blue-700 text-sm font-bold">{"@" + comment.reply_to + " "}</span>
@@ -206,18 +187,12 @@ export default function OneCommentReply({
             )}
             {currUserId && !isReplying && (
                 <div className="flex flex-row justify-start items-center gap-2">
-                    {/* <a
-                        href="#"
-                        className="block p-1 hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
-                        onClick={() => setIsReplying(true)}
-                    > */}
                     <div
                         className="block cursor-pointer p-1 text-[10px] font-thin hover:text-cyan-800 border rounded-sm hover:bg-blue-200"
                         onClick={() => setIsReplying(true)}
                     >
                         댓글 쓰기
                     </div>
-                    {/* </a> */}
                 </div>
             )}
             {/* 대댓글 작성 ------------------------------------------------ */}

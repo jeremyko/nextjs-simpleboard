@@ -1,4 +1,3 @@
-// "use client";
 
 import type { Metadata } from "next";
 import "@/styles/globals.css";
@@ -6,10 +5,8 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import Footer from "@/components/Footer/Footer";
 import HeaderNav from "@/components/HeaderNav/HeaderNav";
-// import SessionWatcher from "@/components/SessionWatcher/SessionWatcher";
 import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
-// import SessionWatcher from "@/components/SessionWatcher/SessionWatcher";
 
 config.autoAddCss = false;
 
@@ -37,7 +34,6 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                // className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col  `}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen  `}
             >
                 {/* <SessionProvider refetchOnWindowFocus={true}> */}

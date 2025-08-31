@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-// TODO 홈 화면에서도 로그인으로 바로 이동되는 문제 !!! 
 export default function SessionWatcher() {
     const { status } = useSession();
     const router = useRouter();
