@@ -37,8 +37,12 @@ export async function middleware(request: NextRequest) {
         response.cookies.set("viewerIdForCnt", newViewerId, {
             httpOnly: true,
             secure: true,
-            sameSite: "lax",
+            // sameSite: "lax",
             path: "/",
+            //---------------- chips
+            sameSite: "none", // Required for Partitioned cookies
+            partitioned: true, // Enable CHIPS
+            //---------------- chips
             maxAge: 60 * 60 * 24 * 30 * 6, // 6 months
             // maxAge: 60 * 60 * 24 * 7, // 7일
             // maxAge: 60 * 1, // 1 분
