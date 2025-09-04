@@ -33,7 +33,7 @@ create table public.comments (
   p_comment_id integer null,
   reply_to text null,
   constraint comments_pkey primary key (comment_id),
-  constraint comments_article_id_fkey foreign KEY (article_id) references articles (article_id)
+  CONSTRAINT comments_article_id_fkey FOREIGN KEY (article_id) REFERENCES public.articles(article_id) ON DELETE CASCADE
 );
 create index IF not exists comments_p_comment_id_idx on public.comments using btree (p_comment_id) TABLESPACE pg_default;
 create index IF not exists comments_article_id_idx on public.comments using btree (article_id) TABLESPACE pg_default;

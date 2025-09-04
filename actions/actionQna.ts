@@ -377,7 +377,10 @@ export async function deleteComment(
     }
 
     try {
-        await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
+        // 대 댓글이 달려있는 댓글을 삭제 시
+        // table 에 데이터는 유지하되, 내용만 삭제로 변경하게 처리. TODO 개선
+        // await sql`DELETE FROM comments WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
+        await sql`UPDATE comments SET comment='작성자에 의해 삭제된 댓글입니다.' WHERE comment_id = ${commentId} and comment_user_id=${commentUserId}`;
     } catch (error) {
         console.error(error);
         return {
