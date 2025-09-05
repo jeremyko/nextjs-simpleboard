@@ -168,7 +168,7 @@ export default function OneCommentReply({
             {/* 수정하는 경우 구분해서 .. */}
             {!isEditing && (
                 <p className="pt-2 pb-2">
-                    <span className="text-blue-700 text-sm font-bold">{"@" + comment.reply_to + " "}</span>
+                    <span className="text-blue-700 dark:text-blue-400 text-sm font-bold">{"@" + comment.reply_to + " "}</span>
                     <span className="text-sm font-normal "> {comment.comment}</span>
                 </p>
             )}

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer/Footer";
 import HeaderNav from "@/components/HeaderNav/HeaderNav";
 import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
+import DarkModeProvider from "@/components/DarkModeProvider";
 
 config.autoAddCss = false;
 
@@ -40,10 +41,12 @@ export default function RootLayout({
                 <SessionProvider>
                     {/* <SessionWatcher /> */}
                     <HeaderNav />
-                    {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
-                    <main className="overflow-y-scroll flex-1 ">
-                        <div className="max-w-3xl mx-auto ">{children}</div>
-                    </main>
+                    <DarkModeProvider>
+                        {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
+                        <main className="overflow-y-scroll flex-1 ">
+                            <div className="max-w-3xl mx-auto ">{children}</div>
+                        </main>
+                    </DarkModeProvider>
                     <Footer />
                 </SessionProvider>
             </body>

@@ -61,7 +61,7 @@ export default async function BoardDataTable({
                             key={post.article_id}
                             className={
                                 currentPostId === post.article_id
-                                    ? "bg-slate-200 border-b border-gray-500"
+                                    ? "bg-slate-200  dark:bg-slate-700 border-b border-gray-500"
                                     : "border-b border-gray-500 "
                             }
                         >
@@ -87,7 +87,7 @@ export default async function BoardDataTable({
                                 )}{" "}
                                 <Link
                                     href={`/qna/${post.article_id}?page=${currentPage}&query=${searchQuery}`}
-                                    className="text-gray-800 hover:underline text-sm "
+                                    className=" hover:underline text-sm "
                                 >
                                     {/* {post.title.substring(0, 40) + "..."} */}
                                     <span>{post.title}</span>

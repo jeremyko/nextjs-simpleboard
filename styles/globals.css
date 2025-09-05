@@ -50,6 +50,24 @@
     --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* 기본 테마 */
+/* @theme {
+  --color-bg: #ffffff;
+  --color-fg: #1f2937;
+  --color-primary: #4f46e5;
+  --color-secondary: #9333ea;
+
+  --font-sans: "Inter", sans-serif;
+} */
+
+/* 다크 모드 */
+@theme dark {
+  --color-bg: #1f2937;
+  --color-fg: #f9fafb;
+  --color-primary: #6366f1;
+  --color-secondary: #c084fc;
+}
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #f8faf5;

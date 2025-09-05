@@ -25,10 +25,15 @@ import { SignOut } from "@/components/SignOut/SignOut";
 // import { auth } from "@/auth";
 import { useSession  } from "next-auth/react";
 
+import { useDarkModeStore } from "@/store/darkModeStore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun, faMoon,} from "@fortawesome/free-solid-svg-icons";
+
 // export default async function UserButton() {
 export default function UserButton() {
     // const session = await auth();
     const { data: session, status  } = useSession();  // jwt callback 이 실행된다 !!!
+    const { dark, toggle } = useDarkModeStore();
 
     // console.debug("UserButton render, status:",status);
     // console.debug("UserButton render, session:", session);
@@ -51,10 +56,18 @@ export default function UserButton() {
         return <SignIn className="h-9 w-16 p-2 border rounded" />;
     }
 
+
     return (
         <div className="flex items-center gap-2">
-            {/* <span className="hidden text-sm sm:inline-flex">{session.user.email}</span> */}
             <DropdownMenu>
+                {/* <DropdownMenuTrigger className="px-2 py-2 rounded bg-primary text-fg hover:bg-secondary transition flex items-center gap-2">
+                    {dark ? (
+                        <FontAwesomeIcon icon={faMoon} aria-label="lightMode" className="h-9 w-9" />
+                    ) : (
+                        <FontAwesomeIcon icon={faSun} aria-label="lightMode" className="h-9 w-9" />
+                    )}
+                </DropdownMenuTrigger> */}
+
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                         <Avatar className="h-9 w-9">
@@ -68,14 +81,36 @@ export default function UserButton() {
                         </Avatar>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48 mt-2" align="end" forceMount>
+
+                <DropdownMenuContent className="flex flex-col gap-1 w-48 mt-2" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                             <p className="text-sm font-medium leading-none">{session.user.name}</p>
                             <p className="text-muted-foreground text-xs leading-none">{session.user.email}</p>
                         </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuItem className="border border-blue-500">
+
+                    <DropdownMenuItem className="flex justify-center border border-blue-500" onClick={() => toggle()}>
+                        <FontAwesomeIcon
+                            icon={faSun}
+                            aria-label="lightMode"
+                            // className="absolute left-3 text-gray-400 peer-focus:text-zinc-200"
+                        />
+                        Light Mode
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        className="flex justify-center items-center gap-2 border border-blue-500"
+                        onClick={() => toggle()}
+                    >
+                        <FontAwesomeIcon
+                            icon={faMoon}
+                            aria-label="darkMode"
+                            // className="absolute left-3 text-gray-400 peer-focus:text-zinc-200"
+                        />
+                        Dark Mode
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild className="flex justify-center items-center gap-2 w-full border border-blue-500 m-0 p-0 ">
                         <SignOut />
                     </DropdownMenuItem>
                 </DropdownMenuContent>
