@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams, useRouter } from "next/navigation";
-import { KeyboardEvent, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 import { Input } from "@/components/ui/input";
 import {
     DropdownMenu,
@@ -17,6 +17,14 @@ export default function Search({ placeholder }: { placeholder: string }) {
     // const pathname = usePathname();
     const { replace } = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [query, setQuery] = useState(decodeURIComponent(searchParams.get("query") || ""));
+    // const defaultValue = decodeURIComponent(searchParams.get("query") || "");
+    // console.log("Search query:", query);
+
+    useEffect(() => {
+        // console.log("Search render");
+        setQuery(decodeURIComponent(searchParams.get("query") || ""));
+    }, [searchParams.get("query")]);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
@@ -64,7 +72,10 @@ export default function Search({ placeholder }: { placeholder: string }) {
                     placeholder={placeholder}
                     onKeyDown={handleKeyDown}
                     id="searchInput"
-                    defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                    // defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                    // defaultValue={defaultValue}
+                    onChange={(e) => setQuery(e.target.value)}
+                    value={query}
                 />
                 <FontAwesomeIcon
                     icon={faMagnifyingGlass}
@@ -97,7 +108,9 @@ export default function Search({ placeholder }: { placeholder: string }) {
                                 onKeyDown={handleKeyDown}
                                 onBlur={handleBlur}
                                 id="searchInput"
-                                defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                                // defaultValue={decodeURIComponent(searchParams.get("query") || "")}
+                                onChange={(e) => setQuery(e.target.value)}
+                                value={query}
                             />
                         </div>
                         {/* </DropdownMenuItem> */}
