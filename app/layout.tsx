@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -6,21 +5,12 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import Footer from "@/components/Footer/Footer";
 import HeaderNav from "@/components/HeaderNav/HeaderNav";
 import { SessionProvider } from "next-auth/react";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_KR } from "next/font/google";
 import DarkModeProvider from "@/components/DarkModeProvider";
 
 config.autoAddCss = false;
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
-// export const nanumGothic = Nanum_Gothic({weight:'400', subsets: ["latin"] });
+const notoSansKr = Noto_Sans_KR({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "simple board",
@@ -34,15 +24,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen  `}
-            >
-                {/* <SessionProvider refetchOnWindowFocus={true}> */}
+            <body className={`${notoSansKr.className} antialiased flex flex-col min-h-screen `} >
                 <SessionProvider>
-                    {/* <SessionWatcher /> */}
                     <HeaderNav />
                     <DarkModeProvider>
-                        {/* home 화면만 module.css 로 배경이미지처리, 나머지 화면은 고정 배경색적용 */}
                         <main className="overflow-y-scroll flex-1 ">
                             <div className="max-w-3xl mx-auto ">{children}</div>
                         </main>
