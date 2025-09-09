@@ -24,16 +24,12 @@ import { SignIn } from "@/components/SignIn/SignIn";
 import { SignOut } from "@/components/SignOut/SignOut";
 // import { auth } from "@/auth";
 import { useSession  } from "next-auth/react";
-
-import { useDarkModeStore } from "@/store/darkModeStore";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSun, faMoon,} from "@fortawesome/free-solid-svg-icons";
+import ThemeToggle from "../ThemeToggle";
 
 // export default async function UserButton() {
 export default function UserButton() {
     // const session = await auth();
     const { data: session, status  } = useSession();  // jwt callback 이 실행된다 !!!
-    const { dark, toggle } = useDarkModeStore();
 
     // console.debug("UserButton render, status:",status);
     // console.debug("UserButton render, session:", session);
@@ -83,32 +79,13 @@ export default function UserButton() {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent className="flex flex-col gap-1 w-48 mt-2" align="end" forceMount>
+                    <ThemeToggle size="md" className="ml-2 mt-2 " />
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                             <p className="text-sm font-medium leading-none">{session.user.name}</p>
                             <p className="text-muted-foreground text-xs leading-none">{session.user.email}</p>
                         </div>
                     </DropdownMenuLabel>
-
-                    <DropdownMenuItem className="flex justify-center border border-blue-500" onClick={() => toggle()}>
-                        <FontAwesomeIcon
-                            icon={faSun}
-                            aria-label="lightMode"
-                            // className="absolute left-3 text-gray-400 peer-focus:text-zinc-200"
-                        />
-                        Light Mode
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        className="flex justify-center items-center gap-2 border border-blue-500"
-                        onClick={() => toggle()}
-                    >
-                        <FontAwesomeIcon
-                            icon={faMoon}
-                            aria-label="darkMode"
-                            // className="absolute left-3 text-gray-400 peer-focus:text-zinc-200"
-                        />
-                        Dark Mode
-                    </DropdownMenuItem>
 
                     <DropdownMenuItem asChild className="flex justify-center items-center gap-2 w-full border border-blue-500 m-0 p-0 ">
                         <SignOut />

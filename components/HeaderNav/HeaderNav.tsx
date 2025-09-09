@@ -28,7 +28,7 @@ export default function HeaderNav() {
     // home icon
     const homeIcon = (
         <Link href="/" className="ml-2 " aria-label="home">
-            <FontAwesomeIcon size="xl" icon={faHouse} aria-label="home" className="text-zinc-200" />
+            <FontAwesomeIcon size="2xl" icon={faHouse} aria-label="home" className="text-zinc-200" />
         </Link>
     );
 

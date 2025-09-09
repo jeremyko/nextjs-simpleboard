@@ -3,20 +3,20 @@
 import { create } from "zustand";
 
 interface DarkModeState {
-    dark: boolean;
+    isDark: boolean;
     toggle: () => void;
     setDark: (value: boolean) => void;
 }
 
 export const useDarkModeStore = create<DarkModeState>((set) => ({
-    dark: false,
+    isDark: false,
     toggle: () =>
         set((state) => {
-            const newValue = !state.dark;
+            const newValue = !state.isDark;
             localStorage.setItem("darkMode", JSON.stringify(newValue));
-            return { dark: newValue };
+            return { isDark: newValue };
         }),
-    setDark: (value: boolean) => set({ dark: value }),
+    setDark: (value: boolean) => set({ isDark: value }),
 }));
 
 
