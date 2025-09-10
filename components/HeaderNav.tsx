@@ -16,14 +16,14 @@ export default function HeaderNav() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // 모바일 메뉴 버튼
-    const mobileMenu = (
-        <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden mr-2 p-2 border rounded"
-        >
-            <FontAwesomeIcon icon={faBars} />
-        </button>
-    );
+    // const mobileMenu = (
+    //     <button
+    //         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+    //         className="sm:hidden mr-2 p-2 border rounded"
+    //     >
+    //         <FontAwesomeIcon icon={faBars} />
+    //     </button>
+    // );
 
     // home icon
     const homeIcon = (
@@ -33,14 +33,14 @@ export default function HeaderNav() {
     );
 
     // 모바일 드롭다운 메뉴
-    const mobileDropDownMenu = (
-        <div className="absolute left-0 top-full bg-gray-700 flex flex-col items-start p-4 sm:hidden">
-            <div className="flex justify-between items-center mt-2 gap-4">
-                <p>test1</p>
-                <p>test2</p>
-            </div>
-        </div>
-    );
+    // const mobileDropDownMenu = (
+    //     <div className="absolute left-0 top-full bg-gray-700 flex flex-col items-start p-4 sm:hidden">
+    //         <div className="flex justify-between items-center mt-2 gap-4">
+    //             <p>test1</p>
+    //             <p>test2</p>
+    //         </div>
+    //     </div>
+    // );
 
     return (
         <header className="w-full bg-gray-800 text-white sticky top-0 z-100">
