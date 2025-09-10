@@ -46,7 +46,7 @@ export default function HeaderNav() {
         <header className="w-full bg-gray-800 text-white sticky top-0 z-100">
             <div className=" max-w-3xl mx-auto text-sm flex justify-between items-center p-2 relative ">
                 <div className="flex justify-between items-center gap-4">
-                    {mobileMenu}
+                    {/* {mobileMenu} */}
                     {homeIcon}
                 </div>
                 <Link href="/qna" className="text-base hover:underline mr-12 p-2">
@@ -58,7 +58,7 @@ export default function HeaderNav() {
                 <div className=" ">
                     <UserButton />
                 </div>
-                {mobileMenuOpen && mobileDropDownMenu}
+                {/* {mobileMenuOpen && mobileDropDownMenu} */}
             </div>
         </header>
     );
