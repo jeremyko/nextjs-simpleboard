@@ -1,17 +1,17 @@
 import { fetchOneQnaById, getComments, getTotalPagesCount, insertPostViews } from "@/app/libs/serverDb";
-import BoardDataTable from "@/components/Table/BoardDataTable";
-import Pagination from "@/components/Pagination/Pagination";
+import BoardDataTable from "@/components/BoardDataTable";
+import Pagination from "@/components/Pagination";
 import { getPostsPerPage } from "@/global_const/global_const";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import OneBoardItem from "@/components/OneBoardItem/OneBoardItem"; //TODO : 경로가 이게 맞는건지 ..
+import OneBoardItem from "@/components/OneBoardItem"; //TODO : 경로가 이게 맞는건지 ..
 import { Button } from "@/components/ui/button";
 import { deleteQuestion, } from "@/actions/actionQna";
 import { getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
-import NewCommentForm from "@/components/Forms/NewCommentForm";
-import OneCommentReply from "@/components/OneCommentReply/OneCommentReply";
+import NewCommentForm from "@/components/NewCommentForm";
+import OneCommentReply from "@/components/OneCommentReply";
 import { cookies } from "next/headers";
-import DeleteQnaForm from "@/components/Forms/DeleteQnaForm";
+import DeleteQnaForm from "@/components/DeleteQnaForm";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 // XXX 개별 게시물 보기

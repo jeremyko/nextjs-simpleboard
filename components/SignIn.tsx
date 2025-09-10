@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "../ui/button";
 import { signIn } from "next-auth/react";
+import { Button } from "./ui/button";
 
 async function actionSignIn(provider?: string) {
     await signIn(provider);

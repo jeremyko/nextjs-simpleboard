@@ -3,13 +3,13 @@
 // comment, reply 같이 사용중임.
 // comment 하나 당 메뉴버튼을 동작하기 위해 별도 component 로 만듬
 import { OneComment } from "@/app/libs/serverDb";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { deleteComment  } from "@/actions/actionQna";
-import { Button } from "../ui/button";
-import EditCommentForm from "../Forms/EditCommentForm";
+import { Button } from "./ui/button";
+import EditCommentForm from "@/components/EditCommentForm";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,8 +20,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import ReplyCommentForm from "../Forms/ReplyCommentForm";
+} from "./ui/alert-dialog";
+import ReplyCommentForm from "@/components/ReplyCommentForm";
 import { useRouter } from "next/navigation";
 import {
     DropdownMenu,

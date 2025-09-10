@@ -4,8 +4,8 @@ import { BoardItemById } from "@/app/libs/serverDb";
 
 // No SSR ==> CSR 처리 명시
 import dynamic from "next/dynamic";
-const Avatar = dynamic(() => import("../ui/avatar").then((mod) => mod.Avatar), { ssr: false });
-const AvatarImage = dynamic(() => import("../ui/avatar").then((mod) => mod.AvatarImage), {
+const Avatar = dynamic(() => import("./ui/avatar").then((mod) => mod.Avatar), { ssr: false });
+const AvatarImage = dynamic(() => import("./ui/avatar").then((mod) => mod.AvatarImage), {
     ssr: false,
 });
 

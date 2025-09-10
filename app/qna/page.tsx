@@ -1,5 +1,5 @@
-import BoardDataTable from "@/components/Table/BoardDataTable";
-import Pagination from "@/components/Pagination/Pagination";
+import BoardDataTable from "@/components/BoardDataTable";
+import Pagination from "@/components/Pagination";
 import { getTotalPagesCount } from "../libs/serverDb";
 import Link from "next/link";
 import { getPostsPerPage } from "@/global_const/global_const";

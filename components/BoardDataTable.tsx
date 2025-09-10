@@ -1,7 +1,7 @@
 import { getAllPostsCount, fetchPagedBoardItems } from "@/app/libs/serverDb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 
 export default async function BoardDataTable({

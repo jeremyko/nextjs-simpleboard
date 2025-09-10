@@ -6,7 +6,7 @@ import { CommentState, updateComment } from "@/actions/actionQna";
 import { OneComment } from "@/app/libs/serverDb";
 import { useActionState, useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 
 export default function EditCommentForm({

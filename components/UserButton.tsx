@@ -20,11 +20,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { SignIn } from "@/components/SignIn/SignIn";
-import { SignOut } from "@/components/SignOut/SignOut";
+import { SignIn } from "@/components/SignIn";
+import { SignOut } from "@/components/SignOut";
 // import { auth } from "@/auth";
 import { useSession  } from "next-auth/react";
-import ThemeToggle from "../ThemeToggle";
+import ThemeToggle from "@/components/ThemeToggle";
 
 // export default async function UserButton() {
 export default function UserButton() {

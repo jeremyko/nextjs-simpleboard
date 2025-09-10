@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import Search from "../Search/Search";
+import Search from "@/components/Search";
 
 import { Suspense } from "react";
 // useSearchParams() should be wrapped in a suspense boundary at page "/404".
 // Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
 
-import UserButton from "../UserButton/UserButton";
+import UserButton from "@/components/UserButton";
 import { useState } from "react";
 
 export default function HeaderNav() {

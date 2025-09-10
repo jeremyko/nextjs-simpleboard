@@ -1,5 +1,5 @@
 import { fetchCategoryData, fetchOneQnaById } from "@/app/libs/serverDb";
-import EditQuestionForm from "@/components/Forms/EditQuestionForm";
+import EditQuestionForm from "@/components/EditQuestionForm";
 import { notFound } from "next/navigation";
 
 // 개별 게시물 수정 페이지
