@@ -166,3 +166,19 @@ textarea {
     @apply bg-background text-foreground;
     }
 }
+
+/* 스크롤바 숨기기 */
+/* 크롬, 사파리, 엣지 */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* 파이어폭스 */
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+}
+
+/* IE/Edge (구버전) */
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+}

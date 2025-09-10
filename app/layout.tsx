@@ -24,11 +24,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${notoSansKr.className} antialiased flex flex-col min-h-screen `} >
+            <body className={`${notoSansKr.className} antialiased flex flex-col min-h-screen `}>
                 <SessionProvider>
                     <HeaderNav />
                     <DarkModeProvider>
-                        <main className="overflow-y-scroll flex-1 ">
+                        <main className="overflow-y-scroll scrollbar-hidden flex-1 ">
                             <div className="max-w-3xl mx-auto ">{children}</div>
                         </main>
                     </DarkModeProvider>

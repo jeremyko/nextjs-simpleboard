@@ -34,7 +34,7 @@ export default function ScrollToTopButton() {
             {isVisible && (
                 <button
                     onClick={scrollToTop}
-                    className="fixed bottom-12 right-3 p-3 rounded-full bg-gray-700 text-white shadow-lg hover:bg-gray-800 transition-all"
+                    className="fixed bottom-12 right-6 p-3 rounded-full bg-gray-700/50 text-white shadow-lg hover:bg-gray-800 transition-all"
                 >
                     <FontAwesomeIcon icon={faArrowUp} size="lg" />
                 </button>
