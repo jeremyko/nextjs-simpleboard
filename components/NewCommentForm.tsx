@@ -2,10 +2,9 @@
 
 import { createComment, CommentState } from "@/actions/actionQna";
 import { useActionState, useEffect, useRef, useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import QuillEditor from "./QuillEditor";
 
 export default function NewCommentForm({
     currUserId,
@@ -67,26 +66,17 @@ export default function NewCommentForm({
             </label>
             <div className="relative mt-2 rounded-md">
                 <div className="relative">
-                    <TextareaAutosize
-                        ref={inputRef}
-                        id="commentContent"
+                    <QuillEditor
                         name="content"
-                        rows={1}
-                        className="peer block w-full rounded-md py-1 pl-2 text-sm border border-zinc-400 outline-none placeholder:text-gray-500  focus:border-cyan-600"
-                        aria-describedby="qna-comments-error"
-                        placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : "댓글을 입력하세요"}
-                        readOnly={currUserId ? false : true}
-                        onClick={onClickTextArea}
+                        theme="snow"
                         value={contentState}
-                        onChange={(e) => setContentState(e.target.value)}
-                        required
-                    ></TextareaAutosize>
+                        isReadOnly={currUserId ? false : true}
+                        onChange={(e) => setContentState(e)}
+                        onFocus={onClickTextArea}
+                        placeholder={!currUserId ? "댓글을 쓰려면 로그인이 필요합니다" : "댓글을 입력하세요"}
+                    />
                 </div>
             </div>
-            {/* 에러 발생시 표시한다  */}
-            {/* <p aria-live="polite" className="bold font-lg text-red-600">
-                {commentState?.errors?.content}
-            </p> */}
 
             {currUserId && isWriting && (
                 <div className="flex justify-end items-center gap-4 mt-1">

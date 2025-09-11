@@ -182,3 +182,8 @@ textarea {
 .scrollbar-hidden {
   -ms-overflow-style: none;
 }
+
+.quillViewModeNoPadding .ql-editor {
+  padding: 0 !important;
+}
+

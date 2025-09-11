@@ -2,15 +2,20 @@
 
 import { createQuestion, State } from "@/actions/actionQna";
 import Link from "next/link";
-import { useActionState, useLayoutEffect, useRef } from "react";
-import TextareaAutosize from "react-textarea-autosize";
+import { useActionState, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
+import QuillEditor from "./QuillEditor";
 
 // 새 게시물 작성 form
 
 export default function NewQuestionForm({ categoryList }: { categoryList: { category_id: number; name: string }[] } ) {
     const initialState: State = { message: null, errors: {} };
     const [state, formAction] = useActionState(createQuestion, initialState);
+    const [content, setContent] = useState("");
+
+    const handleEditorChange = (value: string) => {
+        setContent(value); // 상태 업데이트
+    };
 
     return (
         <form action={formAction}>
@@ -91,17 +96,14 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             </label>
                             <div className="relative mt-2 rounded-md">
                                 <div className="relative">
-                                    <TextareaAutosize
-                                        // ref={textbox}
-                                        // onChange={handleKeyDown}
-                                        id="content"
+                                    <QuillEditor
+                                        className=""
                                         name="content"
-                                        rows={10}
-                                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
-                                        aria-describedby="qna-content-error"
-                                        placeholder="본문을 입력하세요"
-                                        required
-                                    ></TextareaAutosize>
+                                        theme="snow"
+                                        value={content}
+                                        isReadOnly={false}
+                                        onChange={handleEditorChange}
+                                    />
                                 </div>
                             </div>
                             {/* error handling */}

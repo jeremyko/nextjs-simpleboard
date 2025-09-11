@@ -15,16 +15,16 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 export type State = {
     //XXX 왜 배열 type 을 지정해야 하는가 ==> zod 에서 그렇게 리턴해준다..
     errors?: {
-        categoryId?: string[];
-        title?: string[];
-        content?: string[];
+        categoryId?: string[]|null;
+        title?: string[]|null;
+        content?: string[]|null;
     };
     message?: string | null;
 };
 
 export type CommentState = {
     errors?: {
-        content?: string[];
+        content?: string[]|null;
     };
     message?: string | null;
     redirectTo?: string | null;
@@ -97,6 +97,15 @@ export async function createQuestion(prevState: State, formData: FormData) {
     const { categoryId, title, content } = validatedFields.data;
     //const date = new Date().toISOString().split("T")[0];
     console.debug("==> createQuestion :", categoryId, title, content);
+
+    //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
+    const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
+    // console.debug("text len=", text.length);
+    if (text.length === 0) {
+        return {
+            errors: {categoryId:null, title:null, content: ["내용을 입력하세요"] },
+        };
+    }
 
     //userId
     const session = await auth();
@@ -177,6 +186,14 @@ export async function updateQuestion(
         };
     }
     const { categoryId, title, content } = validatedFields.data;
+    //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
+    const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
+    console.debug("text len=", text.length);
+    if (text.length === 0) {
+        return {
+            errors: { categoryId: null, title: null, content: ["내용을 입력하세요"] },
+        };
+    }
 
     const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
     if (!isLoggedInAndMine) {
@@ -289,6 +306,14 @@ export async function createComment(
         };
     }
     const { content } = validatedFields.data;
+    //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
+    const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
+    // console.debug("text len=", text.length);
+    if (text.length === 0) {
+        return {
+            errors: { content: ["내용을 입력하세요"] },
+        };
+    }
 
     try {
         await sql` 
@@ -341,6 +366,14 @@ export async function updateComment(
         };
     }
     const { content } = validatedFields.data;
+    //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
+    const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
+    // console.debug("text len=", text.length);
+    if (text.length === 0) {
+        return {
+            errors: { content: ["내용을 입력하세요"] },
+        };
+    }
 
     try {
         await sql` 
@@ -431,8 +464,16 @@ export async function createReply(
         };
     }
     const { content } = validatedFields.data;
+    //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
+    const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
+    // console.debug("text len=", text.length);
+    if (text.length === 0) {
+        return {
+            errors: { content: ["내용을 입력하세요"] },
+        };
+    }
 
-    console.debug("p_comment_id :", commentId);
+    // console.debug("p_comment_id :", commentId);
     try {
         await sql` 
         INSERT INTO comments (article_id, p_comment_id, comment, comment_user_id,reply_to) 

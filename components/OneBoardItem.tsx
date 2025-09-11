@@ -4,14 +4,12 @@ import { BoardItemById } from "@/app/libs/serverDb";
 
 // No SSR ==> CSR 처리 명시
 import dynamic from "next/dynamic";
+import QuillEditor from "./QuillEditor";
 const Avatar = dynamic(() => import("./ui/avatar").then((mod) => mod.Avatar), { ssr: false });
 const AvatarImage = dynamic(() => import("./ui/avatar").then((mod) => mod.AvatarImage), {
     ssr: false,
 });
 
-// 높이 조절 textarea 를 사용하려면 client에서만 가능하므로 별로도 만듬.
-// 서버 컴포넌트에서 이걸 사용하는 방식으로 구현
-// TextareaAutosize 사용시 렌더링 지연이 발생되어 div 로 처리함
 export default function OneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) {
     // console.debug("OneBoardItem render");
     // console.debug("[ViewOneBoardItem] oneQnA:", oneQnA);
@@ -37,9 +35,15 @@ export default function OneBoardItem({ oneQnA }: { oneQnA: BoardItemById }) {
                     {oneQnA.title}
                 </h1>
             </div>
-            <article style={{ whiteSpace: "pre-wrap" }} className="pb-2 w-full  ">
-                {oneQnA.contents}
-            </article>
+
+            <QuillEditor
+                className="quillViewModeNoPadding"
+                name="content"
+                theme="bubble"
+                value={oneQnA.contents}
+                isReadOnly={true}
+                onChange={() => {}}
+            />
         </div>
     );
 }

@@ -30,6 +30,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import QuillEditor from "./QuillEditor";
 
 // Comment 이건 이미 nextjs 가 사용중인 이름이라서 에러발생됨
 export default function OneCommentReply({
@@ -138,7 +139,7 @@ export default function OneCommentReply({
                                         <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
                                         <AlertDialogDescription></AlertDialogDescription>
                                     </AlertDialogHeader>
-                                    <AlertDialogFooter >
+                                    <AlertDialogFooter>
                                         <AlertDialogCancel
                                             onClick={() => setDlgOpen(false)}
                                             className=" text-white bg-blue-600 hover:bg-blue-500 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -167,10 +168,18 @@ export default function OneCommentReply({
             {/* 댓글 본문 -------------------------------------------------- */}
             {/* 수정하는 경우 구분해서 .. */}
             {!isEditing && (
-                <p className="pt-2 pb-2">
-                    <span className="text-blue-700 dark:text-blue-400 text-sm font-bold">{"@" + comment.reply_to + " "}</span>
-                    <span className="text-sm font-normal "> {comment.comment}</span>
-                </p>
+                <div className="pt-2 pb-2">
+                    <span className="text-blue-700 dark:text-blue-400 text-sm font-bold">
+                        {"@" + comment.reply_to + " "}
+                    </span>
+                    <QuillEditor
+                        className="quillViewModeNoPadding"
+                        name="content"
+                        theme="bubble"
+                        value={comment.comment}
+                        isReadOnly={true}
+                    />
+                </div>
             )}
             {/* <p> depth : {comment.depth} </p>  */}
             {/* 수정하는 경우에만 보여준다 */}

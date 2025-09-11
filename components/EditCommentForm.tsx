@@ -5,9 +5,9 @@
 import { CommentState, updateComment } from "@/actions/actionQna";
 import { OneComment } from "@/app/libs/serverDb";
 import { useActionState, useEffect, useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import QuillEditor from "./QuillEditor";
 
 export default function EditCommentForm({
     currUserId,
@@ -54,16 +54,14 @@ export default function EditCommentForm({
         <form action={formAction}>
             <div className="relative mt-2 rounded-md ">
                 <div className="relative">
-                    <TextareaAutosize
-                        id="content"
+                    <QuillEditor
+                        // className="quillViewModeNoPadding"
                         name="content"
-                        rows={1}
-                        className="peer block w-full rounded-md py-2 pl-4 text-sm border border-zinc-400 outline-0 placeholder:text-gray-500 focus:ring-1 focus:ring-blue-400"
-                        aria-describedby="qna-comments-error"
+                        theme="snow"
                         value={contentState}
-                        onChange={(e) => setContentState(e.target.value)}
-                        required
-                    ></TextareaAutosize>
+                        isReadOnly={false}
+                        onChange={(e) => setContentState(e)}
+                    />
                 </div>
                 <div className="flex flex-row justify-end mt-2  gap-4">
                     <Button

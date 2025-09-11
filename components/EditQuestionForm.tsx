@@ -3,9 +3,9 @@
 import { updateQuestion, State } from "@/actions/actionQna";
 import { BoardItemById } from "@/app/libs/serverDb";
 import Link from "next/link";
-import { useActionState, useLayoutEffect, useRef } from "react";
-import TextareaAutosize from "react-textarea-autosize";
+import { useActionState, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import QuillEditor from "./QuillEditor";
 
 //XXX 게시물 수정 form
 
@@ -20,26 +20,15 @@ export default function EditQuestionForm({
     currentPage: number;
     searchQuery: string;
 }) {
-    console.debug("[EditQuestionForm] searchQuery:", searchQuery);
+    console.debug("[EditQuestionForm] render :", searchQuery);
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery);
     const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
 
-    // 글입력시 자동 높이 조정 -----------------
-    // const textbox = useRef<HTMLTextAreaElement>(null);
-    // function adjustHeight() {
-    //     console.debug("adjustHeight called");
-    //     if (textbox.current) {
-    //         textbox.current.style.height = "inherit";
-    //         textbox.current.style.height = `${textbox.current.scrollHeight}px`;
-    //     }
-    // }
-    // useLayoutEffect(adjustHeight, []);
-
-    // function handleKeyDown() {
-    //     adjustHeight();
-    // }
-    // 글입력시 자동 높이 조정 -----------------
+    const [content, setContent] = useState(oneQnA.contents);
+    const handleEditorChange = (value: string) => {
+        setContent(value); // 상태 업데이트
+    };
 
     return (
         <form action={formAction}>
@@ -112,17 +101,14 @@ export default function EditQuestionForm({
                             </label>
                             <div className="relative mt-2 ">
                                 <div className="relative">
-                                    <TextareaAutosize
-                                        // ref={textbox}
-                                        // onChange={handleKeyDown}
-                                        id="content"
+                                    <QuillEditor
+                                        // className="quillViewModeNoPadding"
                                         name="content"
-                                        rows={3}
-                                        className=" mt-2 pt-2 block w-full py-2 pl-2 rounded-md border border-zinc-400 outline-0  focus:ring-1 focus:ring-blue-400"
-                                        defaultValue={oneQnA.contents}
-                                        aria-describedby="qna-content-error"
-                                        required
-                                    ></TextareaAutosize>
+                                        theme="snow"
+                                        value={content}
+                                        isReadOnly={false}
+                                        onChange={handleEditorChange}
+                                    />
                                 </div>
                             </div>
                             {/* error handling */}
