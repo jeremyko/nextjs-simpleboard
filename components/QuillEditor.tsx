@@ -1,8 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { forwardRef, useMemo, useRef } from "react";
+import { forwardRef, useMemo } from "react";
 import "react-quill-new/dist/quill.snow.css";
+import Range from "react-quill-new";
+import EmitterSource from "react-quill-new";
+import UnprivilegedEditor from "react-quill-new";
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 // react-quill 은 form 안에 직접 value 를 넣어주지 않음.
@@ -18,7 +21,8 @@ interface QuillEditorProps {
     isReadOnly: boolean;
     placeholder?: string;
     onChange?: (value: string) => void;
-    onFocus?: (range: any, source: any, editor: any) => void;
+    // onFocus?: (selection: Range, source: EmitterSource, editor: UnprivilegedEditor) => void;
+    onFocus?: () => void;
 }
 
 function QuillEditor({
@@ -32,8 +36,6 @@ function QuillEditor({
     onChange,
     onFocus,
 }: QuillEditorProps) {
-
-    const quillRef = useRef<any>(null);
 
     const modules = useMemo(
         () => ({
