@@ -16,7 +16,7 @@ interface QuillEditorProps {
     className?: string;
     name: string;
     theme: string;
-    style?: any;
+    style?: React.CSSProperties;
     value?: string;
     isReadOnly: boolean;
     placeholder?: string;
