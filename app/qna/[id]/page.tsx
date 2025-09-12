@@ -6,7 +6,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import OneBoardItem from "@/components/OneBoardItem"; //TODO : 경로가 이게 맞는건지 ..
 import { Button } from "@/components/ui/button";
-import { deleteQuestion, } from "@/actions/actionQna";
 import { getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import NewCommentForm from "@/components/NewCommentForm";
 import OneCommentReply from "@/components/OneCommentReply";
@@ -42,10 +41,6 @@ export default async function Page(props: {
         notFound();
     }
     const isLoggedInAndMine = await isAuthenticatedAndMine(oneQnA.user_id);
-    // const isLogged = await checkIsAuthenticated();
-    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, oneQnA.user_id, searchQuery);
-    // const initialState: DelQnAState = { message: null };
-    // const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
     const comments = await getComments(oneQnA.article_id);
 
     // ----------------------------------------------- 조회수 관리

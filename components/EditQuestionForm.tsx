@@ -3,7 +3,7 @@
 import { updateQuestion, State } from "@/actions/actionQna";
 import { BoardItemById } from "@/app/libs/serverDb";
 import Link from "next/link";
-import { useActionState, useLayoutEffect, useRef, useState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import QuillEditor from "./QuillEditor";
 

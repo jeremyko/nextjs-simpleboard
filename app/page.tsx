@@ -3,7 +3,7 @@ import packageJson from "@/package.json";
 // home page
 
 export default async function Home() {
-    const appName = packageJson.name;
+    // const appName = packageJson.name;
     const appVersion = packageJson.version;
     const dependencies = packageJson.dependencies;
     const devDependencies = packageJson.devDependencies;

@@ -2,7 +2,7 @@
 
 import { createQuestion, State } from "@/actions/actionQna";
 import Link from "next/link";
-import { useActionState, useLayoutEffect, useRef, useState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "./ui/button";
 import QuillEditor from "./QuillEditor";
 

@@ -48,7 +48,7 @@ export default function EditCommentForm({
             router.push(commentState.redirectTo);
             setIsEditing(false);
         }
-    }, [commentState, router]);
+    }, [commentState, router, setIsEditing]);
 
     return (
         <form action={formAction}>

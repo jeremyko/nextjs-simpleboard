@@ -19,7 +19,6 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import ReplyCommentForm from "@/components/ReplyCommentForm";
 import { useRouter } from "next/navigation";
@@ -27,7 +26,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import QuillEditor from "./QuillEditor";
@@ -56,7 +54,6 @@ export default function OneCommentReply({
     // console.debug("OneCommentData : comment.comment_user_id=>", comment.comment_user_id);
     // console.debug("OneCommentData : isPostMine=>", isPostMine);
     // console.debug("OneCommentData : isCommentMine=>", isCommentMine);
-    const [isOpen, setIsOpen] = useState(false); //comment 수정,삭제를 보여주기 위함
     const [isEditing, setIsEditing] = useState(false); 
     const [isReplying, setIsReplying] = useState(false); 
 

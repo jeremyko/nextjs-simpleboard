@@ -4,6 +4,7 @@ import { createReply, CommentState } from "@/actions/actionQna";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import QuillEditor from "./QuillEditor";
+import type ReactQuillType from "react-quill-new";
 
 export default function ReplyCommentForm({
     currUserId, //현재 로그인한 사용자
@@ -42,7 +43,8 @@ export default function ReplyCommentForm({
     );
     const [replyState, formAction] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
-    const scrollRef = useRef<HTMLTextAreaElement | null>(null);
+    // const scrollRef = useRef<HTMLTextAreaElement | null>(null);
+    const scrollRef = useRef<ReactQuillType | null>(null);
 
     function onClickTextArea() {
         if (!currUserId) {
@@ -63,7 +65,7 @@ export default function ReplyCommentForm({
             setContentState("");
             setIsReplying(false);
         }
-    }, [replyState, router]);
+    }, [replyState, router, setIsReplying]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -88,6 +90,7 @@ export default function ReplyCommentForm({
                     <div className="mt-2 rounded-md">
                         <div className="">
                             <QuillEditor
+                                ref={scrollRef}
                                 name="content"
                                 theme="snow"
                                 value={contentState}

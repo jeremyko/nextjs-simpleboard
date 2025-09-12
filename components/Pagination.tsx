@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { KeyboardEvent, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Pagination({
     isFromViewPage = false,

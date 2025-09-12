@@ -1,7 +1,6 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Search from "@/components/Search";
 
@@ -10,10 +9,9 @@ import { Suspense } from "react";
 // Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
 
 import UserButton from "@/components/UserButton";
-import { useState } from "react";
 
 export default function HeaderNav() {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    // const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // 모바일 메뉴 버튼
     // const mobileMenu = (

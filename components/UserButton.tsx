@@ -11,7 +11,7 @@
 //     import { signOut } from "next-auth/react";  
 // "@/auth" 에서 가져온 signOut 은 제대로 처리되지 않았다. 
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,

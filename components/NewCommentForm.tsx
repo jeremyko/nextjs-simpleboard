@@ -1,7 +1,7 @@
 "use client";
 
 import { createComment, CommentState } from "@/actions/actionQna";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import QuillEditor from "./QuillEditor";
@@ -32,7 +32,6 @@ export default function NewCommentForm({
     const [commentState, formAction] = useActionState(createCommentWithParams, initialState);
     const [contentState, setContentState] = useState("");
     const [isWriting, setIsWriting] = useState(false);
-    const inputRef = useRef<HTMLTextAreaElement | null>(null);
     const router = useRouter();
 
     function onClickTextArea() {
