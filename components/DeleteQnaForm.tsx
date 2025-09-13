@@ -54,6 +54,7 @@ export default function ModifyDeleteQnaForm({
                         <AlertDialogHeader>
                             <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
                             <AlertDialogDescription>
+                            {isPending && <span className="text-blue-600 text-sm">삭제 중입니다...</span>}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter className="flex justify-end items-center gap-4">
