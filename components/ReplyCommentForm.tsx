@@ -107,7 +107,6 @@ export default function ReplyCommentForm({
                         </div>
                     </div>
 
-                    {isPending && <p className="text-blue-600">저장 중입니다...</p>}
                     {currUserId && (
                         <div className="flex justify-end items-center gap-4 mt-2">
                             <Button

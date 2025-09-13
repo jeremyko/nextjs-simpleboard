@@ -123,7 +123,6 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             {state?.message}
                         </p> */}
 
-                        {isPending && <p className="text-blue-600 text-sm">저장 중입니다...</p>}
                         {/* --------------------- */}
                         <div className="mt-6 pt-2 pb-2 flex justify-between items-center gap-4">
                             <Link href="/qna">
