@@ -148,11 +148,21 @@ export default function OneCommentReply({
                                             id="deleteCommentForm"
                                             name="deleteCommentForm"
                                         >
-                                            <AlertDialogAction
-                                                type="submit"
-                                                className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            >
-                                                삭제
+                                            <AlertDialogAction asChild>
+                                                <Button
+                                                    type="submit"
+                                                    className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                >
+                                                    삭제
+                                                </Button>
+
+                                                {/* TODO useActionState 사용 안하면 삭제후 창이 안없어지는 문제..그냥 Button 사용  */}
+                                                {/* <SubmitButton
+                                                    className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                    desc="삭제"
+                                                    pendingDesc="삭제 중입니다..."
+                                                /> */}
+
                                             </AlertDialogAction>
                                         </form>
                                     </AlertDialogFooter>

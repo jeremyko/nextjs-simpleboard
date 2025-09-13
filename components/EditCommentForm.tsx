@@ -8,6 +8,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import QuillEditor from "./QuillEditor";
+import SubmitButton from "./SubmitButton";
 
 export default function EditCommentForm({
     currUserId,
@@ -35,7 +36,7 @@ export default function EditCommentForm({
         currentPostId,
         comment.comment_id,
     );
-    const [commentState, formAction] = useActionState(updateCommentWithParams, initialState);
+    const [commentState, formAction, isPending] = useActionState(updateCommentWithParams, initialState);
     const router = useRouter();
 
     function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
@@ -71,7 +72,10 @@ export default function EditCommentForm({
                     >
                         취소
                     </Button>
-                    <Button type="submit"> 저장 </Button>
+                    <SubmitButton
+                        desc="저장"
+                        pendingDesc="저장 중입니다..."
+                    />
                 </div>
             </div>
         </form>

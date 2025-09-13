@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import QuillEditor from "./QuillEditor";
+import SubmitButton from "./SubmitButton";
 
 //XXX 게시물 수정 form
 
@@ -23,7 +24,7 @@ export default function EditQuestionForm({
     console.debug("[EditQuestionForm] render :", searchQuery);
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery);
-    const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
+    const [state, formAction, isPending] = useActionState(updateQnaWithArticleId, initialState);
 
     const [content, setContent] = useState(oneQnA.contents);
     const handleEditorChange = (value: string) => {
@@ -131,7 +132,10 @@ export default function EditQuestionForm({
                                 <Button variant="destructive"> 취소</Button>
                             </Link>
 
-                            <Button type="submit"> 저장 </Button>
+                            <SubmitButton
+                                desc="저장"
+                                pendingDesc="저장 중입니다..."
+                            />
                         </div>
                     </div>
                 </div>

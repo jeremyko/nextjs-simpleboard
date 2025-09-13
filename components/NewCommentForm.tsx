@@ -5,6 +5,8 @@ import { useActionState, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import QuillEditor from "./QuillEditor";
+import { Button } from "./ui/button";
+import SubmitButton from "./SubmitButton";
 
 export default function NewCommentForm({
     currUserId,
@@ -29,7 +31,7 @@ export default function NewCommentForm({
         searchQuery,
         currentPostId,
     );
-    const [commentState, formAction] = useActionState(createCommentWithParams, initialState);
+    const [commentState, formAction, isPending] = useActionState(createCommentWithParams, initialState);
     const [contentState, setContentState] = useState("");
     const [isWriting, setIsWriting] = useState(false);
     const router = useRouter();
@@ -42,7 +44,7 @@ export default function NewCommentForm({
     }
 
 
-    function cancelComment(e: React.MouseEvent<HTMLDivElement>) {
+    function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsWriting(false);
         e.preventDefault();
@@ -79,16 +81,15 @@ export default function NewCommentForm({
 
             {currUserId && isWriting && (
                 <div className="flex justify-end items-center gap-4 mt-1">
-                    <div
+                    <Button
                         className="block cursor-pointer p-2 text-sm font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
                         onClick={cancelComment}
                     >
                         작성취소
-                    </div>
-                    <input
-                        type="submit"
-                        value="저장"
-                        className="block w-20 cursor-pointer p-2 text-sm font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
+                    </Button>
+                    <SubmitButton
+                        desc="저장"
+                        pendingDesc="저장 중입니다..."
                     />
                 </div>
             )}

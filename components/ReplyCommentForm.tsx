@@ -5,6 +5,8 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import QuillEditor from "./QuillEditor";
 import type ReactQuillType from "react-quill-new";
+import { Button } from "./ui/button";
+import SubmitButton from "./SubmitButton";
 
 export default function ReplyCommentForm({
     currUserId, //현재 로그인한 사용자
@@ -41,7 +43,7 @@ export default function ReplyCommentForm({
         searchQuery,
         currentPostId,
     );
-    const [replyState, formAction] = useActionState(createReplyWithParams, initialState);
+    const [replyState, formAction, isPending] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
     // const scrollRef = useRef<HTMLTextAreaElement | null>(null);
     const scrollRef = useRef<ReactQuillType | null>(null);
@@ -52,7 +54,8 @@ export default function ReplyCommentForm({
         }
     }
 
-    function cancelReply(e: React.MouseEvent<HTMLDivElement>) {
+    // function cancelReply(e: React.MouseEvent<HTMLDivElement>) {
+    function cancelReply(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsReplying(false);
         e.preventDefault();
@@ -106,16 +109,15 @@ export default function ReplyCommentForm({
 
                     {currUserId && (
                         <div className="flex justify-end items-center gap-4 mt-2">
-                            <div
+                            <Button
                                 className="block cursor-pointer p-2 text-sm font-bold bg-red-600 text-white  border rounded-sm hover:bg-red-700"
                                 onClick={cancelReply}
                             >
                                 작성취소
-                            </div>
-                            <input
-                                type="submit"
-                                value="의견 남기기"
-                                className="block w-24 cursor-pointer p-2 text-sm font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600"
+                            </Button>
+                            <SubmitButton
+                                desc="의견 남기기"
+                                pendingDesc="저장 중입니다..."
                             />
                         </div>
                     )}

@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Button } from "./ui/button";
 import QuillEditor from "./QuillEditor";
+import SubmitButton from "./SubmitButton";
 
 // 새 게시물 작성 form
 
 export default function NewQuestionForm({ categoryList }: { categoryList: { category_id: number; name: string }[] } ) {
     const initialState: State = { message: null, errors: {} };
-    const [state, formAction] = useActionState(createQuestion, initialState);
+    const [state, formAction, isPending] = useActionState(createQuestion, initialState);
     const [content, setContent] = useState("");
 
     const handleEditorChange = (value: string) => {
@@ -128,7 +129,10 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                 <Button> 취소</Button>
                             </Link>
 
-                            <Button type="submit">저장</Button>
+                            <SubmitButton
+                                desc="저장"
+                                pendingDesc="저장 중입니다..."
+                            />
                         </div>
                     </div>
                 </div>

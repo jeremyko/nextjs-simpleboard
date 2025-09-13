@@ -15,10 +15,11 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import SubmitButton from "./SubmitButton";
 
-//XXX 게시물 삭제 form
+//XXX 게시물 수정/삭제 form
 
-export default function DeleteQnaForm({
+export default function ModifyDeleteQnaForm({
     id,
     page,
     userId,
@@ -31,7 +32,7 @@ export default function DeleteQnaForm({
 }) {
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, userId, searchQuery);
     const initialState: DelQnAState = { error: null };
-    const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
+    const [state, formAction, isPending] = useActionState(deleteQuestionWithId, initialState); // client component only
 
     return (
         <>
@@ -60,11 +61,12 @@ export default function DeleteQnaForm({
                                 취소
                             </AlertDialogCancel>
                             <form action={formAction} id="deleteForm" name="deleteForm">
-                                <AlertDialogAction
-                                    type="submit"
-                                    className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                >
-                                    삭제
+                                <AlertDialogAction asChild>
+                                    <SubmitButton
+                                        className="bg-red-800 hover:bg-red-700 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        desc="삭제"
+                                        pendingDesc="삭제 중입니다..."
+                                    />
                                 </AlertDialogAction>
                             </form>
                         </AlertDialogFooter>
@@ -72,7 +74,6 @@ export default function DeleteQnaForm({
                 </AlertDialog>
 
                 <Link href={`/qna/edit/${id}?page=${page}&query=${searchQuery}`}>
-                    {/* <Button>수정</Button> */}
                     <div className="block cursor-pointer p-2 text-sm font-bold bg-blue-500 text-white border rounded-sm hover:bg-blue-600">
                         수정
                     </div>

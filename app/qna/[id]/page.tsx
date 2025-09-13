@@ -10,7 +10,7 @@ import { getSessionUserId, isAuthenticatedAndMine } from "@/app/libs/dataAccessL
 import NewCommentForm from "@/components/NewCommentForm";
 import OneCommentReply from "@/components/OneCommentReply";
 import { cookies } from "next/headers";
-import DeleteQnaForm from "@/components/DeleteQnaForm";
+import ModifyDeleteQnaForm from "@/components/DeleteQnaForm";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 // XXX 개별 게시물 보기
@@ -63,7 +63,7 @@ export default async function Page(props: {
 
                     {isLoggedInAndMine && (
                         // 에러를 화면에 표시하기 위해 client component 로 분리함 
-                        <DeleteQnaForm
+                        <ModifyDeleteQnaForm
                             id={id}
                             page={page}
                             userId={oneQnA.user_id}
