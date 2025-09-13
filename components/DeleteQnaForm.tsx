@@ -31,7 +31,7 @@ export default function DeleteQnaForm({
 }) {
     const deleteQuestionWithId = deleteQuestion.bind(null, id, page, userId, searchQuery);
     const initialState: DelQnAState = { error: null };
-    const [state, formAction] = useActionState(deleteQuestionWithId, initialState); // client component only
+    const [state, formAction, isPending] = useActionState(deleteQuestionWithId, initialState); // client component only
 
     return (
         <>
@@ -53,6 +53,7 @@ export default function DeleteQnaForm({
                         <AlertDialogHeader>
                             <AlertDialogTitle>정말 삭제 하시겠습니까?</AlertDialogTitle>
                             <AlertDialogDescription>
+                            {isPending && <span className="text-blue-600 text-sm">삭제 중입니다...</span>}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter className="flex justify-end items-center gap-4">

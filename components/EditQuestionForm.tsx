@@ -23,7 +23,7 @@ export default function EditQuestionForm({
     console.debug("[EditQuestionForm] render :", searchQuery);
     const initialState: State = { message: null, errors: {} };
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery);
-    const [state, formAction] = useActionState(updateQnaWithArticleId, initialState);
+    const [state, formAction, isPending] = useActionState(updateQnaWithArticleId, initialState);
 
     const [content, setContent] = useState(oneQnA.contents);
     const handleEditorChange = (value: string) => {
@@ -125,6 +125,7 @@ export default function EditQuestionForm({
                         {/* 에러 발생시 표시한다  */}
                         {/* <p aria-live="polite" className="bold font-lg text-red-600">{JSON.stringify(state?.errors?.categoryId)}</p> */}
 
+                        {isPending && <p className="text-blue-600 text-sm">변경 중입니다...</p>}
                         {/* --------------------- */}
                         <div className="mt-6 pt-2 pb-2 flex justify-end items-center gap-2">
                             <Link href={`/qna/${oneQnA.article_id}?page=${currentPage}&query=${searchQuery}`}>

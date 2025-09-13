@@ -35,7 +35,7 @@ export default function EditCommentForm({
         currentPostId,
         comment.comment_id,
     );
-    const [commentState, formAction] = useActionState(updateCommentWithParams, initialState);
+    const [commentState, formAction, isPending] = useActionState(updateCommentWithParams, initialState);
     const router = useRouter();
 
     function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
@@ -63,6 +63,7 @@ export default function EditCommentForm({
                         onChange={(e) => setContentState(e)}
                     />
                 </div>
+                {isPending && <p className="text-blue-600">변경 중입니다...</p>}
                 <div className="flex flex-row justify-end mt-2  gap-4">
                     <Button
                         variant="destructive"

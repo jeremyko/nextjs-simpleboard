@@ -29,7 +29,7 @@ export default function NewCommentForm({
         searchQuery,
         currentPostId,
     );
-    const [commentState, formAction] = useActionState(createCommentWithParams, initialState);
+    const [commentState, formAction, isPending] = useActionState(createCommentWithParams, initialState);
     const [contentState, setContentState] = useState("");
     const [isWriting, setIsWriting] = useState(false);
     const router = useRouter();
@@ -76,6 +76,8 @@ export default function NewCommentForm({
                     />
                 </div>
             </div>
+
+            {isPending && <p className="text-blue-600">저장 중입니다...</p>}
 
             {currUserId && isWriting && (
                 <div className="flex justify-end items-center gap-4 mt-1">
