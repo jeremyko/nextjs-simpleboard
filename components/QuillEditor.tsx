@@ -12,7 +12,7 @@ import "react-quill-new/dist/quill.snow.css";
 
 const QuillDynamic = dynamic(() => import("react-quill-new"), {
     ssr: false,
-});
+}); // document is not defined 오류 방지
 
 import type ReactQuillType from "react-quill-new";
 
