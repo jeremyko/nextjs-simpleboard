@@ -65,6 +65,7 @@ export default function OneCommentReply({
             searchQuery,
             currentPostId,
             comment.comment_id,
+            comment.comment
         );
         if (result?.redirectTo) {
             router.push(result.redirectTo); // soft navigation → 깜박임 없음

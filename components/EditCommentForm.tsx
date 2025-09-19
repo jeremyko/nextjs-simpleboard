@@ -4,10 +4,11 @@
 
 import { CommentState, updateComment } from "@/actions/actionQna";
 import { OneComment } from "@/app/libs/serverDb";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import QuillEditor from "./QuillEditor";
+import QuillEditor, { PendingFile } from "./QuillEditor";
+import type ReactQuillType from "react-quill-new";
 import SubmitButton from "./SubmitButton";
 
 export default function EditCommentForm({
@@ -28,6 +29,7 @@ export default function EditCommentForm({
     // console.debug("EditCommentForm");
     const [contentState, setContentState] = useState(comment.comment);
     const initialState: CommentState = { message: null, errors: {} };
+    // 수정되기 전의 내용을 함께 전달한다. 이미지 삭제된것을 파악하기 위해.
     const updateCommentWithParams = updateComment.bind(
         null,
         currUserId ?? "",
@@ -35,6 +37,7 @@ export default function EditCommentForm({
         searchQuery,
         currentPostId,
         comment.comment_id,
+        comment.comment,
     );
     const [commentState, formAction, isPending] = useActionState(updateCommentWithParams, initialState);
     const router = useRouter();
@@ -51,12 +54,25 @@ export default function EditCommentForm({
         }
     }, [commentState, router, setIsEditing]);
 
+    const quillRef = useRef<ReactQuillType | null>(null);
+    const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+    const handleSubmit = async (formData: FormData) => {
+        // 파일 추가
+        console.debug("Submitting form : pendingFiles =>", pendingFiles);
+        pendingFiles.forEach((pendingFile, i) => {
+            formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
+        });
+        setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
+        return  formAction(formData);
+    };
+
     return (
-        <form action={formAction}>
+        <form action={handleSubmit}>
             <div className="relative mt-2 rounded-md ">
                 <div className="relative">
                     <QuillEditor
-                        // className="quillViewModeNoPadding"
+                        ref={quillRef}
+                        setPendingFiles={setPendingFiles}
                         name="content"
                         theme="snow"
                         value={contentState}
@@ -72,10 +88,7 @@ export default function EditCommentForm({
                     >
                         취소
                     </Button>
-                    <SubmitButton
-                        desc="저장"
-                        pendingDesc="저장 중입니다..."
-                    />
+                    <SubmitButton desc="저장" pendingDesc="저장 중입니다..." />
                 </div>
             </div>
         </form>

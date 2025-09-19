@@ -3,7 +3,7 @@
 import { createReply, CommentState } from "@/actions/actionQna";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import QuillEditor from "./QuillEditor";
+import QuillEditor, { PendingFile } from "./QuillEditor";
 import type ReactQuillType from "react-quill-new";
 import { Button } from "./ui/button";
 import SubmitButton from "./SubmitButton";
@@ -45,8 +45,6 @@ export default function ReplyCommentForm({
     );
     const [replyState, formAction, isPending] = useActionState(createReplyWithParams, initialState);
     const [contentState, setContentState] = useState("");
-    // const scrollRef = useRef<HTMLTextAreaElement | null>(null);
-    const scrollRef = useRef<ReactQuillType | null>(null);
 
     function onClickTextArea() {
         if (!currUserId) {
@@ -70,30 +68,44 @@ export default function ReplyCommentForm({
         }
     }, [replyState, router, setIsReplying]);
 
+    const quillRef = useRef<ReactQuillType | null>(null);
+    const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+    const handleSubmit = async (formData: FormData) => {
+        // 파일 추가
+        // console.debug("Submitting form : pendingFiles =>", pendingFiles);
+        pendingFiles.forEach((pendingFile, i) => {
+            formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
+        });
+        setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
+        return  formAction(formData);
+    };
+
     useEffect(() => {
-        if (scrollRef.current) {
+        if (quillRef.current) {
             // const rect = scrollRef.current.getBoundingClientRect();
             // console.debug("상대 좌표:", rect);
             // console.debug("window.scrollY : ", window.scrollY);
             // console.debug("window.pageYOffset : ", window.pageYOffset);
             // console.debug("절대 y 좌표:", rect.top + window.pageYOffset);
             // window.scrollTo(0, rect.top + window.pageYOffset);
-            scrollRef.current.focus();
+            quillRef.current.focus();
             // scrollRef.current.scrollIntoView({ behavior: "instant", block: "center" }); 
         }
     },[] );
 
+
     return (
         <div className="w-full mt-6 mb-4 ">
             <div className="ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300">
-                <form action={formAction}>
+                <form action={handleSubmit}>
                     <label htmlFor="content" className="sr-only">
                         댓글
                     </label>
                     <div className="mt-2 rounded-md">
                         <div className="">
                             <QuillEditor
-                                ref={scrollRef}
+                                ref={quillRef}
+                                setPendingFiles={setPendingFiles}
                                 name="content"
                                 theme="snow"
                                 value={contentState}

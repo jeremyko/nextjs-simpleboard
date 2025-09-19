@@ -1,10 +1,11 @@
 "use client";
 
 import { createComment, CommentState } from "@/actions/actionQna";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
-import QuillEditor from "./QuillEditor";
+import QuillEditor, { PendingFile } from "./QuillEditor";
+import type ReactQuillType from "react-quill-new";
 import { Button } from "./ui/button";
 import SubmitButton from "./SubmitButton";
 
@@ -58,16 +59,28 @@ export default function NewCommentForm({
         }
     }, [commentState, router]);
 
+    const quillRef = useRef<ReactQuillType | null>(null);
+    const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+    const handleSubmit = async (formData: FormData) => {
+        // 파일 추가
+        // console.debug("Submitting form : pendingFiles =>", pendingFiles);
+        pendingFiles.forEach((pendingFile, i) => {
+            formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
+        });
+        setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
+        return  formAction(formData);
+    };
 
     return (
-        // <div className=" max-w-3xl mx-auto mt-4 border border-gray-500 rounded-md p-4">
-        <form action={formAction}>
+        <form action={handleSubmit}>
             <label htmlFor="content" className="sr-only">
                 댓글
             </label>
             <div className="relative mt-2 rounded-md">
                 <div className="relative">
                     <QuillEditor
+                        ref={quillRef}
+                        setPendingFiles={setPendingFiles}
                         name="content"
                         theme="snow"
                         value={contentState}
@@ -87,10 +100,7 @@ export default function NewCommentForm({
                     >
                         작성취소
                     </Button>
-                    <SubmitButton
-                        desc="저장"
-                        pendingDesc="저장 중입니다..."
-                    />
+                    <SubmitButton desc="저장" pendingDesc="저장 중입니다..." />
                 </div>
             )}
         </form>

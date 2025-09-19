@@ -7,8 +7,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { checkIsAuthenticated, isAuthenticatedAndMine } from "@/app/libs/dataAccessLayer";
 import { auth } from "@/auth";
-import { getTotalPagesCount } from "@/app/libs/serverDb";
-import { getPostsPerPage } from "@/global_const/global_const";
+import { fetchAllCommentReplyImgPaths, getTotalPagesCount } from "@/app/libs/serverDb";
+import { getImgBucketName, getPostsPerPage } from "@/global_const/global_const";
+import { deleteImageAction, uploadImageAction } from "./actionImage";
+import { extractImgSrcList, publicUrlToPath } from "@/app/libs/supabaseServer";
+import { url } from "inspector";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -61,6 +64,16 @@ const CreateQnA = CreateFormSchema.omit({});
 const UpdateQnA = UpdateFormSchema.omit({});
 const CreateQnAComment = CreateCommentFormSchema.omit({});
 
+const sanitizeImageUrls = (html: string) => {
+    // blob URL과 Supabase URL만 허용
+    return html.replace(/<img [^>]*src="([^"]+)"[^>]*>/gi, (_, src) => {
+        if (src.startsWith("blob:") || src.includes("supabase.co/storage/v1/object/public/")) {
+            return `<img src="${src}" />`;
+        }
+        return "";
+    });
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * QnA 게시글 생성 서버 액션 
@@ -70,7 +83,7 @@ const CreateQnAComment = CreateCommentFormSchema.omit({});
  */
 export async function createQuestion(prevState: State, formData: FormData) {
     //XXX 이 로그는 server 기동시킨 터미널에서만 보임. server 액션
-    console.debug("==> createQuestion called with formData:", formData);
+    // console.debug("==> createQuestion called with formData:", formData);
 
     const validatedFields = CreateQnA.safeParse({
         categoryId: formData.get("categoryId"),
@@ -96,14 +109,14 @@ export async function createQuestion(prevState: State, formData: FormData) {
     }
     const { categoryId, title, content } = validatedFields.data;
     //const date = new Date().toISOString().split("T")[0];
-    console.debug("==> createQuestion :", categoryId, title, content);
+    // console.debug("==> createQuestion :", categoryId, title, content);
 
     //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
     const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
     // console.debug("text len=", text.length);
     if (text.length === 0) {
         return {
-            errors: {categoryId:null, title:null, content: ["내용을 입력하세요"] },
+            errors: { categoryId: null, title: null, content: ["내용을 입력하세요"] },
         };
     }
 
@@ -116,9 +129,7 @@ export async function createQuestion(prevState: State, formData: FormData) {
             errors: { categoryId: ["로그인 후 다시 시도하세요."] },
         };
     }
-    // console.debug("==> createQuestion session:", session);
     const userId = session.userId;
-    // console.debug("==> createQuestion userId:", userId);
     if (!userId) {
         console.debug("재 로그인 필요");
         return {
@@ -126,10 +137,24 @@ export async function createQuestion(prevState: State, formData: FormData) {
             errors: { categoryId: ["유저 정보가 없습니다."] },
         };
     }
+
+    // key : blob url , value : File
+    let replacedContent = content;
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            const publicUrl = await uploadImageAction(value as File);
+            // URL.revokeObjectURL(key); // XXX 여기서 실행 하면 error : 아직 uploadImageAction 안끝났는데 revoke 
+            replacedContent = replacedContent.replaceAll(key, publicUrl); 
+        }
+    }
+    const finalHtml = sanitizeImageUrls(replacedContent);
+    // console.debug("content with public url:", replacedContent);
+    // console.debug("finalHtml:", finalHtml);
+
     try {
         await sql`
             INSERT INTO articles (title, contents, user_id, category_id) 
-            VALUES ( ${title}, ${content}, ${userId}, ${categoryId} )`;
+            VALUES ( ${title}, ${finalHtml}, ${userId}, ${categoryId} )`;
     } catch (error) {
         console.error(error);
         return {
@@ -137,6 +162,14 @@ export async function createQuestion(prevState: State, formData: FormData) {
             // errors: error,
         };
     }
+
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            // console.log("Revoke URL:", key);
+            URL.revokeObjectURL(key); 
+        }
+    }
+
     revalidatePath("/qna");
     redirect("/qna");
 }
@@ -144,25 +177,20 @@ export async function createQuestion(prevState: State, formData: FormData) {
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * QnA 게시글 수정 서버 액션 
- * @param articleId - 수정할 게시글의 ID
- * @param currentPage - 현재 페이지 번호
- * @param searchQuery - 현재 검색어
- * @param prevState - 이전 상태 객체(State)
- * @param formData - 폼 데이터(FormData)
- * @returns 수정 성공 시 리다이렉트, 실패 시 에러 메시지와 필드 에러 반환
  */
 export async function updateQuestion(
     postUserId: string, // 게시글 작성자 ID
     articleId: number,
     currentPage: number,
     searchQuery: string,
+    oriContent: string, // 수정되기 전의 content (이미지 삭제된것 파악하기 위해)
     prevState: State,
     formData: FormData,
 ) {
-    console.debug("edit action ==> updateQuestion formData:", formData);
-    console.debug("            ==> post userId :", postUserId);
-    console.debug("            ==> article_id :", articleId, " currentPage:", currentPage);
-    console.debug("            ==> searchQuery :", searchQuery);
+    // console.debug("edit action ==> updateQuestion formData:", formData);
+    // console.debug("            ==> post userId :", postUserId);
+    // console.debug("            ==> article_id :", articleId, " currentPage:", currentPage);
+    // console.debug("            ==> searchQuery :", searchQuery);
 
     const validatedFields = UpdateQnA.safeParse({
         categoryId: formData.get("categoryId"),
@@ -188,7 +216,7 @@ export async function updateQuestion(
     const { categoryId, title, content } = validatedFields.data;
     //html 이 저장되므로, 내용이 공백인지 확인하는 로직 추가
     const text = content.replace(/<(.|\n)*?>/g, "").trim(); // 태그 제거 후 공백 확인
-    console.debug("text len=", text.length);
+    // console.debug("text len=", text.length);
     if (text.length === 0) {
         return {
             errors: { categoryId: null, title: null, content: ["내용을 입력하세요"] },
@@ -201,10 +229,40 @@ export async function updateQuestion(
         redirect("/api/auth/signin");
     }
 
+    // key : blob url , value : File
+    let replacedContent = content;
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            const publicUrl = await uploadImageAction(value as File);
+            console.debug("Uploading file :", key, " to ", publicUrl);
+            replacedContent = replacedContent.replaceAll(key, publicUrl);
+        }
+    }
+    const finalHtml = sanitizeImageUrls(replacedContent);
+    // console.debug("content with public url:", replacedContent);
+    // console.debug("finalHtml:", finalHtml);
+    const oriImgSrcList = extractImgSrcList(oriContent); // 수정되기 전의 이미지 URL(public) 목록
+    const imgSrcList = extractImgSrcList(finalHtml);
+    // 최종 이미지 URL 목록과 비교해서 삭제된 이미지 파악.
+    let deletedImgSrc = oriImgSrcList.filter((e) => !imgSrcList.includes(e));
+    if (deletedImgSrc.length > 0) {
+        // console.debug("updateQuestion : deletedImgSrc:", deletedImgSrc);
+        const deletedImgPaths = deletedImgSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        // console.debug("updateQuestion : imgSrcList:", imgSrcList);
+        // console.debug("updateQuestion : deletedImgPaths:", deletedImgPaths);
+        try {
+            deleteImageAction(deletedImgPaths);
+        } catch (error) {
+            return {
+                error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+
     try {
         await sql` 
         UPDATE articles 
-        SET    title= ${title}, contents=${content}, category_id= ${categoryId} 
+        SET    title= ${title}, contents=${finalHtml}, category_id= ${categoryId} 
         WHERE  article_id = ${articleId}
         AND    user_id = ${postUserId}`;
     } catch (error) {
@@ -213,6 +271,13 @@ export async function updateQuestion(
             message: "Database Error: Failed to Update QnA.",
         };
     }
+
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            // console.log("Revoke URL:", key);
+            URL.revokeObjectURL(key); 
+        }
+    }
     revalidatePath(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
     redirect(`/qna/${articleId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`);
 }
@@ -220,15 +285,13 @@ export async function updateQuestion(
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * QnA 게시글 삭제 서버 액션 .
- * @param articleId - 삭제할 게시글의 ID
- * @param currentPage - 현재 페이지 번호
- * @returns 삭제 후 해당 페이지로 리다이렉트
  */
 export async function deleteQuestion(
     articleId: number,
     currentPage: number,
     postUserId: string,
     searchQuery: string,
+    content: string,
 ) {
     // 로그인된 상태에서만 처리되어야 함
     const isLoggedInAndMine = await isAuthenticatedAndMine(postUserId);
@@ -237,16 +300,43 @@ export async function deleteQuestion(
         redirect("/api/auth/signin");
     }
 
+    const imgSrcList = extractImgSrcList(content);
+    if (imgSrcList.length > 0) {
+        const delImgPaths = imgSrcList.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        // console.debug("deleteQuestion : imgSrcList:", imgSrcList);
+        // console.debug("deleteQuestion : delImgPaths:", delImgPaths);
+        try {
+            deleteImageAction(delImgPaths);
+        } catch (error) {
+            return {
+                error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+
+    // 게시글이 삭제되면 모든 댓글도 삭제됨. 이때 댓글에 포함된 모든 이미지 삭제
+    const urls = await fetchAllCommentReplyImgPaths(articleId);
+    if (urls.length > 0) {
+        try {
+            deleteImageAction(urls.map((u) => publicUrlToPath(u.url, getImgBucketName())));
+        } catch (error) {
+            return {
+                error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+
+    // 게시글 삭제
     try {
         await sql`DELETE FROM articles WHERE article_id = ${articleId} and user_id = ${postUserId}`;
     } catch (error) {
         const sqlError = error as PostgresError;
         console.error("sqlError:", sqlError);
-        if (sqlError.code === "23503") {
-            return {
-                error: "대댓글이 있는 경우 삭제할수 없습니다",
-            };
-        }
+        // if (sqlError.code === "23503") {
+        //     return {
+        //         error: "대댓글이 있는 경우 삭제할수 없습니다",
+        //     };
+        // }
         return {
             error: `Database Error: ${sqlError.code} / ${sqlError.detail} `,
         };
@@ -282,7 +372,7 @@ export async function createComment(
     prevState: CommentState,
     formData: FormData,
 ) {
-    console.debug("==> createComment called with formData:", formData);
+    // console.debug("==> createComment called with formData:", formData);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         // console.error("로그인 안된 상태 ");
@@ -315,15 +405,33 @@ export async function createComment(
         };
     }
 
+    // key : blob url , value : File
+    let replacedContent = content;
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            const publicUrl = await uploadImageAction(value as File);
+            // URL.revokeObjectURL(key); // XXX 여기서 실행 하면 error : 아직 uploadImageAction 안끝났는데 revoke 
+            replacedContent = replacedContent.replaceAll(key, publicUrl); 
+        }
+    }
+    const finalHtml = sanitizeImageUrls(replacedContent);
+
     try {
         await sql` 
         INSERT INTO comments (article_id, comment, comment_user_id,reply_to) 
-        VALUES ( ${currentPostId}, ${content}, ${userId}, ${currentPostUserName} )`;
+        VALUES ( ${currentPostId}, ${finalHtml}, ${userId}, ${currentPostUserName} )`;
     } catch (error) {
         console.error(error);
         return {
             message: "Database Error: Failed to create QnA comment.",
         };
+    }
+
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            // console.log("Revoke URL:", key);
+            URL.revokeObjectURL(key); 
+        }
     }
 
     return {
@@ -341,9 +449,11 @@ export async function updateComment(
     searchQuery: string,
     currentPostId: number,
     currentCommentId: number,
+    oriComment: string, // 수정되기 전의 comment (이미지 삭제된것 파악하기 위해)
     prevState: CommentState,
     formData: FormData,
 ) {
+    console.debug("updateComment formData:", formData);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         redirect("/api/auth/signin");
@@ -375,10 +485,40 @@ export async function updateComment(
         };
     }
 
+    // key : blob url , value : File
+    let replacedContent = content;
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            const publicUrl = await uploadImageAction(value as File);
+            console.debug("Uploading file :", key, " to ", publicUrl);
+            replacedContent = replacedContent.replaceAll(key, publicUrl);
+        }
+    }
+    const finalHtml = sanitizeImageUrls(replacedContent);
+    // console.debug("content with public url:", replacedContent);
+    console.debug("finalHtml:", finalHtml);
+    const oriImgSrcList = extractImgSrcList(oriComment); // 수정되기 전의 이미지 URL(public) 목록
+    const imgSrcList = extractImgSrcList(finalHtml);
+    // 최종 이미지 URL 목록과 비교해서 삭제된 이미지 파악.
+    let deletedImgSrc = oriImgSrcList.filter((e) => !imgSrcList.includes(e));
+    if (deletedImgSrc.length > 0) {
+        console.debug("updateComment: deletedImgSrc:", deletedImgSrc);
+        const deletedImgPaths = deletedImgSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        console.debug("updateComment: imgSrcList:", imgSrcList);
+        console.debug("updateComment : deletedImgPaths:", deletedImgPaths);
+        try {
+            deleteImageAction(deletedImgPaths);
+        } catch (error) {
+            return {
+                error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+
     try {
         await sql` 
         UPDATE comments 
-        SET COMMENT = ${content}
+        SET COMMENT = ${finalHtml}
         WHERE comment_id= ${currentCommentId} 
         AND comment_user_id=${userId}`;
     } catch (error) {
@@ -387,6 +527,14 @@ export async function updateComment(
             message: "Database Error: Failed to update QnA comment.",
         };
     }
+
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            // console.log("Revoke URL:", key);
+            URL.revokeObjectURL(key); 
+        }
+    }
+
     return {
         redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
     };
@@ -402,11 +550,26 @@ export async function deleteComment(
     searchQuery: string,
     currentPostId: number,
     commentId: number,
+    comment: string,
 ) {
     const isLoggedInAndMine = await isAuthenticatedAndMine(commentUserId);
     if (!isLoggedInAndMine) {
         console.error("본인 댓글 아님");
         redirect("/api/auth/signin");
+    }
+
+    const imgSrcList = extractImgSrcList(comment);
+    if (imgSrcList.length > 0) {
+        const delImgPaths = imgSrcList.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        // console.debug("deleteComment : imgSrcList:", imgSrcList);
+        // console.debug("deleteComment : delImgPaths:", delImgPaths);
+        try {
+            deleteImageAction(delImgPaths);
+        } catch (error) {
+            return {
+                error: `image file 삭제 에러: ${error}`,
+            };
+        }
     }
 
     try {
@@ -473,17 +636,35 @@ export async function createReply(
         };
     }
 
+    // key : blob url , value : File
+    let replacedContent = content;
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            const publicUrl = await uploadImageAction(value as File);
+            replacedContent = replacedContent.replaceAll(key, publicUrl); 
+        }
+    }
+    const finalHtml = sanitizeImageUrls(replacedContent);
+
     // console.debug("p_comment_id :", commentId);
     try {
         await sql` 
         INSERT INTO comments (article_id, p_comment_id, comment, comment_user_id,reply_to) 
-        VALUES ( ${currentPostId},  ${commentId}, ${content}, ${currUserId},${commentUserName} )`;
+        VALUES ( ${currentPostId},  ${commentId}, ${finalHtml}, ${currUserId},${commentUserName} )`;
     } catch (error) {
         console.error(error);
         return {
             message: "Database Error: Failed to create QnA reply.",
         };
     }
+
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith("blob:http")) {
+            // console.log("Revoke URL:", key);
+            URL.revokeObjectURL(key); 
+        }
+    }
+
     return {
         redirectTo: `/qna/${currentPostId}?page=${currentPage}&query=${encodeURIComponent(searchQuery)}`,
     };

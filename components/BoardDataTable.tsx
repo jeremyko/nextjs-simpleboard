@@ -33,7 +33,7 @@ export default async function BoardDataTable({
         // <div className="max-w-3xl mx-auto min-h-screen ">
         <div className="max-w-3xl ">
             <div className="text-2xl font-bold pt-4 mb-4 text-left">
-                <h1> Q&A </h1>
+                <h1> 게시물 </h1>
             </div>
             {searchQuery && (
                 <div>

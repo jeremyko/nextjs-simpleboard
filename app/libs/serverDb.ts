@@ -223,3 +223,23 @@ export async function insertPostViews(articleId: number, currUserId: string, vie
         console.error(error);
     }
 }
+
+
+// 게시글이 삭제되면 모든 댓글도 삭제됨. 이때 댓글에 포함된 모든 이미지 삭제
+export type ImgPublicUrl = {
+    url: string;
+};
+
+export async function fetchAllCommentReplyImgPaths(articleId: number): Promise<ImgPublicUrl[]> {
+    try {
+        const imgPaths = await sql<ImgPublicUrl[]>` 
+        SELECT unnest(regexp_matches(comment, 'img src="([^"]*)"', 'g')) AS url  
+        FROM comments where article_id = ${articleId} `;
+
+        // console.debug("fetchAllCommentReplyImgPaths : ", imgPaths);
+        return imgPaths;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch img urls.");
+    }
+}

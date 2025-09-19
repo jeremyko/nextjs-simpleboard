@@ -3,10 +3,11 @@
 import { updateQuestion, State } from "@/actions/actionQna";
 import { BoardItemById } from "@/app/libs/serverDb";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import QuillEditor from "./QuillEditor";
 import SubmitButton from "./SubmitButton";
+import type ReactQuillType from "react-quill-new";
+import QuillEditor, { PendingFile } from "./QuillEditor";
 
 //XXX 게시물 수정 form
 
@@ -23,16 +24,28 @@ export default function EditQuestionForm({
 }) {
     console.debug("[EditQuestionForm] render :", searchQuery);
     const initialState: State = { message: null, errors: {} };
-    const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery);
+    // 수정되기 전의 내용을 함께 전달한다. 이미지 삭제된것을 파악하기 위해.
+    const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery, oneQnA.contents );
     const [state, formAction, isPending] = useActionState(updateQnaWithArticleId, initialState);
 
     const [content, setContent] = useState(oneQnA.contents);
     const handleEditorChange = (value: string) => {
         setContent(value); // 상태 업데이트
     };
+    const quillRef = useRef<ReactQuillType | null>(null);
+    const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+    const handleSubmit = async (formData: FormData) => {
+        // 파일 추가
+        console.debug("Submitting form : pendingFiles =>", pendingFiles);
+        pendingFiles.forEach((pendingFile, i) => {
+            formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
+        });
+        setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
+        return  formAction(formData);
+    };
 
     return (
-        <form action={formAction}>
+        <form action={handleSubmit}>
             <div className="min-h-screen max-w-3xl mx-auto  ">
                 <div className="flex flex-col text-sm  p-4 mb-4 text-left ">
                     <div className="p-4 md:p-6">
@@ -50,7 +63,11 @@ export default function EditQuestionForm({
                                     aria-describedby="qna-category-error"
                                 >
                                     {categoryList.map((category) => (
-                                        <option key={category.name} value={category.category_id}>
+                                        <option
+                                            key={category.name}
+                                            value={category.category_id}
+                                            className="bg-gray-100  dark:bg-slate-700"
+                                        >
                                             {category.name}
                                         </option>
                                     ))}
@@ -103,7 +120,8 @@ export default function EditQuestionForm({
                             <div className="relative mt-2 ">
                                 <div className="relative">
                                     <QuillEditor
-                                        // className="quillViewModeNoPadding"
+                                        ref={quillRef}
+                                        setPendingFiles={setPendingFiles}
                                         name="content"
                                         theme="snow"
                                         value={content}
@@ -132,10 +150,7 @@ export default function EditQuestionForm({
                                 <Button variant="destructive"> 취소</Button>
                             </Link>
 
-                            <SubmitButton
-                                desc="저장"
-                                pendingDesc="저장 중입니다..."
-                            />
+                            <SubmitButton desc="저장" pendingDesc="저장 중입니다..." />
                         </div>
                     </div>
                 </div>

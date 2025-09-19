@@ -24,13 +24,16 @@ export default function ModifyDeleteQnaForm({
     page,
     userId,
     searchQuery,
+    content
 }: {
     id: number;
     page: number;
     userId: string;
     searchQuery:string;
+    content:string;
 }) {
-    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, userId, searchQuery);
+    // imageUrlList 를 추출하기 위해 content 도 전달 받음.
+    const deleteQuestionWithId = deleteQuestion.bind(null, id, page, userId, searchQuery, content);
     const initialState: DelQnAState = { error: null };
     const [state, formAction, isPending] = useActionState(deleteQuestionWithId, initialState); // client component only
 

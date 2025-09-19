@@ -2,10 +2,11 @@
 
 import { createQuestion, State } from "@/actions/actionQna";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import QuillEditor from "./QuillEditor";
+import QuillEditor, { PendingFile } from "./QuillEditor";
 import SubmitButton from "./SubmitButton";
+import type ReactQuillType from "react-quill-new";
 
 // 새 게시물 작성 form
 
@@ -13,13 +14,25 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
     const initialState: State = { message: null, errors: {} };
     const [state, formAction, isPending] = useActionState(createQuestion, initialState);
     const [content, setContent] = useState("");
+    const quillRef = useRef<ReactQuillType | null>(null);
+    const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
 
     const handleEditorChange = (value: string) => {
         setContent(value); // 상태 업데이트
     };
 
+    const handleSubmit = async (formData: FormData) => {
+        // 파일 추가
+        // console.debug("Submitting form : pendingFiles =>", pendingFiles);
+        pendingFiles.forEach((pendingFile, i) => {
+            formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
+        });
+        setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
+        return  formAction(formData);
+    };
+
     return (
-        <form action={formAction}>
+        <form action={handleSubmit}>
             <div className="min-h-screen max-w-3xl mx-auto ">
                 <div className="flex flex-col text-2xl p-4 mb-4 text-left ">
                     <h1> 질문 하기</h1>
@@ -42,7 +55,11 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                         분류를 선택 하세요
                                     </option>
                                     {categoryList.map((category) => (
-                                        <option key={category.name} value={category.category_id}>
+                                        <option
+                                            key={category.name}
+                                            value={category.category_id}
+                                            className="bg-gray-100  dark:bg-slate-700"
+                                        >
                                             {category.name}
                                         </option>
                                     ))}
@@ -98,6 +115,8 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                             <div className="relative mt-2 rounded-md">
                                 <div className="relative">
                                     <QuillEditor
+                                        ref={quillRef}
+                                        setPendingFiles={setPendingFiles}
                                         className=""
                                         name="content"
                                         theme="snow"
@@ -129,10 +148,7 @@ export default function NewQuestionForm({ categoryList }: { categoryList: { cate
                                 <Button> 취소</Button>
                             </Link>
 
-                            <SubmitButton
-                                desc="저장"
-                                pendingDesc="저장 중입니다..."
-                            />
+                            <SubmitButton desc="저장" pendingDesc="저장 중입니다..." />
                         </div>
                     </div>
                 </div>

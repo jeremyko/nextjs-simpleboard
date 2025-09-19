@@ -62,12 +62,14 @@ export default async function Page(props: {
                     <OneBoardItem oneQnA={oneQnA} />
 
                     {isLoggedInAndMine && (
+                        // 수정, 삭제 버튼 표시 
                         // 에러를 화면에 표시하기 위해 client component 로 분리함 
                         <ModifyDeleteQnaForm
                             id={id}
                             page={page}
                             userId={oneQnA.user_id}
                             searchQuery={searchQuery}
+                            content={oneQnA.contents}
                         />
                     )}
 

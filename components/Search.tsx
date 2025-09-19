@@ -23,7 +23,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
     useEffect(() => {
         // console.log("Search render");
         setQuery(decodeURIComponent(searchParams.get("query") || ""));
-    }, [searchParams.get("query")]);
+    // }, [searchParams.get("query")]);
+    }, [searchParams ]);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {

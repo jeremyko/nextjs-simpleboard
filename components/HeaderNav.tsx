@@ -48,7 +48,7 @@ export default function HeaderNav() {
                     {homeIcon}
                 </div>
                 <Link href="/qna" className="text-base hover:underline mr-12 p-2">
-                    Q&A
+                    게시물
                 </Link>
                 <Suspense>
                     <Search placeholder="검색어를 입력하세요" />
