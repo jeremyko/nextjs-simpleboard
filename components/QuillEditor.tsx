@@ -115,7 +115,7 @@ function QuillEditor({
         };
     };
 
-    let modules = undefined;
+    // let modules = undefined;
 
     const toolbarOptions = {
         container: [
@@ -131,26 +131,15 @@ function QuillEditor({
     };
 
     // addRange(): The given range isn't in document. 에러가 발생 => useMemo 사용 필요
-    if (isReadOnly === false) {
-        modules = useMemo(() => {
-            return {
-                toolbar: toolbarOptions,
-                clipboard: {
-                    // toggle to add extra line breaks when pasting HTML:
-                    matchVisual: false,
-                },
-            };
-        }, []);
-    } else {
-        modules = useMemo(() => {
-            return {
-                toolbar: false,
-                clipboard: {
-                    matchVisual: false,
-                },
-            };
-        }, []);
-    }
+    const modules = useMemo(() => {
+        return {
+            toolbar: isReadOnly === false ? toolbarOptions : false,
+            clipboard: {
+                // toggle to add extra line breaks when pasting HTML:
+                matchVisual: false,
+            },
+        };
+    }, []);
 
     // See https://quilljs.com/docs/formats/
     // const formats = [
