@@ -22,7 +22,7 @@ export default function NewCommentForm({
     currentPage: number;
     searchQuery: string;
 }) {
-    // console.debug("[NewCommentForm] currentPostId:", currentPostId, " / currUserId:", currUserId);
+    // console.debug("[NewCommentForm] render => currentPostId:", currentPostId, " / currUserId:", currUserId);
     const initialState: CommentState = { message: null, errors: {} , redirectTo:""};
     const createCommentWithParams = createComment.bind(
         null,
@@ -34,20 +34,23 @@ export default function NewCommentForm({
     );
     const [commentState, formAction, isPending] = useActionState(createCommentWithParams, initialState);
     const [contentState, setContentState] = useState("");
-    const [isWriting, setIsWriting] = useState(false);
+    const [isWriting, setIsWriting] = useState(false); // 입력란 클릭시 작성취소, 저장 버튼 보이기 
     const router = useRouter();
 
     function onClickTextArea() {
         if (!currUserId) {
             redirect("/api/auth/signin");
         }
+        // 입력란 클릭시 작성취소, 저장 버튼 보이기 
         setIsWriting(true);
     }
-
 
     function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsWriting(false);
+        quillRef.current?.getEditor().blur(); // 명시적으로 포커스 해제 한다. 
+        // 포커스가 남아 있으면 더이상 포커스 입력을 감지못하고,
+        // 삭제, 수정 버튼이 안 나타나는 경우가 발생하기 때문.
         e.preventDefault();
     }
 
@@ -73,9 +76,9 @@ export default function NewCommentForm({
 
     return (
         <form action={handleSubmit}>
-            <label htmlFor="content" className="sr-only">
+            {/* <label htmlFor="content" className="sr-only">
                 댓글
-            </label>
+            </label> */}
             <div className="relative mt-2 rounded-md">
                 <div className="relative">
                     <QuillEditor

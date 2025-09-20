@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { forwardRef, useEffect} from "react";
+import { forwardRef, useEffect, useMemo} from "react";
 import "react-quill-new/dist/quill.snow.css";
 
 // react-quill 은 form 안에 직접 value 를 넣어주지 않음.
@@ -32,7 +32,7 @@ ReactQuill.displayName = "ReactQuill";
 
 //------------------------------------------------------------------------------
 interface QuillEditorProps {
-    ref?: React.Ref<ReactQuillInstanceRef>; 
+    ref?: React.Ref<ReactQuillInstanceRef>;
     setPendingFiles?: React.Dispatch<React.SetStateAction<PendingFile[]>>;
     className?: string;
     name: string;
@@ -59,7 +59,6 @@ function QuillEditor({
     onChange,
     onFocus,
 }: QuillEditorProps) {
-
     useEffect(() => {
         // sanitize 를 해줘야 quill 에서 이미지가 보임
         (async () => {
@@ -76,16 +75,16 @@ function QuillEditor({
         })();
     }, []);
 
-
     const handleImageInsert = async () => {
         // 저장 전, 이미지를 삽입할때마다 매번 호출됨.
-        console.debug("handleImageInsert called");
+        // console.debug("handleImageInsert called");
         const input = document.createElement("input");
         input.type = "file";
         input.accept = "image/*";
         input.click();
 
         input.onchange = async () => {
+            // console.debug("handleImageInsert onchange called");
             const file = input.files?.[0];
             if (!file) {
                 console.error("No file selected");
@@ -96,7 +95,7 @@ function QuillEditor({
             const blobUrl = URL.createObjectURL(file);
             // console.debug("blobUrl :", blobUrl);
 
-            if (!ref || !('current' in ref) || !ref.current) {
+            if (!ref || !("current" in ref) || !ref.current) {
                 console.error("Quill editor ref is not available");
                 return;
             }
@@ -105,7 +104,7 @@ function QuillEditor({
             const index = sel?.index ?? quill.getLength?.() ?? 0;
 
             if (typeof index === "number") {
-                quill.insertEmbed(index, "image", blobUrl );
+                quill.insertEmbed(index, "image", blobUrl);
                 quill.setSelection(index + 1);
                 if (setPendingFiles) {
                     setPendingFiles((prev) => [...prev, { file, placeholderUrl: blobUrl }]);
@@ -131,21 +130,26 @@ function QuillEditor({
         handlers: { image: handleImageInsert },
     };
 
+    // addRange(): The given range isn't in document. 에러가 발생 => useMemo 사용 필요
     if (isReadOnly === false) {
-        modules = {
-            toolbar: toolbarOptions,
-            clipboard: {
-                // toggle to add extra line breaks when pasting HTML:
-                matchVisual: false,
-            },
-        };
+        modules = useMemo(() => {
+            return {
+                toolbar: toolbarOptions,
+                clipboard: {
+                    // toggle to add extra line breaks when pasting HTML:
+                    matchVisual: false,
+                },
+            };
+        }, []);
     } else {
-        modules = {
-            toolbar: false,
-            clipboard: {
-                matchVisual: false,
-            },
-        };
+        modules = useMemo(() => {
+            return {
+                toolbar: false,
+                clipboard: {
+                    matchVisual: false,
+                },
+            };
+        }, []);
     }
 
     // See https://quilljs.com/docs/formats/

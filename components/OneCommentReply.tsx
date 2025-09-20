@@ -73,7 +73,9 @@ export default function OneCommentReply({
     }
 
     const [dlgOpen, setDlgOpen] = useState(false);
-
+    const isDeleted = comment.comment.includes("작성자에 의해 삭제된 댓글");
+    // console.debug("comment=>", comment.comment);
+    // console.debug("isDeleted=>", isDeleted);
     return (
         <div
             className={
@@ -99,7 +101,7 @@ export default function OneCommentReply({
                     )}
                 </div>
                 {/* 내가 작성한것일때만 수정,삭제 기능 활성화 */}
-                {isCommentMine && (
+                {isCommentMine && !isDeleted && (
                     <div>
                         <div className="flex flex-row justify-end items-center gap-2 ">
                             <DropdownMenu>
@@ -163,7 +165,6 @@ export default function OneCommentReply({
                                                     desc="삭제"
                                                     pendingDesc="삭제 중입니다..."
                                                 /> */}
-
                                             </AlertDialogAction>
                                         </form>
                                     </AlertDialogFooter>
@@ -202,7 +203,7 @@ export default function OneCommentReply({
                     setIsEditing={setIsEditing}
                 ></EditCommentForm>
             )}
-            {currUserId && !isReplying && (
+            {currUserId && !isReplying && !isDeleted && (
                 <div className="flex flex-row justify-start items-center gap-2">
                     <div
                         className="block cursor-pointer p-1 text-[10px] font-thin hover:text-cyan-800 border rounded-sm hover:bg-blue-200"

@@ -52,11 +52,10 @@ export default function ReplyCommentForm({
         }
     }
 
-    // function cancelReply(e: React.MouseEvent<HTMLDivElement>) {
     function cancelReply(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsReplying(false);
-        e.preventDefault();
+        e.preventDefault(); // Form submission canceled because the form is not connected 경고 방지
     }
 
     const router = useRouter();
@@ -98,9 +97,9 @@ export default function ReplyCommentForm({
         <div className="w-full mt-6 mb-4 ">
             <div className="ml-[20px] pl-4 border-dashed border-l-3 border-l-zinc-300 border-t-1 border-t-zinc-300">
                 <form action={handleSubmit}>
-                    <label htmlFor="content" className="sr-only">
+                    {/* <label htmlFor="content" className="sr-only">
                         댓글
-                    </label>
+                    </label> */}
                     <div className="mt-2 rounded-md">
                         <div className="">
                             <QuillEditor

@@ -453,7 +453,7 @@ export async function updateComment(
     prevState: CommentState,
     formData: FormData,
 ) {
-    console.debug("updateComment formData:", formData);
+    // console.debug("updateComment formData:", formData);
     const isIsAuthenticated = await checkIsAuthenticated();
     if (!isIsAuthenticated) {
         redirect("/api/auth/signin");
@@ -490,22 +490,22 @@ export async function updateComment(
     for (const [key, value] of formData.entries()) {
         if (key.startsWith("blob:http")) {
             const publicUrl = await uploadImageAction(value as File);
-            console.debug("Uploading file :", key, " to ", publicUrl);
+            // console.debug("Uploading file :", key, " to ", publicUrl);
             replacedContent = replacedContent.replaceAll(key, publicUrl);
         }
     }
     const finalHtml = sanitizeImageUrls(replacedContent);
     // console.debug("content with public url:", replacedContent);
-    console.debug("finalHtml:", finalHtml);
+    // console.debug("finalHtml:", finalHtml);
     const oriImgSrcList = extractImgSrcList(oriComment); // 수정되기 전의 이미지 URL(public) 목록
     const imgSrcList = extractImgSrcList(finalHtml);
     // 최종 이미지 URL 목록과 비교해서 삭제된 이미지 파악.
     let deletedImgSrc = oriImgSrcList.filter((e) => !imgSrcList.includes(e));
     if (deletedImgSrc.length > 0) {
-        console.debug("updateComment: deletedImgSrc:", deletedImgSrc);
+        // console.debug("updateComment: deletedImgSrc:", deletedImgSrc);
         const deletedImgPaths = deletedImgSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
-        console.debug("updateComment: imgSrcList:", imgSrcList);
-        console.debug("updateComment : deletedImgPaths:", deletedImgPaths);
+        // console.debug("updateComment: imgSrcList:", imgSrcList);
+        // console.debug("updateComment : deletedImgPaths:", deletedImgPaths);
         try {
             deleteImageAction(deletedImgPaths);
         } catch (error) {
