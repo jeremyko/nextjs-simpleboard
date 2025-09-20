@@ -134,19 +134,20 @@ function QuillEditor({
             // console.debug("file :", file);
             // 최종 저장 전까지는 blob URL 을 사용
             const blobUrl = URL.createObjectURL(file);
-            console.debug("blobUrl :", blobUrl);
+            // console.debug("blobUrl :", blobUrl);
 
             if (!ref || !("current" in ref) || !ref.current) {
                 console.error("Quill editor ref is not available");
                 return;
             }
             const quill = ref.current.getEditor();
-            const sel = quill.getSelection?.(true);
+            const sel = quill.getSelection(true);
             const index = sel?.index ?? quill.getLength?.() ?? 0;
 
             if (typeof index === "number") {
                 quill.insertEmbed(index, "customVideo", blobUrl);
-                quill.setSelection(index + 1);
+                quill.insertText(index + 1, "\n");
+                quill.setSelection(index + 2);
                 if (setPendingFiles) {
                     setPendingFiles((prev) => [...prev, { file, placeholderUrl: blobUrl }]);
                 }
@@ -181,7 +182,7 @@ function QuillEditor({
                 return;
             }
             const quill = ref.current.getEditor();
-            const sel = quill.getSelection?.(true);
+            const sel = quill.getSelection(true);
             const index = sel?.index ?? quill.getLength?.() ?? 0;
 
             if (typeof index === "number") {
