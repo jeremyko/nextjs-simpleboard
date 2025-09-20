@@ -5,7 +5,7 @@ import { supabaseServer } from "@/app/libs/supabaseServer";
 import { getImgBucketName } from "@/global_const/global_const";
 import { randomUUID } from "crypto";
 
-export async function uploadImageAction(file: File) {
+export async function uploadFileAction(file: File) {
     if (!file) throw new Error("No file provided");
 
     const ext = file.name.split(".").pop();
@@ -17,7 +17,7 @@ export async function uploadImageAction(file: File) {
         .upload(fileName, file, { upsert: false });
 
     if (error) {
-        console.error("Error uploading image:", error);
+        console.error("Error uploading file:", error);
         throw error;
     }
 
@@ -29,11 +29,11 @@ export async function uploadImageAction(file: File) {
     return publicUrl;
 }
 
-export async function deleteImageAction(paths: string[]) {
+export async function deleteFilesAction(paths: string[]) {
     const { error } = await supabaseServer.storage.from(getImgBucketName()).remove(paths);
 
     if (error) {
-        console.error("Error remove images:", error);
+        console.error("Error remove files:", error);
         throw error;
     }
 }

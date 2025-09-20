@@ -22,3 +22,14 @@ export function extractImgSrcList(html: string): string[] {
     }
     return result;
 }
+
+export function extractVideoSrcList(html: string): string[] {
+    const regex = /<video controls[^>]+src\s*=\s*["']([^"']+)["']/gi;
+    const result: string[] = [];
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(html)) !== null) {
+        result.push(match[1]);
+    }
+    console.debug("extractVideoSrcList: ", result);
+    return result;
+}

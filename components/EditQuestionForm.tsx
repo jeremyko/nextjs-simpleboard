@@ -22,7 +22,7 @@ export default function EditQuestionForm({
     currentPage: number;
     searchQuery: string;
 }) {
-    console.debug("[EditQuestionForm] render :", searchQuery);
+    // console.debug("[EditQuestionForm] render :", searchQuery);
     const initialState: State = { message: null, errors: {} };
     // 수정되기 전의 내용을 함께 전달한다. 이미지 삭제된것을 파악하기 위해.
     const updateQnaWithArticleId = updateQuestion.bind(null, oneQnA.user_id, oneQnA.article_id, currentPage, searchQuery, oneQnA.contents );
@@ -36,7 +36,7 @@ export default function EditQuestionForm({
     const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
     const handleSubmit = async (formData: FormData) => {
         // 파일 추가
-        console.debug("Submitting form : pendingFiles =>", pendingFiles);
+        // console.debug("Submitting form : pendingFiles =>", pendingFiles);
         pendingFiles.forEach((pendingFile, i) => {
             formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
         });

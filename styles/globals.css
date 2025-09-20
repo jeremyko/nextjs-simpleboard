@@ -187,3 +187,15 @@ textarea {
   padding: 0 !important;
 }
 
+.ql-editor .custom-video {
+  display: block;
+  text-align: center;
+  margin: 6px 0;
+}
+
+.ql-editor .custom-video video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}

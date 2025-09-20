@@ -59,6 +59,7 @@ function QuillEditor({
     onChange,
     onFocus,
 }: QuillEditorProps) {
+    
     useEffect(() => {
         // sanitize 를 해줘야 quill 에서 이미지가 보임
         (async () => {
@@ -72,8 +73,88 @@ function QuillEditor({
                 }
                 return "";
             };
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const Vidoe = Quill.import("formats/video") as any;
+            Vidoe.sanitize = function (url: string) {
+                // blob URL 또는 supabase public URL만 허용
+                if (url.startsWith("blob:") || url.includes("supabase.co/storage/v1/object/public/")) {
+                    return url;
+                }
+                return "";
+            };
+
+            // --- 커스텀 VideoBlot ---
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const BlockEmbed = Quill.import("blots/block/embed") as any;
+            class VideoBlot extends BlockEmbed {
+                static blotName = "customVideo";
+                static tagName = "div";
+                static className = "custom-video";
+
+                static create(value: string) {
+                    const node = super.create() as HTMLElement;
+                    // node.setAttribute("contenteditable", "false"); // 영상 안쪽에 커서 안 들어가게
+                    node.style.position = "relative";
+                    node.style.display = "block";
+                    node.style.textAlign = "center";
+                    node.style.margin = "1em 0";
+
+                    // video 엘리먼트 생성
+                    const video = document.createElement("video");
+                    video.setAttribute("controls", "");
+                    video.setAttribute("src", value);
+                    video.style.maxWidth = "100%";
+                    video.style.height = "auto";
+                    node.appendChild(video);
+                    return node;
+                }
+
+                static value(node: HTMLElement) {
+                    const video = node.querySelector("video");
+                    return video?.getAttribute("src");
+                }
+            }
+            Quill.register("formats/video", VideoBlot, true); // true -> suppress the warning
         })();
     }, []);
+
+    const handleVideoInsert = async () => {
+        console.debug("handleVideoInsert called");
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "video/*";
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) {
+                console.error("No file selected");
+                return;
+            }
+            // console.debug("file :", file);
+            // 최종 저장 전까지는 blob URL 을 사용
+            const blobUrl = URL.createObjectURL(file);
+            console.debug("blobUrl :", blobUrl);
+
+            if (!ref || !("current" in ref) || !ref.current) {
+                console.error("Quill editor ref is not available");
+                return;
+            }
+            const quill = ref.current.getEditor();
+            const sel = quill.getSelection?.(true);
+            const index = sel?.index ?? quill.getLength?.() ?? 0;
+
+            if (typeof index === "number") {
+                quill.insertEmbed(index, "customVideo", blobUrl);
+                quill.setSelection(index + 1);
+                if (setPendingFiles) {
+                    setPendingFiles((prev) => [...prev, { file, placeholderUrl: blobUrl }]);
+                }
+            } else {
+                console.error("Quill editor selection index is undefined");
+            }
+        };
+    };
 
     const handleImageInsert = async () => {
         // 저장 전, 이미지를 삽입할때마다 매번 호출됨.
@@ -127,7 +208,7 @@ function QuillEditor({
             ["link", "image", "code", "code-block", "video"],
             ["clean"],
         ],
-        handlers: { image: handleImageInsert },
+        handlers: { image: handleImageInsert, video: handleVideoInsert },
     };
 
     // addRange(): The given range isn't in document. 에러가 발생 => useMemo 사용 필요

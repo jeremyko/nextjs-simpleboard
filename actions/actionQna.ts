@@ -9,8 +9,8 @@ import { checkIsAuthenticated, isAuthenticatedAndMine } from "@/app/libs/dataAcc
 import { auth } from "@/auth";
 import { fetchAllCommentReplyImgPaths, getTotalPagesCount } from "@/app/libs/serverDb";
 import { getImgBucketName, getPostsPerPage } from "@/global_const/global_const";
-import { deleteImageAction, uploadImageAction } from "./actionImage";
-import { extractImgSrcList, publicUrlToPath } from "@/app/libs/supabaseServer";
+import { deleteFilesAction, uploadFileAction } from "./actionImage";
+import { extractImgSrcList, extractVideoSrcList, publicUrlToPath } from "@/app/libs/supabaseServer";
 import { url } from "inspector";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
@@ -74,6 +74,15 @@ const sanitizeImageUrls = (html: string) => {
     });
 };
 
+const sanitizeVideoUrls = (html: string) => {
+    // blob URL과 Supabase URL만 허용
+    return html.replace(/<video controls[^>]*src="([^"]+)"[^>]*>/gi, (_, src) => {
+        if (src.startsWith("blob:") || src.includes("supabase.co/storage/v1/object/public/")) {
+            return `<video controls src="${src}" />`;
+        }
+        return "";
+    });
+};
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * QnA 게시글 생성 서버 액션 
@@ -142,12 +151,13 @@ export async function createQuestion(prevState: State, formData: FormData) {
     let replacedContent = content;
     for (const [key, value] of formData.entries()) {
         if (key.startsWith("blob:http")) {
-            const publicUrl = await uploadImageAction(value as File);
-            // URL.revokeObjectURL(key); // XXX 여기서 실행 하면 error : 아직 uploadImageAction 안끝났는데 revoke 
+            const publicUrl = await uploadFileAction(value as File);
+            // URL.revokeObjectURL(key); // XXX 여기서 실행 하면 error : 아직 upload 안끝났는데 revoke 
             replacedContent = replacedContent.replaceAll(key, publicUrl); 
         }
     }
-    const finalHtml = sanitizeImageUrls(replacedContent);
+    let finalHtml = sanitizeImageUrls(replacedContent);
+    finalHtml = sanitizeVideoUrls(finalHtml);
     // console.debug("content with public url:", replacedContent);
     // console.debug("finalHtml:", finalHtml);
 
@@ -233,28 +243,42 @@ export async function updateQuestion(
     let replacedContent = content;
     for (const [key, value] of formData.entries()) {
         if (key.startsWith("blob:http")) {
-            const publicUrl = await uploadImageAction(value as File);
+            const publicUrl = await uploadFileAction(value as File);
             console.debug("Uploading file :", key, " to ", publicUrl);
             replacedContent = replacedContent.replaceAll(key, publicUrl);
         }
     }
-    const finalHtml = sanitizeImageUrls(replacedContent);
+    let finalHtml = sanitizeImageUrls(replacedContent);
+    finalHtml = sanitizeVideoUrls(finalHtml);
     // console.debug("content with public url:", replacedContent);
     // console.debug("finalHtml:", finalHtml);
     const oriImgSrcList = extractImgSrcList(oriContent); // 수정되기 전의 이미지 URL(public) 목록
     const imgSrcList = extractImgSrcList(finalHtml);
-    // 최종 이미지 URL 목록과 비교해서 삭제된 이미지 파악.
+    const oriVideoSrcList = extractVideoSrcList(oriContent); // 수정되기 전의 video URL(public) 목록
+    const videoSrcList = extractVideoSrcList(finalHtml);
+    // 최종 URL 목록과 비교해서 삭제된 files 파악.
     let deletedImgSrc = oriImgSrcList.filter((e) => !imgSrcList.includes(e));
+    let deletedVideoSrc = oriVideoSrcList.filter((e) => !videoSrcList.includes(e));
     if (deletedImgSrc.length > 0) {
         // console.debug("updateQuestion : deletedImgSrc:", deletedImgSrc);
         const deletedImgPaths = deletedImgSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
         // console.debug("updateQuestion : imgSrcList:", imgSrcList);
         // console.debug("updateQuestion : deletedImgPaths:", deletedImgPaths);
         try {
-            deleteImageAction(deletedImgPaths);
+            deleteFilesAction(deletedImgPaths);
         } catch (error) {
             return {
                 error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+    if (deletedVideoSrc.length > 0) {
+        const deletedVideoPaths = deletedVideoSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        try {
+            deleteFilesAction(deletedVideoPaths);
+        } catch (error) {
+            return {
+                error: `video file 삭제 에러: ${error}`,
             };
         }
     }
@@ -306,7 +330,20 @@ export async function deleteQuestion(
         // console.debug("deleteQuestion : imgSrcList:", imgSrcList);
         // console.debug("deleteQuestion : delImgPaths:", delImgPaths);
         try {
-            deleteImageAction(delImgPaths);
+            deleteFilesAction(delImgPaths);
+        } catch (error) {
+            return {
+                error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+    const videoSrcList = extractVideoSrcList(content);
+    if (videoSrcList.length > 0) {
+        const delVideoPaths = videoSrcList.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        // console.debug("videoSrcList : videoSrcList:", videoSrcList);
+        // console.debug("deleteQuestion : delVideoPaths:", delVideoPaths);
+        try {
+            deleteFilesAction(delVideoPaths);
         } catch (error) {
             return {
                 error: `image file 삭제 에러: ${error}`,
@@ -318,7 +355,7 @@ export async function deleteQuestion(
     const urls = await fetchAllCommentReplyImgPaths(articleId);
     if (urls.length > 0) {
         try {
-            deleteImageAction(urls.map((u) => publicUrlToPath(u.url, getImgBucketName())));
+            deleteFilesAction(urls.map((u) => publicUrlToPath(u.url, getImgBucketName())));
         } catch (error) {
             return {
                 error: `image file 삭제 에러: ${error}`,
@@ -409,12 +446,13 @@ export async function createComment(
     let replacedContent = content;
     for (const [key, value] of formData.entries()) {
         if (key.startsWith("blob:http")) {
-            const publicUrl = await uploadImageAction(value as File);
+            const publicUrl = await uploadFileAction(value as File);
             // URL.revokeObjectURL(key); // XXX 여기서 실행 하면 error : 아직 uploadImageAction 안끝났는데 revoke 
             replacedContent = replacedContent.replaceAll(key, publicUrl); 
         }
     }
-    const finalHtml = sanitizeImageUrls(replacedContent);
+    let finalHtml = sanitizeImageUrls(replacedContent);
+    finalHtml = sanitizeVideoUrls(finalHtml);
 
     try {
         await sql` 
@@ -489,28 +527,42 @@ export async function updateComment(
     let replacedContent = content;
     for (const [key, value] of formData.entries()) {
         if (key.startsWith("blob:http")) {
-            const publicUrl = await uploadImageAction(value as File);
+            const publicUrl = await uploadFileAction(value as File);
             // console.debug("Uploading file :", key, " to ", publicUrl);
             replacedContent = replacedContent.replaceAll(key, publicUrl);
         }
     }
-    const finalHtml = sanitizeImageUrls(replacedContent);
+    let finalHtml = sanitizeImageUrls(replacedContent);
+    finalHtml = sanitizeVideoUrls(finalHtml);
     // console.debug("content with public url:", replacedContent);
     // console.debug("finalHtml:", finalHtml);
     const oriImgSrcList = extractImgSrcList(oriComment); // 수정되기 전의 이미지 URL(public) 목록
     const imgSrcList = extractImgSrcList(finalHtml);
+    const oriVideoSrcList = extractVideoSrcList(oriComment); // 수정되기 전의 video URL(public) 목록
+    const videoSrcList = extractVideoSrcList(finalHtml);
     // 최종 이미지 URL 목록과 비교해서 삭제된 이미지 파악.
     let deletedImgSrc = oriImgSrcList.filter((e) => !imgSrcList.includes(e));
+    let deletedVideoSrc = oriVideoSrcList.filter((e) => !videoSrcList.includes(e));
     if (deletedImgSrc.length > 0) {
         // console.debug("updateComment: deletedImgSrc:", deletedImgSrc);
         const deletedImgPaths = deletedImgSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
         // console.debug("updateComment: imgSrcList:", imgSrcList);
         // console.debug("updateComment : deletedImgPaths:", deletedImgPaths);
         try {
-            deleteImageAction(deletedImgPaths);
+            deleteFilesAction(deletedImgPaths);
         } catch (error) {
             return {
                 error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+    if (deletedVideoSrc.length > 0) {
+        const deletedVideoPaths = deletedVideoSrc.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        try {
+            deleteFilesAction(deletedVideoPaths);
+        } catch (error) {
+            return {
+                error: `video file 삭제 에러: ${error}`,
             };
         }
     }
@@ -564,10 +616,22 @@ export async function deleteComment(
         // console.debug("deleteComment : imgSrcList:", imgSrcList);
         // console.debug("deleteComment : delImgPaths:", delImgPaths);
         try {
-            deleteImageAction(delImgPaths);
+            deleteFilesAction(delImgPaths);
         } catch (error) {
             return {
                 error: `image file 삭제 에러: ${error}`,
+            };
+        }
+    }
+
+    const videoSrcList = extractVideoSrcList(comment);
+    if (videoSrcList.length > 0) {
+        const delVideoPaths = videoSrcList.map((url: string) => publicUrlToPath(url, getImgBucketName()));
+        try {
+            deleteFilesAction(delVideoPaths);
+        } catch (error) {
+            return {
+                error: `video file 삭제 에러: ${error}`,
             };
         }
     }
@@ -640,11 +704,12 @@ export async function createReply(
     let replacedContent = content;
     for (const [key, value] of formData.entries()) {
         if (key.startsWith("blob:http")) {
-            const publicUrl = await uploadImageAction(value as File);
+            const publicUrl = await uploadFileAction(value as File);
             replacedContent = replacedContent.replaceAll(key, publicUrl); 
         }
     }
-    const finalHtml = sanitizeImageUrls(replacedContent);
+    let finalHtml = sanitizeImageUrls(replacedContent);
+    finalHtml = sanitizeVideoUrls(finalHtml);
 
     // console.debug("p_comment_id :", commentId);
     try {
