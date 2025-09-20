@@ -119,7 +119,7 @@ function QuillEditor({
     }, []);
 
     const handleVideoInsert = async () => {
-        console.debug("handleVideoInsert called");
+        // console.debug("handleVideoInsert called");
         const input = document.createElement("input");
         input.type = "file";
         input.accept = "video/*";
