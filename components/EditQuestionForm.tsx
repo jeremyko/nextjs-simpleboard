@@ -3,7 +3,7 @@
 import { updateQuestion, State } from "@/actions/actionQna";
 import { BoardItemById } from "@/app/libs/serverDb";
 import Link from "next/link";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import SubmitButton from "./SubmitButton";
 import type ReactQuillType from "react-quill-new";
@@ -43,6 +43,15 @@ export default function EditQuestionForm({
         setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
         return  formAction(formData);
     };
+
+    useEffect(() => {
+        // 수정시 마지막 부분에 커서 이동 가능하게 만든다. 동영상 이미지 편집이 가능해야 함 
+        const quill = quillRef.current?.getEditor();
+        const index = quill?.getLength() ?? 0;
+        // console.debug("EditQuestionForm quill length :", index);
+        quill?.insertText(index , "\n");
+        quill?.setSelection(index + 1);
+    }, []);
 
     return (
         <form action={handleSubmit}>

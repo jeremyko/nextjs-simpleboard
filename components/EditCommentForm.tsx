@@ -55,6 +55,15 @@ export default function EditCommentForm({
         }
     }, [commentState, router, setIsEditing]);
 
+    useEffect(() => {
+        // 수정시 마지막 부분에 커서 이동 가능하게 만든다. 동영상 이미지 편집이 가능해야 함 
+        const quill = quillRef.current?.getEditor();
+        const index = quill?.getLength() ?? 0;
+        // console.debug("EditCommentForm quill length :", index);
+        quill?.insertText(index , "\n");
+        quill?.setSelection(index + 1);
+    }, []);
+
     const quillRef = useRef<ReactQuillType | null>(null);
     const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
     const handleSubmit = async (formData: FormData) => {
