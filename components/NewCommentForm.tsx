@@ -48,6 +48,7 @@ export default function NewCommentForm({
     function cancelComment(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsWriting(false);
+        setPendingFiles([]); 
         quillRef.current?.getEditor().blur(); // 명시적으로 포커스 해제 한다. 
         // 포커스가 남아 있으면 더이상 포커스 입력을 감지못하고,
         // 삭제, 수정 버튼이 안 나타나는 경우가 발생하기 때문.
@@ -71,6 +72,7 @@ export default function NewCommentForm({
             formData.append(`${pendingFile.placeholderUrl}`, pendingFile.file);
         });
         setPendingFiles([]); // 이미지를 사용안한경우에도 이전에 올린 이미지가 중복 업로드 에러방지.
+        quillRef.current?.getEditor().blur(); // 명시적으로 포커스 해제 한다. 
         return  formAction(formData);
     };
 

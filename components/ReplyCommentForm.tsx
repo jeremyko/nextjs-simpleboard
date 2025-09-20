@@ -55,6 +55,7 @@ export default function ReplyCommentForm({
     function cancelReply(e: React.MouseEvent<HTMLButtonElement>) {
         setContentState("");
         setIsReplying(false);
+        setPendingFiles([]); 
         e.preventDefault(); // Form submission canceled because the form is not connected 경고 방지
     }
 

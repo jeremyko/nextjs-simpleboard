@@ -44,6 +44,7 @@ export default function EditCommentForm({
 
     function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
         setIsEditing(false);
+        setPendingFiles([]); 
         e.preventDefault(); // Form submission canceled because the form is not connected 경고 방지
     }
 
