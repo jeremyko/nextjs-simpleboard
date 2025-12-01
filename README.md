@@ -2,7 +2,7 @@
 
 [https://jeremyko.github.io/2025/08/30/nextjs-simple-board.html](https://jeremyko.github.io/2025/08/30/nextjs-simple-board.html)  
 
-소스코드 동작확인 : [nextjs-simpleboard.vercel.app](nextjs-simpleboard.vercel.app)
+소스코드 동작확인 : [https://nextjs-simpleboard.vercel.app](https://nextjs-simpleboard.vercel.app)
 
 next.js server action 과 react server component 를 사용해서 다음을 구현함.
 
